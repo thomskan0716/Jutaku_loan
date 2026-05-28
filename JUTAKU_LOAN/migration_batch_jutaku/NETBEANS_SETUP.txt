@@ -1,0 +1,171 @@
+NetBeans Setup Guide for JUTAKU_LOAN Migration
+================================================
+
+Environment:
+  VM: C:\Users\sun.ykawakamit\Desktop\静岡銀行_S-plus\branches\新帰属入\050000_データ移行#JTAKU_LOAN\migration_batch_JUTAKU
+  Java: C:\Program Files\Java\jdk1.8.0_45
+  IDE: NetBeans (no network connection)
+  libs: Already exists in project root
+
+================================================
+
+Step 1: Open Project in NetBeans
+================================================
+
+1. Launch NetBeans IDE
+2. File → Open Project
+3. Navigate to: C:\Users\sun.ykawakamit\Desktop\静岡銀行_S-plus\branches\新帰属入\050000_データ移行#JTAKU_LOAN\migration_batch_JUTAKU
+4. Select migration_batch_JUTAKU folder
+5. Click "Open Project"
+
+================================================
+
+Step 2: Configure Project Libraries
+================================================
+
+1. Right-click project → Properties
+2. Select "Libraries" category
+3. Click "Add JAR/Folder"
+4. Navigate to libs folder in project root
+5. Select ALL .jar files (Ctrl+A):
+   - spring-boot-*.jar
+   - spring-batch-*.jar
+   - mybatis-*.jar
+   - ojdbc8-*.jar
+   - commons-*.jar
+   - (all other JARs in libs folder)
+6. Click "Open"
+7. Click "OK"
+
+================================================
+
+Step 3: Configure Source Folders
+================================================
+
+1. Right-click project → Properties
+2. Select "Sources" category
+3. Verify source folders:
+   Source Packages: src\main\java
+   Resource Packages: src\main\resources
+4. Set source level: JDK 1.8
+5. Click "OK"
+
+================================================
+
+Step 4: Build Project
+================================================
+
+1. Right-click project → Clean and Build
+2. Check output window for compilation errors
+3. If successful, compiled classes are in: build\classes
+
+OR use compile_for_vm.bat:
+  cd batch
+  compile_for_vm.bat
+  (Output: bin\main\*.class)
+
+================================================
+
+Step 5: Configure application.yml
+================================================
+
+Edit: src\main\resources\application.yml
+
+Replace passwords:
+  spring.datasource.source.password: <actual_password>
+  spring.datasource.target.password: <actual_password>
+
+================================================
+
+Step 6: Run Migration
+================================================
+
+Option A: Single Instance
+  cd batch
+  run.bat
+
+Option B: 15 Parallel Instances
+  cd batch
+  create_batches.bat
+  (Opens 15 separate windows)
+  batch01.bat
+  batch02.bat
+  ...
+  batch15.bat
+
+================================================
+
+Project Structure in NetBeans
+================================================
+
+migration_batch_JUTAKU
+├── src/main/java
+│   └── migration
+│       ├── MigrationBatchApplication.java
+│       ├── common/szh_sms
+│       │   ├── E申込目的.java
+│       │   └── E連絡コード.java
+│       ├── domain
+│       │   ├── source/ApplicationSource.java
+│       │   └── target/ApplicationTarget.java
+│       ├── mapper
+│       │   ├── source/ApplicationSourceMapper.java
+│       │   └── target/ApplicationTargetMapper.java
+│       ├── service/ApplicationMigrationService.java
+│       └── config
+│           ├── SourceDataSourceConfig.java
+│           └── TargetDataSourceConfig.java
+├── src/main/resources
+│   ├── application.yml
+│   └── migration/mybatis/mapper
+│       ├── source/ApplicationSourceMapper.xml
+│       └── target/ApplicationTargetMapper.xml
+├── libs (40+ JAR files, ~100MB)
+├── batch
+│   ├── run.bat
+│   ├── batch01.bat
+│   ├── create_batches.bat
+│   ├── compile_for_vm.bat
+│   ├── export_structure.bat
+│   └── import_structure.bat
+└── build.gradle (reference only, no network in VM)
+
+================================================
+
+Troubleshooting
+================================================
+
+Error: Package org.springframework does not exist
+  → Add spring-boot-*.jar and spring-*.jar to Libraries
+
+Error: Package org.mybatis does not exist
+  → Add mybatis-*.jar to Libraries
+
+Error: Package oracle.jdbc does not exist
+  → Add ojdbc8-*.jar to Libraries
+
+Error: Class not found migration.MigrationBatchApplication
+  → Build project first (Clean and Build)
+
+Error: Could not connect to database
+  → Check application.yml passwords
+  → Verify Oracle TNS configuration
+
+================================================
+
+Development Workflow
+================================================
+
+Home PC (with network, AI agent):
+  1. Code in VS Code with GitHub Copilot
+  2. Test logic and syntax
+  3. Copy code files
+
+VM (no network, NetBeans):
+  1. Paste code into NetBeans
+  2. Build with NetBeans or compile_for_vm.bat
+  3. Configure application.yml
+  4. Run batch scripts
+  5. Debug and test with actual databases
+
+================================================

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="Shift-JIS"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.ApplicationSourceMapper">
+
+    <resultMap id="applicationSourceMap" type="migration.domain.source.ApplicationSource">
+        <id property="申込番号" column="申込番号"/>
+        <result property="申込日" column="申込日"/>
+        <result property="申込目的" column="申込目的"/>
+        <result property="融資申込番号" column="融資申込番号"/>
+        <result property="関連番" column="関連番"/>
+        <result property="連絡コード" column="連絡コード"/>
+        <result property="経済記" column="経済記"/>
+        <result property="申込履歴号" column="申込履歴号"/>
+        <result property="申込日付" column="申込日付"/>
+        <result property="審査履歴" column="審査履歴"/>
+        <result property="日付" column="日付"/>
+        <result property="イベント" column="イベント"/>
+    </resultMap>
+
+    <!-- Select by Range (F-Level Pattern) -->
+    <select id="selectByRange" resultMap="applicationSourceMap">
+        SELECT
+            申込番号,
+            申込日,
+            申込目的,
+            融資申込番号,
+            関連番,
+            連絡コード,
+            経済記,
+            申込履歴号,
+            申込日付,
+            審査履歴,
+            日付,
+            イベント
+        FROM 申込
+        WHERE 申込番号 BETWEEN #{startId} AND #{endId}
+        ORDER BY 申込番号
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+    <!-- Count total records (TEST: Limited to 100) -->
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM (
+            SELECT 申込番号 FROM 申込 WHERE ROWNUM <= 100
+        )
+    </select>
+
+    <!-- Find min/max IDs for range processing (TEST: Limited to 100) -->
+    <select id="findMinId" resultType="string">
+        SELECT MIN(申込番号) FROM (
+            SELECT 申込番号 FROM 申込 WHERE ROWNUM <= 100
+        )
+    </select>
+
+    <select id="findMaxId" resultType="string">
+        SELECT MAX(申込番号) FROM (
+            SELECT 申込番号 FROM 申込 WHERE ROWNUM <= 100
+        )
+    </select>
+
+</mapper>

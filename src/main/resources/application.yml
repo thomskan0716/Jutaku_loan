@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: MIGRATION_BATCH_C
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE   # ← Change to your DB URL
+    username: your_username                     # ← Change
+    password: your_password                     # ← Change
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
+  batch:
+    job:
+      enabled: false   # Prevent auto-run on startup
+    jdbc:
+      initialize-schema: always
+
+mybatis:
+  mapper-locations: classpath:migration/mybatis/mapper/**/*.xml
+  type-aliases-package: migration.mybatis.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.migration: DEBUG
+    org.springframework.batch: INFO

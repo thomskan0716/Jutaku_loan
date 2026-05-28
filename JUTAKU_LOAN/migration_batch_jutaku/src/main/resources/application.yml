@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: migration_batch_jutaku
+
+  datasource:
+    source:
+      url: jdbc:oracle:thin:@E00197SV0203:1521:ORCL
+      username: ITF_SMS
+      password: SCP00ITF_SMS
+      driver-class-name: oracle.jdbc.OracleDriver
+    target:
+      url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
+      username: ITF_SMS
+      password: SCP00ITF_SMS
+      driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
+  batch:
+    job:
+      enabled: true   # Enable auto-run on startup (required for BatchConfig)
+    jdbc:
+      initialize-schema: always
+
+mybatis:
+  mapper-locations: classpath*:migration/mybatis/mapper/**/*.xml
+  type-aliases-package: migration.domain
+  configuration:
+    map-underscore-to-camel-case: false
+
+logging:
+  level:
+    migration: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.batch: INFO

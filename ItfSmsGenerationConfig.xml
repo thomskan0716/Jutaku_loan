@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="ItfSmsContext" targetRuntime="MyBatis3">
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="false"/>
+        </commentGenerator>
+
+        <!-- TODO: Update DB connection -->
+        <jdbcConnection driverClass="oracle.jdbc.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@localhost:1521:XE"
+                        userId="your_username"
+                        password="your_password"/>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator
+                targetPackage="migration.mybatis.domain"
+                targetProject="gen/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator
+                targetPackage="migration.mybatis.mapper.sms"
+                targetProject="gen/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER"
+                targetPackage="migration.mybatis.mapper"
+                targetProject="gen/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- TODO: Add your actual SMS table names -->
+        <table tableName="SMS_MIGRATION" domainObjectName="ItfSms"/>
+
+    </context>
+</generatorConfiguration>

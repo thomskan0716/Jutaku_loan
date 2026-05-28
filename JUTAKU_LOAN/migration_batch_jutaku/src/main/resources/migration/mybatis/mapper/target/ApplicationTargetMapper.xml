@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="Shift-JIS"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.ApplicationTargetMapper">
+
+    <!-- Insert to target (ONLY columns with ○ on RIGHT side) -->
+    <insert id="insert" parameterType="migration.domain.target.ApplicationTarget">
+        INSERT INTO 申込 (
+            申込番号,
+            申込日,
+            融資申込番号,
+            関連番,
+            連絡コード,
+            経済記,
+            申込履歴号,
+            申込日付,
+            審査履歴,
+            日付,
+            イベント
+        ) VALUES (
+            #{申込番号},
+            #{申込日},
+            #{融資申込番号},
+            #{関連番},
+            #{連絡コード},
+            #{経済記},
+            #{申込履歴号},
+            #{申込日付},
+            #{審査履歴},
+            #{日付},
+            #{イベント}
+        )
+    </insert>
+
+    <!-- Delete all (for testing) -->
+    <delete id="deleteAll">
+        DELETE FROM 申込
+    </delete>
+
+</mapper>
