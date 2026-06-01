@@ -21,11 +21,15 @@ public class ApplicationMigrationService {
     @Autowired
     private ApplicationTargetMapper targetMapper;
     
-    private static final int BATCH_SIZE = 100; // Records per range
+    private static final int BATCH_SIZE = 10; // Records per range (TEST: 10 for testing)
     private String currentMinId = null;
     private String currentMaxId = null;
     
     public void processAll() {
+        // Clear target table before migration (for testing)
+        targetMapper.deleteAll();
+        System.out.println("申込 Migration - Target table cleared");
+        
         long totalCount = sourceMapper.count();
         currentMinId = sourceMapper.findMinId();
         currentMaxId = sourceMapper.findMaxId();
@@ -43,20 +47,36 @@ public class ApplicationMigrationService {
      */
     @Transactional
     public ApplicationSource claimNextRange() {
+        // Check if we've exceeded the max ID (from first 100 records)
+        if (currentMinId != null && currentMaxId != null) {
+            if (currentMinId.compareTo(currentMaxId) > 0) {
+                System.out.println("Reached maxId limit: " + currentMaxId);
+                return null;  // No more ranges in test dataset
+            }
+        }
+        
+        // Query for next BATCH_SIZE records starting from currentMinId, limited by currentMaxId
         List<ApplicationSource> candidates = sourceMapper.selectByRange(
             currentMinId != null ? currentMinId : "000000000001",
-            currentMaxId != null ? currentMaxId : "999999999999"
+            currentMaxId != null ? currentMaxId : "999999999999"  // Don't exceed test limit
         );
         
         if (candidates.isEmpty()) {
+            System.out.println("No more records found in range " + currentMinId + " ~ " + currentMaxId);
             return null;
         }
         
+        // Return first record as range start marker
         return candidates.get(0);
     }
     
-    public void markDone(ApplicationSource range) {
-        System.out.println("DONE: Range starting from " + range.get申込番号());
+    public void markDone(ApplicationSource range, String actualMaxId) {
+        // Advance currentMinId to ACTUAL next ID (one more than last processed)
+        long nextId = Long.parseLong(actualMaxId) + 1;
+        currentMinId = String.format("%012d", nextId);
+        
+        System.out.println("DONE: Range starting from " + range.get申込番号() + 
+            " (last processed: " + actualMaxId + ") → Next start: " + currentMinId);
     }
     
     public void markError(ApplicationSource range, String errorMessage) {
@@ -67,22 +87,24 @@ public class ApplicationMigrationService {
        Process One Range (Main Logic)
      * @param startId Range start ID
      * @param endId Range end ID
-     * @return Number of processed records
+     * @return Last processed ID (for markDone)
      */
     @Transactional
-    public int processOneRange(String startId, String endId) {
+    public String processOneRange(String startId, String endId) {
         System.out.println("Processing range: " + startId + " ~ " + endId);
         
         List<ApplicationSource> sourceList = sourceMapper.selectByRange(startId, endId);
         
         int processedCount = 0;
         int skippedCount = 0;
+        String lastProcessedId = startId;  // Track actual last processed ID
         
         for (ApplicationSource source : sourceList) {
             try {
                 if (!isMigrationTarget(source)) {
                     System.out.println("SKIP: " + source.get申込番号() + " - Not migration target");
                     skippedCount++;
+                    lastProcessedId = source.get申込番号();  // Update even for skipped
                     continue;
                 }
                 
@@ -91,15 +113,16 @@ public class ApplicationMigrationService {
                 targetMapper.insert(target);
                 
                 processedCount++;
+                lastProcessedId = source.get申込番号();  // Track last processed
                 
             } catch (Exception e) {
                 System.err.println("ERROR processing 申込番号=" + source.get申込番号() + ": " + e.getMessage());
-                throw e; // Let transaction rollback
+                throw e;
             }
         }
         
         System.out.println("Range completed: Processed=" + processedCount + ", Skipped=" + skippedCount);
-        return processedCount;
+        return lastProcessedId;  // Return for markDone
     }
     
     
@@ -115,38 +138,18 @@ public class ApplicationMigrationService {
             return false;
         }
         
-        // TODO: Add more criteria
-        // - Check 審査ステータス = completed
-        
         return true;
     }
-    
-    //Transform: Apply E-Level Conversions
     private ApplicationTarget transform(ApplicationSource source) {
         ApplicationTarget target = new ApplicationTarget();
         
-
+        // 1. 申込番号 (PK) - No conversion
         target.set申込番号(source.get申込番号());
         
-        
-        target.set申込日(source.get申込日());
-        target.set融資申込番号(source.get融資申込番号());
-        target.set関連番(source.get関連番());
-        target.set経済記(source.get経済記());
-        target.set申込履歴号(source.get申込履歴号());
-        target.set申込日付(source.get申込日付());
-        target.set審査履歴(source.get審査履歴());
-        target.setイベント(source.getイベント());
-        
-        
-        String old連絡コード = source.get連絡コード();
-        String new連絡コード = E連絡コード.convert(old連絡コード);
-        target.set連絡コード(new連絡コード);
-        
-        
-        String old日付 = source.get日付();
-        String new日付 = E申込目的.convert(old日付);
-        target.set日付(new日付);
+        // 2. 申込目的 - E-level conversion (10/15→10, 20/30→20, 90→null)
+        String old申込目的 = source.get申込目的();
+        String new申込目的 = E申込目的.convert(old申込目的);
+        target.set申込目的(new申込目的);
         
         return target;
     }
