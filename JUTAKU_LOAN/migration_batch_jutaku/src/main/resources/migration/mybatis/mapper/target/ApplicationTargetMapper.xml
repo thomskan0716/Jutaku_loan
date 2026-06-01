@@ -4,12 +4,14 @@
 
 <mapper namespace="migration.mapper.target.ApplicationTargetMapper">
 
-    <!-- Insert to target - Week 3-4: Only 2 columns (TEST TABLE) -->
+    <!-- Insert to target - Week 3-4: TEST TABLE (ID is NOT NULL, use sequence) -->
     <insert id="insert" parameterType="migration.domain.target.ApplicationTarget">
         INSERT INTO TEST (
+            ID,
             申込番号,
             申込目的
         ) VALUES (
+            TEST_SEQ.NEXTVAL,
             #{申込番号},
             #{申込目的}
         )
