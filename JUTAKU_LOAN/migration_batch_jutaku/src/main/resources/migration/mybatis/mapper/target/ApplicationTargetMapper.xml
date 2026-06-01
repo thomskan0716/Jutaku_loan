@@ -4,38 +4,20 @@
 
 <mapper namespace="migration.mapper.target.ApplicationTargetMapper">
 
-    <!-- Insert to target (ONLY columns with ○ on RIGHT side) -->
+    <!-- Insert to target - Week 3-4: Only 2 columns (TEST TABLE) -->
     <insert id="insert" parameterType="migration.domain.target.ApplicationTarget">
-        INSERT INTO 申込 (
+        INSERT INTO TEST (
             申込番号,
-            申込日,
-            融資申込番号,
-            関連番,
-            連絡コード,
-            経済記,
-            申込履歴号,
-            申込日付,
-            審査履歴,
-            日付,
-            イベント
+            申込目的
         ) VALUES (
             #{申込番号},
-            #{申込日},
-            #{融資申込番号},
-            #{関連番},
-            #{連絡コード},
-            #{経済記},
-            #{申込履歴号},
-            #{申込日付},
-            #{審査履歴},
-            #{日付},
-            #{イベント}
+            #{申込目的}
         )
     </insert>
 
     <!-- Delete all (for testing) -->
     <delete id="deleteAll">
-        DELETE FROM 申込
+        DELETE FROM TEST
     </delete>
 
 </mapper>

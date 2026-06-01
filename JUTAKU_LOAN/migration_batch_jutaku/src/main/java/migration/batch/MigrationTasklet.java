@@ -35,22 +35,23 @@ public class MigrationTasklet implements Tasklet {
                     
                     try {
                         String startId = range.get申込番号();
-                        // Calculate endId (add 100 for batch size)
+                        // Calculate endId (add 10 for batch size TEST)
                         String endId = String.format("%012d", 
-                            Long.parseLong(startId) + 100);
+                            Long.parseLong(startId) + 10);
                         
-                        int processedCount = applicationMigrationService.processOneRange(startId, endId);
+                        String lastProcessedId = applicationMigrationService.processOneRange(startId, endId);
                         
-                        // Step 4: Mark as done
-                        applicationMigrationService.markDone(range);
                         
-                        System.out.println("Range processed: " + startId + " ~ " + endId + 
-                            " (" + processedCount + " records)");
+                        applicationMigrationService.markDone(range, lastProcessedId);
+                        
+                        System.out.println("Range processed: " + startId + " ~ " + lastProcessedId);
                         
                     } catch (Exception e) {
                         System.err.println("ERROR processing range: " + range.get申込番号());
                         e.printStackTrace();
                         applicationMigrationService.markError(range, e.getMessage());
+                        // STOP on error to prevent infinite loop
+                        throw new RuntimeException("Migration stopped due to error in range: " + range.get申込番号(), e);
                     }
                     
                 } catch (Exception e) {
