@@ -67,10 +67,9 @@ public class 申込MigrationService {
             }
         }
         
-        // Query for next BATCH_SIZE records starting from currentMinId, limited by currentMaxId
         List<申込Source> candidates = sourceMapper.selectByRange(
             currentMinId != null ? currentMinId : "000000000001",
-            currentMaxId != null ? currentMaxId : "999999999999"  // Don't exceed test limit
+            currentMaxId != null ? currentMaxId : "999999999999" 
         );
         
         if (candidates.isEmpty()) {
@@ -78,7 +77,6 @@ public class 申込MigrationService {
             return null;
         }
         
-        // Return first record as range start marker
         return candidates.get(0);
     }
     
@@ -123,7 +121,6 @@ public class 申込MigrationService {
                 申込Target target = transform(source);
                 targetMapper.insert(target);
 
-                // Migrate child records: 申込審査状況
                 int reviewCount = 申込審査状況MigrationService.migrateByApplicationId(source.get申込番号());
                 System.out.println("  申込審査状況: " + reviewCount + " records for " + source.get申込番号());
 
@@ -142,7 +139,6 @@ public class 申込MigrationService {
     }
     
     
-    //Migration Target Check
     private boolean isMigrationTarget(申込Source source) {
         
         String 申込目的 = source.get申込目的();
@@ -159,10 +155,10 @@ public class 申込MigrationService {
     private 申込Target transform(申込Source source) {
         申込Target target = new 申込Target();
         
-        // 1. 申込番号 (PK) - No conversion
+        // 申込番号 (PK) - No conversion
         target.set申込番号(source.get申込番号());
         
-        // 2. 申込目的 - E-level conversion (10/15→10, 20/30→20, 90→null)
+        // 申込目的 - E-level conversion (10/15→10, 20/30→20, 90→null)
         String old申込目的 = source.get申込目的();
         String new申込目的 = E申込目的.convert(old申込目的);
         target.set申込目的(new申込目的);

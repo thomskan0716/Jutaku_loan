@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.申込審査状況SourceMapper">
+
+    <resultMap id="reviewStatusSourceMap" type="migration.domain.source.申込審査状況Source">
+        <id property="申込番号" column="申込番号"/>
+        <id property="申込目的" column="申込目的"/>
+        <id property="回数"     column="回数"/>
+    </resultMap>
+
+    <select id="selectByApplicationId" resultMap="reviewStatusSourceMap">
+        SELECT
+            申込番号,
+            申込目的,
+            回数
+        FROM 申込審査状況
+        WHERE 申込番号 = #{申込番号}
+        ORDER BY 申込目的, 回数
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM 申込審査状況
+        WHERE 申込目的 != '90'
+    </select>
+
+    <select id="findMinId" resultType="string">
+        SELECT MIN(申込番号) FROM 申込審査状況
+        WHERE 申込目的 != '90'
+    </select>
+
+    <select id="findMaxId" resultType="string">
+        SELECT MAX(申込番号) FROM 申込審査状況
+        WHERE 申込目的 != '90'
+    </select>
+
+</mapper>
