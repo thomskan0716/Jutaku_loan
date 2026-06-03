@@ -8,15 +8,15 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import migration.domain.source.ApplicationSource;
-import migration.service.ApplicationMigrationService;
+import migration.domain.source.申込Source;
+import migration.service.申込MigrationService;
 
 @Component
 @StepScope
 public class MigrationTasklet implements Tasklet {
 
     @Autowired
-    private ApplicationMigrationService applicationMigrationService;
+    private 申込MigrationService applicationMigrationService;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
@@ -27,7 +27,7 @@ public class MigrationTasklet implements Tasklet {
             
             while (true) {
                 try {
-                    ApplicationSource range = applicationMigrationService.claimNextRange();
+                    申込Source range = applicationMigrationService.claimNextRange();
                     if (range == null) {
                         System.out.println("No more ranges to process");
                         break;

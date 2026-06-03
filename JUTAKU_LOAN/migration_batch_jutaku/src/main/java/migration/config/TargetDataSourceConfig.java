@@ -17,8 +17,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
- * Target Database Configuration (New System)
- * E00736SV0001/SZH_SMS
+ * Target Database Configuration (New System) E00736SV0001/ITF_GMS
  */
 @Configuration
 @MapperScan(basePackages = "migration.mapper.target", sqlSessionFactoryRef = "targetSqlSessionFactory")

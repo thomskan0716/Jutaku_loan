@@ -10,8 +10,8 @@ spring:
       driver-class-name: oracle.jdbc.OracleDriver
     target:
       url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
-      username: ITF_SMS
-      password: SCP00ITF_SMS
+      username: ITF_GMS
+      password: SCP00ITF_GMS
       driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
@@ -27,7 +27,7 @@ spring:
     job:
       enabled: true   # Enable auto-run on startup (required for BatchConfig)
     jdbc:
-      initialize-schema: never   # Use existing Spring Batch tables in ITF_SMS
+      initialize-schema: always   # Auto-create Spring Batch metadata tables in ITF_GMS
 
 mybatis:
   mapper-locations: classpath*:migration/mybatis/mapper/**/*.xml

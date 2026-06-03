@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.申込SourceMapper">
+
+    <resultMap id="applicationSourceMap" type="migration.domain.source.申込Source">
+        <id property="申込番号" column="申込番号"/>
+        <result property="申込目的" column="申込目的"/>
+    </resultMap>
+    
+    <select id="selectByRange" resultMap="applicationSourceMap">
+        <![CDATA[
+        SELECT
+            申込番号,
+            申込目的
+        FROM 申込
+        WHERE 申込番号 >= #{startId}
+          AND 申込番号 <= #{endId}
+        ORDER BY 申込番号
+        FETCH FIRST 10 ROWS ONLY
+        ]]>
+    </select>
+
+    <!-- Count all migration-target records -->
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM 申込
+        WHERE 申込目的 != '90'
+    </select>
+
+    <!-- Find min 申込番号 for range processing start -->
+    <select id="findMinId" resultType="string">
+        SELECT MIN(申込番号) FROM 申込
+        WHERE 申込目的 != '90'
+    </select>
+
+    <!-- Find max 申込番号 for range processing end -->
+    <select id="findMaxId" resultType="string">
+        SELECT MAX(申込番号) FROM 申込
+        WHERE 申込目的 != '90'
+    </select>
+
+</mapper>
