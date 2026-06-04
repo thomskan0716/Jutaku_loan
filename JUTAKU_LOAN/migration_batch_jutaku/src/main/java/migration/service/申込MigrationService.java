@@ -23,14 +23,15 @@ public class 申込MigrationService {
     @Autowired
     private 申込審査状況MigrationService 申込審査状況MigrationService;
 
-    private static final int BATCH_SIZE = 10;   // Records per range
-    private static final int TEST_LIMIT = 100;   // TEST: Stop after 100 records total
+    private static final int BATCH_SIZE = 10; 
+    private static final int TEST_LIMIT = 100;
     private String currentMinId = null;
     private String currentMaxId = null;
     private int totalProcessed = 0;
     
     public void processAll() {
         // Clear target tables before migration (for testing)
+        申込審査状況MigrationService.resetTestState();
         申込審査状況MigrationService.deleteAll();
         targetMapper.deleteAll();
         System.out.println("申込 Migration - Target tables cleared");
@@ -38,7 +39,7 @@ public class 申込MigrationService {
         long totalCount = sourceMapper.count();
         currentMinId = sourceMapper.findMinId();
         currentMaxId = sourceMapper.findMaxId();
-        totalProcessed = 0;  // Reset counter
+        totalProcessed = 0;
 
         System.out.println("申込 Migration - Process All Started");
         System.out.println("Total Records: " + totalCount);
@@ -121,7 +122,7 @@ public class 申込MigrationService {
                 申込Target target = transform(source);
                 targetMapper.insert(target);
 
-                int reviewCount = 申込審査状況MigrationService.migrateByApplicationId(source.get申込番号());
+                int reviewCount = 申込審査状況MigrationService.migrateByApplicationId(source.get申込番号(), source.get申込目的());
                 System.out.println("  申込審査状況: " + reviewCount + " records for " + source.get申込番号());
 
                 processedCount++;
