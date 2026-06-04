@@ -8,7 +8,9 @@ import migration.mapper.target.申込審査状況TargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -20,6 +22,14 @@ public class 申込審査状況MigrationService {
     @Autowired
     private 申込審査状況TargetMapper targetMapper;
 
+    private final Set<String> processedGroups = new HashSet<>();
+    private final Set<String> insertedTargetKeys = new HashSet<>();
+
+    public void resetTestState() {
+        processedGroups.clear();
+        insertedTargetKeys.clear();
+    }
+
     /**
      * Migrate all 申込審査状況 records for a given 申込番号.
      * Called once per 申込 record inside processOneRange().
@@ -27,7 +37,14 @@ public class 申込審査状況MigrationService {
      * @param 申込番号 the application number whose review statuses to migrate
      * @return number of records inserted
      */
-    public int migrateByApplicationId(String 申込番号) {
+    public int migrateByApplicationId(String 申込番号, String 親申込目的) {
+        String targetPurpose = E申込目的.convert(親申込目的);
+        String groupKey = 申込番号 + "|" + targetPurpose;
+        if (!processedGroups.add(groupKey)) {
+            System.out.println("SKIP 申込審査状況 group already processed: " + groupKey);
+            return 0;
+        }
+
         List<申込審査状況Source> sourceList = sourceMapper.selectByApplicationId(申込番号);
 
         int insertedCount = 0;
@@ -39,6 +56,16 @@ public class 申込審査状況MigrationService {
             }
 
             申込審査状況Target target = transform(source);
+            if (!targetPurpose.equals(target.get申込目的())) {
+                continue;
+            }
+
+            String targetKey = target.get申込番号() + "|" + target.get申込目的() + "|" + target.get回数();
+            if (!insertedTargetKeys.add(targetKey)) {
+                System.out.println("SKIP duplicate 申込審査状況 target key: " + targetKey);
+                continue;
+            }
+
             targetMapper.insert(target);
             insertedCount++;
         }
