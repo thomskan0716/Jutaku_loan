@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,7 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * Target Database Configuration (New System) E00736SV0001/ITF_GMS
  */
 @Configuration
-@MapperScan(basePackages = "migration.mapper.target", sqlSessionFactoryRef = "targetSqlSessionFactory")
+@MapperScan(basePackages = {"migration.mapper.target", "migration.mapper.移行管理"}, sqlSessionFactoryRef = "targetSqlSessionFactory")
 public class TargetDataSourceConfig {
 
     @Bean(name = "targetDataSourceProperties")
@@ -48,9 +49,13 @@ public class TargetDataSourceConfig {
             throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setMapperLocations(
-            new PathMatchingResourcePatternResolver().getResources("classpath*:migration/mybatis/mapper/target/*.xml")
-        );
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] targetXmls = resolver.getResources("classpath*:migration/mybatis/mapper/target/*.xml");
+        Resource[] managementXmls = resolver.getResources("classpath*:migration/mybatis/mapper/移行管理/*.xml");
+        Resource[] allXmls = new Resource[targetXmls.length + managementXmls.length];
+        System.arraycopy(targetXmls, 0, allXmls, 0, targetXmls.length);
+        System.arraycopy(managementXmls, 0, allXmls, targetXmls.length, managementXmls.length);
+        factoryBean.setMapperLocations(allXmls);
         return factoryBean.getObject();
     }
 

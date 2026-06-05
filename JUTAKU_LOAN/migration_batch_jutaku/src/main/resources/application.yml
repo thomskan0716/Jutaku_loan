@@ -4,7 +4,7 @@ spring:
 
   datasource:
     source:
-      url: jdbc:oracle:thin:@E00197SV0203:1521:ORCL
+      url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
       username: SZH_SMS
       password: SZH_SMS  
       driver-class-name: oracle.jdbc.OracleDriver
