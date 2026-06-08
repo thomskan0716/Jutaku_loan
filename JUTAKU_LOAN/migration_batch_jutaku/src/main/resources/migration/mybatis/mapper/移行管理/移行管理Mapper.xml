@@ -26,7 +26,7 @@
             処理開始日時,
             処理終了日時,
             処理プロセスID
-        FROM ITF_SMS.移行管理
+        FROM 移行管理
         WHERE ステータス = 'TODO'
         ORDER BY 申込番号
         FOR UPDATE SKIP LOCKED
@@ -34,7 +34,7 @@
     </select>
 
     <update id="updateStatusToRunning">
-        UPDATE ITF_SMS.移行管理
+        UPDATE 移行管理
         SET ステータス = 'RUNNING',
             処理開始日時 = #{startTime},
             処理プロセスID = #{processId}
@@ -46,7 +46,7 @@
 
     <update id="updateStatusToDone">
         <![CDATA[
-        UPDATE ITF_SMS.移行管理
+        UPDATE 移行管理
         SET ステータス = 'DONE',
             処理終了日時 = #{endTime}
         WHERE 申込番号 = #{申込番号}
@@ -55,7 +55,7 @@
 
     <update id="updateStatusToError">
         <![CDATA[
-        UPDATE ITF_SMS.移行管理
+        UPDATE 移行管理
         SET ステータス = 'ERROR',
             処理終了日時 = #{endTime}
         WHERE 申込番号 = #{申込番号}
@@ -65,7 +65,7 @@
     <select id="countByStatus" resultType="long">
         <![CDATA[
         SELECT COUNT(*)
-        FROM ITF_SMS.移行管理
+        FROM 移行管理
         WHERE ステータス = #{status}
         ]]>
     </select>
@@ -79,7 +79,7 @@
             処理開始日時,
             処理終了日時,
             処理プロセスID
-        FROM ITF_SMS.移行管理
+        FROM 移行管理
         WHERE ステータス = #{status}
         ORDER BY 申込番号
         ]]>
