@@ -140,6 +140,34 @@ public class 申込MigrationService {
     }
     
     
+    /**
+     * Migrate a single application by 申込番号 (used by 移行管理 parallel flow)
+     * @return 1 if migrated, 0 if skipped
+     */
+    @Transactional
+    public int migrateOneApplication(String 申込番号) {
+        申込Source source = sourceMapper.selectById(申込番号);
+
+        if (source == null) {
+            System.out.println("SKIP: " + 申込番号 + " - Not found in source");
+            return 0;
+        }
+
+        if (!isMigrationTarget(source)) {
+            System.out.println("SKIP: " + 申込番号 + " - Not migration target");
+            return 0;
+        }
+
+        申込Target target = transform(source);
+        targetMapper.insert(target);
+
+        int reviewCount = 申込審査状況MigrationService.migrateByApplicationId(
+                source.get申込番号(), source.get申込目的());
+        System.out.println("  申込審査状況: " + reviewCount + " records for " + 申込番号);
+
+        return 1;
+    }
+
     private boolean isMigrationTarget(申込Source source) {
         
         String 申込目的 = source.get申込目的();

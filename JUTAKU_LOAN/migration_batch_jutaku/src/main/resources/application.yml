@@ -4,14 +4,14 @@ spring:
 
   datasource:
     source:
-      url: jdbc:oracle:thin:@E00197SV0203:1521:ORCL
-      username: SZH_SMS
-      password: SZH_SMS  
+      url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
+      username: SZB_SMS
+      password: SZB_SMS
       driver-class-name: oracle.jdbc.OracleDriver
     target:
       url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
-      username: ITF_GMS
-      password: SCP00ITF_GMS
+      username: ITF_SMS
+      password: SCP00ITF_SMS
       driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:

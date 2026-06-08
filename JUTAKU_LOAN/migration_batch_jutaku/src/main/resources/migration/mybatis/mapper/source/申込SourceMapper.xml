@@ -9,6 +9,17 @@
         <result property="申込目的" column="申込目的"/>
     </resultMap>
     
+    <!-- Select single record by 申込番号 (for 移行管理 parallel processing) -->
+    <select id="selectById" resultMap="applicationSourceMap">
+        <![CDATA[
+        SELECT
+            申込番号,
+            申込目的
+        FROM 申込
+        WHERE 申込番号 = #{申込番号}
+        ]]>
+    </select>
+    
     <select id="selectByRange" resultMap="applicationSourceMap">
         <![CDATA[
         SELECT

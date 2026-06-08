@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.移行管理.移行管理Mapper">
+
+    <resultMap id="移行管理Map" type="migration.domain.移行管理.移行管理">
+        <id property="申込番号" column="申込番号"/>
+        <result property="申込目的" column="申込目的"/>
+        <result property="ステータス" column="ステータス"/>
+        <result property="処理開始日時" column="処理開始日時"/>
+        <result property="処理終了日時" column="処理終了日時"/>
+        <result property="処理プロセスID" column="処理プロセスID"/>
+    </resultMap>
+
+    <!-- FOR UPDATE SKIP LOCKED enables parallel processing without lock contention -->
+    <select id="selectUnprocessedForUpdate" 
+            resultMap="移行管理Map" 
+            fetchSize="100" 
+            resultSetType="FORWARD_ONLY">
+        <![CDATA[
+        SELECT 
+            申込番号,
+            申込目的,
+            ステータス,
+            処理開始日時,
+            処理終了日時,
+            処理プロセスID
+        FROM 移行管理
+        WHERE ステータス = 'TODO'
+        ORDER BY 申込番号
+        FOR UPDATE SKIP LOCKED
+        ]]>
+    </select>
+
+    <update id="updateStatusToRunning">
+        UPDATE 移行管理
+        SET ステータス = 'RUNNING',
+            処理開始日時 = #{startTime},
+            処理プロセスID = #{processId}
+        WHERE 申込番号 IN
+        <foreach collection="records" item="record" open="(" separator="," close=")">
+            #{record.申込番号}
+        </foreach>
+    </update>
+
+    <update id="updateStatusToDone">
+        <![CDATA[
+        UPDATE 移行管理
+        SET ステータス = 'DONE',
+            処理終了日時 = #{endTime}
+        WHERE 申込番号 = #{申込番号}
+        ]]>
+    </update>
+
+    <update id="updateStatusToError">
+        <![CDATA[
+        UPDATE 移行管理
+        SET ステータス = 'ERROR',
+            処理終了日時 = #{endTime}
+        WHERE 申込番号 = #{申込番号}
+        ]]>
+    </update>
+
+    <select id="countByStatus" resultType="long">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM 移行管理
+        WHERE ステータス = #{status}
+        ]]>
+    </select>
+
+    <select id="selectByStatus" resultMap="移行管理Map">
+        <![CDATA[
+        SELECT 
+            申込番号,
+            申込目的,
+            ステータス,
+            処理開始日時,
+            処理終了日時,
+            処理プロセスID
+        FROM 移行管理
+        WHERE ステータス = #{status}
+        ORDER BY 申込番号
+        ]]>
+    </select>
+
+</mapper>
