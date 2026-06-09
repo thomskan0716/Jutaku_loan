@@ -16,7 +16,7 @@ migration_batch_jutaku/
 │   │   │   └── migration/
 │   │   │       ├── MigrationBatchApplication.java    ← Main entry point
 │   │   │       ├── batch/                             ← Spring Batch layer
-│   │   │       │   └── MigrationTasklet.java         (Wraps service)
+│   │   │       │   └── 移行管理Tasklet.java         (Parallel processing via 移行管理 table)
 │   │   │       ├── common/
 │   │   │       │   └── szh_sms/                      ← E-Level enums
 │   │   │       │       ├── E申込目的.java
@@ -192,7 +192,7 @@ MyBatis: 3.0.3
 ### ✅ Completed
 
 **Spring Batch Layer** (matches parent MIGRATION_BATCH_C):
-- [x] MigrationTasklet.java (wraps service in Spring Batch)
+- [x] 移行管理Tasklet.java (parallel processing via 移行管理 table)
 - [x] BatchConfig.java (@EnableBatchProcessing, Job/Step definition)
 - [x] MyBatchConfigurer.java (Spring Batch metadata configuration)
 
@@ -313,8 +313,8 @@ SELECT * FROM 申込 WHERE 申込番号 LIKE 'TEST%';
 ```claimNextRange() → processOneRange() → markDone/markError()
 5. **Spring Batch Framework**: Uses same architecture as parent MIGRATION_BATCH_C
    - @EnableBatchProcessing triggers Job on startup
-   - MigrationTasklet wraps ApplicationMigrationService
-   - Supports parallel execution with batch01-15.bat
+   - 移行管理Tasklet implements parallel processing via FOR UPDATE SKIP LOCKED
+   - Supports parallel execution with test1.bat, test2.bat, test3.bat
 
 ---
 

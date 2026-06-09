@@ -25,6 +25,12 @@ public class 移行管理 {
     /** 処理プロセスID - Identifies which parallel process handled this record */
     private String 処理プロセスID;
 
+    /** 更新日時 */
+    private Timestamp 更新日時;
+
+    /** 説明 - '正常終了' on success, error message on failure */
+    private String 説明;
+
     // Getters and Setters
     public String get申込番号() {
         return 申込番号;
@@ -74,6 +80,22 @@ public class 移行管理 {
         this.処理プロセスID = 処理プロセスID;
     }
 
+    public Timestamp get更新日時() {
+        return 更新日時;
+    }
+
+    public void set更新日時(Timestamp 更新日時) {
+        this.更新日時 = 更新日時;
+    }
+
+    public String get説明() {
+        return 説明;
+    }
+
+    public void set説明(String 説明) {
+        this.説明 = 説明;
+    }
+
     // Status constants
     public static final String STATUS_TODO = "TODO";
     public static final String STATUS_RUNNING = "RUNNING";
@@ -89,6 +111,8 @@ public class 移行管理 {
                 ", 処理開始日時=" + 処理開始日時 +
                 ", 処理終了日時=" + 処理終了日時 +
                 ", 処理プロセスID='" + 処理プロセスID + '\'' +
+                ", 更新日時=" + 更新日時 +
+                ", 説明='" + 説明 + '\'' +
                 '}';
     }
 }

@@ -6,6 +6,7 @@ import migration.domain.target.申込Target;
 import migration.mapper.source.申込SourceMapper;
 import migration.mapper.target.申込TargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Service
 public class 申込MigrationService {
-    
+
     @Autowired
     private 申込SourceMapper sourceMapper;
 
@@ -23,12 +24,15 @@ public class 申込MigrationService {
     @Autowired
     private 申込審査状況MigrationService 申込審査状況MigrationService;
 
-    private static final int BATCH_SIZE = 10; 
-    private static final int TEST_LIMIT = 100;
+    @Value("${migration.range.batch-size:100}")
+    private int batchSize;
+
+    @Value("${migration.range.test-limit:1000}")
+    private int testLimit;
     private String currentMinId = null;
     private String currentMaxId = null;
     private int totalProcessed = 0;
-    
+
     public void processAll() {
         // Clear target tables before migration (for testing)
         申込審査状況MigrationService.resetTestState();
@@ -44,18 +48,18 @@ public class 申込MigrationService {
         System.out.println("申込 Migration - Process All Started");
         System.out.println("Total Records: " + totalCount);
         System.out.println("ID Range: " + currentMinId + " ~ " + currentMaxId);
-        System.out.println("TEST LIMIT: " + TEST_LIMIT + " records");
+        System.out.println("TEST LIMIT: " + testLimit + " records");
 
         // TODO: Load master data into HashMap cache
     }
-    
+
     /**
      * @return Next range start record, or null if no more ranges
      */
     @Transactional
     public 申込Source claimNextRange() {
         // Check TEST_LIMIT
-        if (totalProcessed >= TEST_LIMIT) {
+        if (totalProcessed >= testLimit) {
             System.out.println("TEST LIMIT reached: " + totalProcessed + " records processed. Stopping.");
             return null;
         }

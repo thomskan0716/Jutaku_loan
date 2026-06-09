@@ -29,14 +29,13 @@ public interface 移行管理Mapper {
     /**
      * Update status to DONE after successful migration
      */
-    int updateStatusToDone(@Param("申込番号") String 申込番号, 
-                           @Param("endTime") Timestamp endTime);
-    
+    int updateStatusToDone(@Param("申込番号") String 申込番号);
+
     /**
      * Update status to ERROR after migration failure
      */
-    int updateStatusToError(@Param("申込番号") String 申込番号, 
-                            @Param("endTime") Timestamp endTime);
+    int updateStatusToError(@Param("申込番号") String 申込番号,
+                            @Param("説明") String 説明);
     
     /**
      * Count records by status

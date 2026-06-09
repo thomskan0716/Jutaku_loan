@@ -10,22 +10,22 @@
         <result property="ステータス" column="ステータス"/>
         <result property="処理開始日時" column="処理開始日時"/>
         <result property="処理終了日時" column="処理終了日時"/>
-        <result property="処理プロセスID" column="処理プロセスID"/>
+        <result property="処理プロセスID" column="処理プロセスＩＤ"/>
     </resultMap>
 
     <!-- FOR UPDATE SKIP LOCKED enables parallel processing without lock contention -->
-    <select id="selectUnprocessedForUpdate" 
-            resultMap="移行管理Map" 
-            fetchSize="100" 
+    <select id="selectUnprocessedForUpdate"
+            resultMap="移行管理Map"
+            fetchSize="100"
             resultSetType="FORWARD_ONLY">
         <![CDATA[
-        SELECT 
+        SELECT
             申込番号,
             申込目的,
             ステータス,
             処理開始日時,
             処理終了日時,
-            処理プロセスID
+            処理プロセスＩＤ
         FROM 移行管理
         WHERE ステータス = 'TODO'
         ORDER BY 申込番号
@@ -37,7 +37,8 @@
         UPDATE 移行管理
         SET ステータス = 'RUNNING',
             処理開始日時 = #{startTime},
-            処理プロセスID = #{processId}
+            処理プロセスＩＤ = #{processId},
+            更新日時 = SYSDATE
         WHERE 申込番号 IN
         <foreach collection="records" item="record" open="(" separator="," close=")">
             #{record.申込番号}
@@ -48,7 +49,9 @@
         <![CDATA[
         UPDATE 移行管理
         SET ステータス = 'DONE',
-            処理終了日時 = #{endTime}
+            処理終了日時 = LOCALTIMESTAMP,
+            更新日時 = SYSDATE,
+            説明 = '正常終了'
         WHERE 申込番号 = #{申込番号}
         ]]>
     </update>
@@ -57,7 +60,9 @@
         <![CDATA[
         UPDATE 移行管理
         SET ステータス = 'ERROR',
-            処理終了日時 = #{endTime}
+            処理終了日時 = LOCALTIMESTAMP,
+            更新日時 = SYSDATE,
+            説明 = #{説明}
         WHERE 申込番号 = #{申込番号}
         ]]>
     </update>
@@ -72,13 +77,13 @@
 
     <select id="selectByStatus" resultMap="移行管理Map">
         <![CDATA[
-        SELECT 
+        SELECT
             申込番号,
             申込目的,
             ステータス,
             処理開始日時,
             処理終了日時,
-            処理プロセスID
+            処理プロセスＩＤ
         FROM 移行管理
         WHERE ステータス = #{status}
         ORDER BY 申込番号

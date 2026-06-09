@@ -1,11 +1,7 @@
 spring:
   application:
     name: migration_batch_jutaku
-  http:
-    encoding:
-      charset: Shift_JIS
-      enabled: true
-      force: true
+
   datasource:
     source:
       url: jdbc:oracle:thin:@E00736SV0001:1521:ORCL
@@ -17,20 +13,52 @@ spring:
       username: ITF_SMS
       password: SCP00ITF_SMS
       driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
   batch:
     job:
-      enabled: false
+      enabled: true
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
 
 mybatis:
   mapper-locations: classpath*:migration/mybatis/mapper/**/*.xml
   type-aliases-package: migration.domain
+  configuration:
+    map-underscore-to-camel-case: false
+
+logging:
+  level:
+    migration: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.batch: INFO
 
 migration:
   management:
     batch-size: 100
-    max-iterations: 3
+    max-iterations: -1
+  range:
+    batch-size: 100
+    test-limit: 1000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+migration:
+  management:
+    batch-size: 100
+    max-iterations: -1
   range:
     batch-size: 100
     test-limit: 1000
