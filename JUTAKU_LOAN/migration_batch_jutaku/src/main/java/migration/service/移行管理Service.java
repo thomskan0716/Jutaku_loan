@@ -72,25 +72,22 @@ public class 移行管理Service {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void markDone(String 申込番号) {
-        Timestamp endTime = new Timestamp(System.currentTimeMillis());
-        int updated = managementMapper.updateStatusToDone(申込番号, endTime);
-        
+        int updated = managementMapper.updateStatusToDone(申込番号);
+
         if (updated == 0) {
             System.err.println("WARNING: Failed to update status to DONE for 申込番号: " + 申込番号);
         } else {
             System.out.println("  Marked DONE: " + 申込番号);
         }
     }
-    
+
     /**
      * Mark record as ERROR (separate transaction)
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void markError(String 申込番号, String errorMessage) {
-        Timestamp endTime = new Timestamp(System.currentTimeMillis());
-        
-        int updated = managementMapper.updateStatusToError(申込番号, endTime);
-        
+        int updated = managementMapper.updateStatusToError(申込番号, errorMessage);
+
         if (updated == 0) {
             System.err.println("WARNING: Failed to update status to ERROR for 申込番号: " + 申込番号);
         } else {

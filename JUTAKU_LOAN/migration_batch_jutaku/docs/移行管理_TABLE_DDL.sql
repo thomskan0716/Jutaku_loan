@@ -16,20 +16,26 @@
 CREATE TABLE 移行管理_JUTAKU (
     -- Primary Key
     申込番号 VARCHAR2(20) NOT NULL,
-    
+
     -- Application Purpose
     申込目的 NUMBER(2),
-    
+
     -- Status: TODO, RUNNING, DONE, ERROR
     ステータス VARCHAR2(10) NOT NULL,
-    
+
     -- Processing timestamps
     処理開始日時 TIMESTAMP,
     処理終了日時 TIMESTAMP,
-    
+
     -- Process identifier for parallel processing tracking
     処理プロセスID VARCHAR2(50),
-    
+
+    -- Last updated timestamp (set on every UPDATE)
+    更新日時 TIMESTAMP,
+
+    -- Result description: '正常終了' on success, error message on failure
+    説明 VARCHAR2(4000),
+
     -- Constraints
     CONSTRAINT PK_移行管理_JUTAKU PRIMARY KEY (申込番号),
     CONSTRAINT CHK_STATUS_JUTAKU CHECK (ステータス IN ('TODO', 'RUNNING', 'DONE', 'ERROR'))

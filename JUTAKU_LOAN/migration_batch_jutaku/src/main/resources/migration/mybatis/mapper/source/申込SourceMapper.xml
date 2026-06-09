@@ -29,7 +29,7 @@
         WHERE 申込番号 >= #{startId}
           AND 申込番号 <= #{endId}
         ORDER BY 申込番号
-        FETCH FIRST 10 ROWS ONLY
+        FETCH FIRST 1000 ROWS ONLY
         ]]>
     </select>
 

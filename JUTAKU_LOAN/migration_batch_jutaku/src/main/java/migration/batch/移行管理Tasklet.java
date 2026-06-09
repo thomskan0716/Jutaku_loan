@@ -9,6 +9,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,6 +17,10 @@ import java.util.List;
 /**
  * 移行管理 Tasklet
  * Uses FOR UPDATE SKIP LOCKED for parallel processing
+ *
+ * Configuration:
+ *   migration.management.batch-size: Records to claim per iteration (default: 100)
+ *   migration.management.max-iterations: Max iterations, -1 for unlimited (default: -1)
  */
 @Component("managementBasedTasklet")
 @StepScope
@@ -23,17 +28,22 @@ public class 移行管理Tasklet implements Tasklet {
 
     @Autowired
     private 移行管理Service managementService;
-    
+
     @Autowired
     private 申込MigrationService migrationService;
-    
-    private static final int BATCH_SIZE = 100;
+
+    @Value("${migration.management.batch-size:100}")
+    private int batchSize;
+
+    @Value("${migration.management.max-iterations:-1}")
+    private int maxIterations;
+
     private int totalProcessed = 0;
-    
+
     private final String processId;
-    
+
     public 移行管理Tasklet() {
-        // Generate unique process ID: hostname + timestamp
+        // Generate unique process ID: hostname + timestamp (with Shift-JIS support)
         String hostname = System.getenv().getOrDefault("COMPUTERNAME", "UNKNOWN");
         this.processId = hostname + "-" + System.currentTimeMillis();
     }
@@ -41,13 +51,16 @@ public class 移行管理Tasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         System.out.println("\n=== Migration Tasklet Started (Management) ===");
-        System.out.println("Process ID: " + processId + "\n");
-        
+        System.out.println("Process ID: " + processId);
+        System.out.println("Configuration: batch-size=" + batchSize + ", max-iterations=" + maxIterations + "\n");
+
         try {
             managementService.printStatusSummary();
-            
-            while (true) {
-                List<移行管理> claimedRecords = managementService.claimRecords(BATCH_SIZE, processId);
+
+            int iteration = 0;
+            while (maxIterations == -1 || iteration < maxIterations) {
+                iteration++;
+                List<移行管理> claimedRecords = managementService.claimRecords(batchSize, processId);
                 
                 if (claimedRecords.isEmpty()) {
                     System.out.println("\nNo more records to process");

@@ -4,6 +4,7 @@ import migration.domain.移行管理.移行管理;
 import migration.mapper.移行管理.移行管理Mapper;
 import migration.service.移行管理Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,10 @@ import java.util.List;
  *   ./gradlew bootRun --args='--spring.profiles.active=test --test.process.id=3'
  *
  * Verify each process claims different records (no overlap in logs)
+ *
+ * Configuration:
+ *   migration.management.batch-size: Records to claim per iteration (default: 100)
+ *   migration.management.max-iterations: Max iterations, -1 for unlimited (default: -1)
  */
 @Component
 @Profile("test")
@@ -30,14 +35,18 @@ public class 移行管理LockTest implements CommandLineRunner {
     @Autowired
     private 移行管理Mapper managementMapper;
 
-    private static final int BATCH_SIZE = 10;
-    private static final int MAX_ITERATIONS = 5;
+    @Value("${migration.management.batch-size:100}")
+    private int batchSize;
+
+    @Value("${migration.management.max-iterations:-1}")
+    private int maxIterations;
 
     @Override
     public void run(String... args) throws Exception {
         String processId = getProcessId(args);
 
-        System.out.println("\n=== Locking Mechanism Test - Process " + processId + " ===\n");
+        System.out.println("\n=== Locking Mechanism Test - Process " + processId + " ===");
+        System.out.println("Configuration: batch-size=" + batchSize + ", max-iterations=" + maxIterations + "\n");
 
         System.out.println("--- Initial Status ---");
         managementService.printStatusSummary();
@@ -45,11 +54,11 @@ public class 移行管理LockTest implements CommandLineRunner {
         int iteration = 0;
         int totalClaimed = 0;
 
-        while (iteration < MAX_ITERATIONS) {
+        while (maxIterations == -1 || iteration < maxIterations) {
             iteration++;
-            System.out.println("\n[Process " + processId + "] Iteration " + iteration + "/" + MAX_ITERATIONS);
+            System.out.println("\n[Process " + processId + "] Iteration " + iteration + (maxIterations == -1 ? "" : "/" + maxIterations));
 
-            List<移行管理> claimed = managementService.claimRecords(BATCH_SIZE, "PROC-" + processId);
+            List<移行管理> claimed = managementService.claimRecords(batchSize, "PROC-" + processId);
 
             if (claimed.isEmpty()) {
                 System.out.println("[Process " + processId + "] No more records to claim");

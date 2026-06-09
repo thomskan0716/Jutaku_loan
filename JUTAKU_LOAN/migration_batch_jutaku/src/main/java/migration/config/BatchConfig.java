@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import migration.batch.MigrationTasklet;
+import migration.batch.移行管理Tasklet;
 
 
 @EnableBatchProcessing
@@ -19,13 +19,13 @@ public class BatchConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final MigrationTasklet migrationTasklet;
+    private final 移行管理Tasklet migrationTasklet;
 
     @Autowired
     public BatchConfig(
             JobBuilderFactory jobBuilderFactory,
             StepBuilderFactory stepBuilderFactory,
-            MigrationTasklet migrationTasklet) {
+            移行管理Tasklet migrationTasklet) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.migrationTasklet = migrationTasklet;
