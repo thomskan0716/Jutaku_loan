@@ -2,7 +2,7 @@ package migration.batch;
 
 import migration.domain.移行管理.移行管理;
 import migration.service.移行管理Service;
-import migration.service.申込MigrationService;
+import migration.service.JutakuLoanService;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -30,7 +30,7 @@ public class 移行管理Tasklet implements Tasklet {
     private 移行管理Service managementService;
 
     @Autowired
-    private 申込MigrationService migrationService;
+    private JutakuLoanService migrationService;
 
     @Value("${migration.management.batch-size:100}")
     private int batchSize;
