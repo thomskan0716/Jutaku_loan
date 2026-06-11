@@ -1,6 +1,6 @@
 package migration.batch;
 
-import migration.domain.移行管理.移行管理;
+import migration.domain.移行管理テーブル.移行管理テーブル;
 import migration.service.移行管理Service;
 import migration.service.JutakuLoanService;
 import org.springframework.batch.core.StepContribution;
@@ -12,15 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * 移行管理 Tasklet
- * Uses FOR UPDATE SKIP LOCKED for parallel processing
+ * Parallel processing via 移行管理テーブル (range-based, FOR UPDATE NOWAIT).
  *
- * Configuration:
- *   migration.management.batch-size: Records to claim per iteration (default: 100)
- *   migration.management.max-iterations: Max iterations, -1 for unlimited (default: -1)
+ * Flow per iteration:
+ *   claimNextRange()  → ① SELECT ROWNUM=1 FOR UPDATE NOWAIT, UPDATE to RUNNING
+ *   processOneRange() → ② Migrate all 申込 records in range (ROW_NUMBER fromNo~toNo)
+ *   markDone/Error()  → ③ UPDATE range to DONE or ERROR
  */
 @Component("managementBasedTasklet")
 @StepScope
@@ -32,86 +31,70 @@ public class 移行管理Tasklet implements Tasklet {
     @Autowired
     private JutakuLoanService migrationService;
 
-    @Value("${migration.management.batch-size:100}")
-    private int batchSize;
+    @Value("${test.process.id:0}")
+    private long processId;
 
-    @Value("${migration.management.max-iterations:-1}")
-    private int maxIterations;
-
-    private int totalProcessed = 0;
-
-    private final String processId;
-
-    public 移行管理Tasklet() {
-        // Generate unique process ID: hostname + timestamp (with Shift-JIS support)
-        String hostname = System.getenv().getOrDefault("COMPUTERNAME", "UNKNOWN");
-        this.processId = hostname + "-" + System.currentTimeMillis();
-    }
+    @Value("${migration.lock-retry-wait-ms:50}")
+    private long lockRetryWaitMs;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        System.out.println("\n=== Migration Tasklet Started (Management) ===");
-        System.out.println("Process ID: " + processId);
-        System.out.println("Configuration: batch-size=" + batchSize + ", max-iterations=" + maxIterations + "\n");
+        String p = "[P" + processId + "]";
+        System.out.println("\n=== " + p + " Migration Tasklet Started ===");
 
-        try {
-            managementService.printStatusSummary();
+        int totalRanges = 0;
 
-            int iteration = 0;
-            while (maxIterations == -1 || iteration < maxIterations) {
-                iteration++;
-                List<移行管理> claimedRecords = managementService.claimRecords(batchSize, processId);
-                
-                if (claimedRecords.isEmpty()) {
-                    System.out.println("\nNo more records to process");
-                    break;
+        while (true) {
+            移行管理テーブル range = null;
+            try {
+                range = managementService.claimNextRange(移行管理テーブル.SYSTEM_JUTAKU);
+            } catch (Exception e) {
+                if (isOracleResourceBusy(e)) {
+                    // Another process locked the same ROWNUM=1 row — it will be RUNNING after commit, retry gets next row
+                    System.out.println("  " + p + " Lock conflict (ORA-00054), waiting " + lockRetryWaitMs + "ms then retrying...");
+                    sleepQuietly(lockRetryWaitMs);
+                    continue;
                 }
-                
-                System.out.println("\n--- Processing batch of " + claimedRecords.size() + " records ---");
-                
-                for (移行管理 record : claimedRecords) {
-                    processOneRecord(record);
-                }
-                
-                totalProcessed += claimedRecords.size();
-                System.out.println("--- Batch complete. Total processed: " + totalProcessed + " ---\n");
-                
-                if (totalProcessed % 500 == 0) {
-                    managementService.printStatusSummary();
-                }
+                throw new RuntimeException("Fatal error claiming range", e);
             }
-            
-            System.out.println("\n=== Migration Tasklet Completed Successfully ===");
-            managementService.printStatusSummary();
-            
-        } catch (Exception e) {
-            System.err.println("\n=== FATAL ERROR in Migration Tasklet ===");
-            e.printStackTrace();
-            managementService.printStatusSummary();
-            throw new RuntimeException("Migration failed", e);
+
+            if (range == null) {
+                System.out.println("\n" + p + " No more TODO ranges.");
+                break;
+            }
+
+            System.out.println("\n--- " + p + " Processing range: " + range.get処理FROM() + " ~ " + range.get処理TO() + " ---");
+
+            try {
+                migrationService.processOneRange(range.get処理FROM(), range.get処理TO());
+                managementService.markDone(移行管理テーブル.SYSTEM_JUTAKU, range.get処理FROM());
+                totalRanges++;
+            } catch (Exception e) {
+                System.err.println("  " + p + " ERROR in range " + range.get処理FROM() + "~" + range.get処理TO() + ": " + e.getMessage());
+                managementService.markError(移行管理テーブル.SYSTEM_JUTAKU, range.get処理FROM(), e.getMessage());
+            }
         }
-        
+
+        System.out.println("\n=== " + p + " Migration Tasklet Completed. Ranges processed: " + totalRanges + " ===");
         return RepeatStatus.FINISHED;
     }
-    
-    /**
-     * Process a single record
-     * No locks held during this phase
-     */
-    private void processOneRecord(移行管理 record) {
-        String 申込番号 = record.get申込番号();
-        
+
+    private void sleepQuietly(long ms) {
         try {
-            System.out.println("  Processing: " + 申込番号);
-            
-            // process is intentionally empty — lock mechanism test only
-            // migrationService.migrateOneApplication(申込番号);
-            
-            managementService.markDone(申込番号);
-            
-        } catch (Exception e) {
-            System.err.println("  ERROR processing " + 申込番号 + ": " + e.getMessage());
-            managementService.markError(申込番号, e.getMessage());
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
+    }
+
+    private boolean isOracleResourceBusy(Exception e) {
+        Throwable cause = e;
+        while (cause != null) {
+            if (cause.getMessage() != null && cause.getMessage().contains("ORA-00054")) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 }

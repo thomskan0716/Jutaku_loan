@@ -1,0 +1,6 @@
+# 'test' profile - activated by test1.bat / test2.bat / test3.bat
+# (--spring.profiles.active=test). Used to verify parallel processing
+# (range claiming / locking / status transitions) WITHOUT real data migration.
+migration:
+  simulate: true
+  simulate-sleep-ms: 500

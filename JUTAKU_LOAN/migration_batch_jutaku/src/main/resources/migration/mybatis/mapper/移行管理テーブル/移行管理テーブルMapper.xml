@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.移行管理テーブル.移行管理テーブルMapper">
+
+    <resultMap id="移行管理テーブルMap" type="migration.domain.移行管理テーブル.移行管理テーブル">
+        <result property="システム"  column="システム"/>
+        <result property="処理FROM" column="処理FROM"/>
+        <result property="処理TO"   column="処理TO"/>
+        <result property="ステータス" column="ステータス"/>
+        <result property="開始日時"  column="開始日時"/>
+        <result property="終了日時"  column="終了日時"/>
+        <result property="備考"     column="備考"/>
+    </resultMap>
+
+    <select id="claimNextRange" resultMap="移行管理テーブルMap">
+        <![CDATA[
+        SELECT システム, 処理FROM, 処理TO, ステータス
+        FROM (
+            SELECT システム, 処理FROM, 処理TO, ステータス
+            FROM 移行管理テーブル
+            WHERE ステータス = 'TODO'
+              AND システム  = #{システム}
+            ORDER BY 処理FROM
+        )
+        WHERE ROWNUM = 1
+        FOR UPDATE NOWAIT
+        ]]>
+    </select>
+
+    <update id="updateStatusToRunning">
+        <![CDATA[
+        UPDATE 移行管理テーブル
+        SET ステータス = 'RUNNING',
+            開始日時   = #{開始日時}
+        WHERE システム  = #{システム}
+          AND 処理FROM  = #{処理FROM}
+        ]]>
+    </update>
+
+    <update id="updateStatusToDone">
+        <![CDATA[
+        UPDATE 移行管理テーブル
+        SET ステータス = 'DONE',
+            終了日時   = #{終了日時}
+        WHERE システム  = #{システム}
+          AND 処理FROM  = #{処理FROM}
+        ]]>
+    </update>
+
+    <update id="updateStatusToError">
+        <![CDATA[
+        UPDATE 移行管理テーブル
+        SET ステータス = 'ERROR',
+            終了日時   = #{終了日時},
+            備考       = #{備考}
+        WHERE システム  = #{システム}
+          AND 処理FROM  = #{処理FROM}
+        ]]>
+    </update>
+
+</mapper>
