@@ -21,7 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * Target Database Configuration (New System) E00736SV0001/ITF_GMS
  */
 @Configuration
-@MapperScan(basePackages = {"migration.mapper.target", "migration.mapper.移行管理"}, sqlSessionFactoryRef = "targetSqlSessionFactory")
+@MapperScan(basePackages = {"migration.mapper.target", "migration.mapper.移行管理テーブル"}, sqlSessionFactoryRef = "targetSqlSessionFactory")
 public class TargetDataSourceConfig {
 
     @Bean(name = "targetDataSourceProperties")
@@ -51,7 +51,7 @@ public class TargetDataSourceConfig {
         factoryBean.setDataSource(dataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] targetXmls = resolver.getResources("classpath*:migration/mybatis/mapper/target/*.xml");
-        Resource[] managementXmls = resolver.getResources("classpath*:migration/mybatis/mapper/移行管理/*.xml");
+        Resource[] managementXmls = resolver.getResources("classpath*:migration/mybatis/mapper/移行管理テーブル/*.xml");
         Resource[] allXmls = new Resource[targetXmls.length + managementXmls.length];
         System.arraycopy(targetXmls, 0, allXmls, 0, targetXmls.length);
         System.arraycopy(managementXmls, 0, allXmls, targetXmls.length, managementXmls.length);

@@ -15,109 +15,58 @@ import java.util.List;
 @Service
 public class JutakuLoanService {
 
-    // 申込 
+    //  申込 
     @Autowired
     private 申込SourceMapper sourceMapper;
 
     @Autowired
     private 申込TargetMapper targetMapper;
 
-
     @Value("${migration.range.batch-size:100}")
     private int batchSize;
 
-    @Value("${migration.range.test-limit:1000}")
-    private int testLimit;
-    private String currentMinId = null;
-    private String currentMaxId = null;
-    private int totalProcessed = 0;
+    /** When true (test profile), simulate work instead of real migration — used to verify parallel processing in isolation. */
+    @Value("${migration.simulate:false}")
+    private boolean simulate;
 
-    public void processAll() {
-        targetMapper.deleteAll();
-        System.out.println("申込 Migration - Target tables cleared");
-
-        long totalCount = sourceMapper.count();
-        currentMinId = sourceMapper.findMinId();
-        currentMaxId = sourceMapper.findMaxId();
-        totalProcessed = 0;
-
-        System.out.println("申込 Migration - Process All Started");
-        System.out.println("Total Records: " + totalCount);
-        System.out.println("ID Range: " + currentMinId + " ~ " + currentMaxId);
-        System.out.println("TEST LIMIT: " + testLimit + " records");
-
-    }
-
-    /**
-     * @return Next range start record, or null if no more ranges
-     */
-    @Transactional
-    public 申込Source claimNextRange() {
-        if (totalProcessed >= testLimit) {
-            System.out.println("TEST LIMIT reached: " + totalProcessed + " records processed. Stopping.");
-            return null;
-        }
-
-        if (currentMinId != null && currentMaxId != null) {
-            if (currentMinId.compareTo(currentMaxId) > 0) {
-                System.out.println("Reached maxId limit: " + currentMaxId);
-                return null;
-            }
-        }
-
-        List<申込Source> candidates = sourceMapper.selectByRange(
-            currentMinId != null ? currentMinId : "000000000001",
-            currentMaxId != null ? currentMaxId : "999999999999"
-        );
-
-        if (candidates.isEmpty()) {
-            System.out.println("No more records found in range " + currentMinId + " ~ " + currentMaxId);
-            return null;
-        }
-
-        return candidates.get(0);
-    }
-
-    public void markDone(申込Source range, String actualMaxId) {
-        long nextId = Long.parseLong(actualMaxId) + 1;
-        currentMinId = String.format("%012d", nextId);
-        System.out.println("DONE: Range starting from " + range.get申込番号() +
-            " (last processed: " + actualMaxId + ") → Next start: " + currentMinId);
-    }
-
-    public void markError(申込Source range, String errorMessage) {
-        System.err.println("ERROR: Range starting from " + range.get申込番号() + " - " + errorMessage);
-    }
+    @Value("${migration.simulate-sleep-ms:500}")
+    private long simulateSleepMs;
 
     /**
      * Process One Range (Main Logic)
-     * @param startId Range start ID
-     * @param endId Range end ID
-     * @return Last processed ID (for markDone)
+     * Fetches all 申込 records where ROW_NUMBER() BETWEEN fromNo AND toNo, migrates each.
+     * TODO: selectByRowRange query must be updated to include JOIN 申込審査状況 + 審査完了区分 filter.
      */
     @Transactional
-    public String processOneRange(String startId, String endId) {
-        System.out.println("Processing range: " + startId + " ~ " + endId);
+    public void processOneRange(long fromNo, long toNo) {
+        if (simulate) {
+            System.out.println("  [SIMULATE] Processing range " + fromNo + " ~ " + toNo + " (sleep " + simulateSleepMs + "ms)");
+            try {
+                Thread.sleep(simulateSleepMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println("  [SIMULATE] Done range " + fromNo + " ~ " + toNo);
+            return;
+        }
 
-        List<申込Source> sourceList = sourceMapper.selectByRange(startId, endId);
+        System.out.println("Processing range: " + fromNo + " ~ " + toNo);
+
+        List<申込Source> sourceList = sourceMapper.selectByRowRange(fromNo, toNo);
 
         int processedCount = 0;
         int skippedCount = 0;
-        String lastProcessedId = startId;
 
         for (申込Source source : sourceList) {
             try {
                 if (!isMigrationTarget(source)) {
                     System.out.println("SKIP: " + source.get申込番号() + " - Not migration target");
                     skippedCount++;
-                    lastProcessedId = source.get申込番号();
                     continue;
                 }
 
                 writeSubsInBatch(source);
-
                 processedCount++;
-                lastProcessedId = source.get申込番号();
 
             } catch (Exception e) {
                 System.err.println("ERROR processing 申込番号=" + source.get申込番号() + ": " + e.getMessage());
@@ -125,31 +74,12 @@ public class JutakuLoanService {
             }
         }
 
-        totalProcessed += processedCount + skippedCount;
-        System.out.println("Range completed: Processed=" + processedCount + ", Skipped=" + skippedCount + ", Total so far=" + totalProcessed);
-        return lastProcessedId;
+        System.out.println("Range completed: Processed=" + processedCount + ", Skipped=" + skippedCount);
     }
 
     /**
-     * Migrate a single application by 申込番号 (used by 移行管理 parallel flow)
-     * @return 1 if migrated, 0 if skipped
+     * Insert all target tables for one 申込 record (equivalent to parent writeSubsInBatch)
      */
-    @Transactional
-    public int migrateOneApplication(String 申込番号) {
-        申込Source source = sourceMapper.selectById(申込番号);
-        if (source == null) {
-            System.out.println("SKIP: " + 申込番号 + " - Not found in source");
-            return 0;
-        }
-        if (!isMigrationTarget(source)) {
-            System.out.println("SKIP: " + 申込番号 + " - Not migration target");
-            return 0;
-        }
-
-        writeSubsInBatch(source);
-        return 1;
-    }
-
     private void writeSubsInBatch(申込Source source) {
 
         //  申込 
