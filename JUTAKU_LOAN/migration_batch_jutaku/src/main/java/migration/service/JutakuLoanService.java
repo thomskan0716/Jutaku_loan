@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 @Service
+@Slf4j
 public class JutakuLoanService {
 
     //  申込 
@@ -40,17 +43,17 @@ public class JutakuLoanService {
     @Transactional
     public void processOneRange(long fromNo, long toNo) {
         if (simulate) {
-            System.out.println("  [SIMULATE] Processing range " + fromNo + " ~ " + toNo + " (sleep " + simulateSleepMs + "ms)");
+            log.info("  [SIMULATE] Processing range {} ~ {} (sleep {}ms)", fromNo, toNo, simulateSleepMs);
             try {
                 Thread.sleep(simulateSleepMs);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            System.out.println("  [SIMULATE] Done range " + fromNo + " ~ " + toNo);
+            log.info("  [SIMULATE] Done range {} ~ {}", fromNo, toNo);
             return;
         }
 
-        System.out.println("Processing range: " + fromNo + " ~ " + toNo);
+        log.info("Processing range: {} ~ {}", fromNo, toNo);
 
         List<申込Source> sourceList = sourceMapper.selectByRowRange(fromNo, toNo);
 
@@ -60,7 +63,7 @@ public class JutakuLoanService {
         for (申込Source source : sourceList) {
             try {
                 if (!isMigrationTarget(source)) {
-                    System.out.println("SKIP: " + source.get申込番号() + " - Not migration target");
+                    log.info("SKIP: {} - Not migration target", source.get申込番号());
                     skippedCount++;
                     continue;
                 }
@@ -69,12 +72,12 @@ public class JutakuLoanService {
                 processedCount++;
 
             } catch (Exception e) {
-                System.err.println("ERROR processing 申込番号=" + source.get申込番号() + ": " + e.getMessage());
+                log.error("ERROR processing 申込番号={}: {}", source.get申込番号(), e.getMessage());
                 throw e;
             }
         }
 
-        System.out.println("Range completed: Processed=" + processedCount + ", Skipped=" + skippedCount);
+        log.info("Range completed: Processed={}, Skipped={}", processedCount, skippedCount);
     }
 
     /**

@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.Timestamp;
 
 @Service
+@Slf4j
 public class 移行管理Service {
 
     @Autowired
@@ -28,7 +31,7 @@ public class 移行管理Service {
         }
         Timestamp now = new Timestamp(System.currentTimeMillis());
         managementMapper.updateStatusToRunning(システム, range.get処理FROM(), now);
-        System.out.println("  Claimed range: " + range.get処理FROM() + " ~ " + range.get処理TO() + " [RUNNING]");
+        log.info("  Claimed range: {} ~ {} [RUNNING]", range.get処理FROM(), range.get処理TO());
         return range;
     }
 
@@ -39,7 +42,7 @@ public class 移行管理Service {
     public void markDone(String システム, long 処理FROM) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         managementMapper.updateStatusToDone(システム, 処理FROM, now);
-        System.out.println("  Marked DONE: FROM=" + 処理FROM);
+        log.info("  Marked DONE: FROM={}", 処理FROM);
     }
 
     /**
@@ -49,6 +52,6 @@ public class 移行管理Service {
     public void markError(String システム, long 処理FROM, String errorMessage) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         managementMapper.updateStatusToError(システム, 処理FROM, now, errorMessage);
-        System.err.println("  Marked ERROR: FROM=" + 処理FROM + " - " + errorMessage);
+        log.error("  Marked ERROR: FROM={} - {}", 処理FROM, errorMessage);
     }
 }

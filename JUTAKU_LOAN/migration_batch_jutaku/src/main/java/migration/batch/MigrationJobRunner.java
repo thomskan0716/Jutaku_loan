@@ -10,8 +10,11 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Component
+@Slf4j
 public class MigrationJobRunner implements ApplicationRunner {
 
     @Autowired
@@ -30,8 +33,8 @@ public class MigrationJobRunner implements ApplicationRunner {
                 .addLong("launchTime", System.currentTimeMillis())
                 .toJobParameters();
 
-        System.out.println("=== [Process " + processId + "] Launching migrationJob ===");
+        log.info("=== [Process {}] Launching migrationJob ===", processId);
         jobLauncher.run(migrationJob, params);
-        System.out.println("=== [Process " + processId + "] migrationJob finished ===");
+        log.info("=== [Process {}] migrationJob finished ===", processId);
     }
 }
