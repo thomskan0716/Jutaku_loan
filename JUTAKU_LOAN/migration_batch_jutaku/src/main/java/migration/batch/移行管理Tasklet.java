@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 移行管理 Tasklet
  * Parallel processing via 移行管理テーブル (range-based, FOR UPDATE NOWAIT).
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("managementBasedTasklet")
 @StepScope
+@Slf4j
 public class 移行管理Tasklet implements Tasklet {
 
     @Autowired
@@ -31,7 +34,7 @@ public class 移行管理Tasklet implements Tasklet {
     @Autowired
     private JutakuLoanService migrationService;
 
-    @Value("${test.process.id:0}")
+    @Value("${migration.process.id:0}")
     private long processId;
 
     @Value("${migration.lock-retry-wait-ms:50}")
@@ -40,7 +43,7 @@ public class 移行管理Tasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         String p = "[P" + processId + "]";
-        System.out.println("\n=== " + p + " Migration Tasklet Started ===");
+        log.info("=== {} Migration Tasklet Started ===", p);
 
         int totalRanges = 0;
 
@@ -51,7 +54,7 @@ public class 移行管理Tasklet implements Tasklet {
             } catch (Exception e) {
                 if (isOracleResourceBusy(e)) {
                     // Another process locked the same ROWNUM=1 row — it will be RUNNING after commit, retry gets next row
-                    System.out.println("  " + p + " Lock conflict (ORA-00054), waiting " + lockRetryWaitMs + "ms then retrying...");
+                    log.info("  {} Lock conflict (ORA-00054), waiting {}ms then retrying...", p, lockRetryWaitMs);
                     sleepQuietly(lockRetryWaitMs);
                     continue;
                 }
@@ -59,23 +62,23 @@ public class 移行管理Tasklet implements Tasklet {
             }
 
             if (range == null) {
-                System.out.println("\n" + p + " No more TODO ranges.");
+                log.info("{} No more TODO ranges.", p);
                 break;
             }
 
-            System.out.println("\n--- " + p + " Processing range: " + range.get処理FROM() + " ~ " + range.get処理TO() + " ---");
+            log.info("--- {} Processing range: {} ~ {} ---", p, range.get処理FROM(), range.get処理TO());
 
             try {
                 migrationService.processOneRange(range.get処理FROM(), range.get処理TO());
                 managementService.markDone(移行管理テーブル.SYSTEM_JUTAKU, range.get処理FROM());
                 totalRanges++;
             } catch (Exception e) {
-                System.err.println("  " + p + " ERROR in range " + range.get処理FROM() + "~" + range.get処理TO() + ": " + e.getMessage());
+                log.error("  {} ERROR in range {}~{}: {}", p, range.get処理FROM(), range.get処理TO(), e.getMessage());
                 managementService.markError(移行管理テーブル.SYSTEM_JUTAKU, range.get処理FROM(), e.getMessage());
             }
         }
 
-        System.out.println("\n=== " + p + " Migration Tasklet Completed. Ranges processed: " + totalRanges + " ===");
+        log.info("=== {} Migration Tasklet Completed. Ranges processed: {} ===", p, totalRanges);
         return RepeatStatus.FINISHED;
     }
 
