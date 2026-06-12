@@ -1,5 +1,8 @@
 package migration.common.szh_sms;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public enum E申込目的 {
     
     事前審査("10", "10", true),
@@ -42,7 +45,7 @@ public enum E申込目的 {
             }
         }
         
-        System.err.println("WARNING: 申込目的 mapping not found: " + oldCode);
+        log.warn("申込目的 mapping not found: {}", oldCode);
         return oldCode;
     }
     

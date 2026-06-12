@@ -1,5 +1,8 @@
 package migration.common.szh_sms;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public enum E連絡コード {
     
     // TODO: Add actual code mappings
@@ -33,7 +36,7 @@ public enum E連絡コード {
         }
         
         if (oldCode.startsWith("JR")) {
-            System.out.println("INFO: JR code detected: " + oldCode);
+            log.info("JR code detected: {}", oldCode);
         }
         
         for (E連絡コード e : values()) {
@@ -42,7 +45,7 @@ public enum E連絡コード {
             }
         }
         
-        System.err.println("WARNING: 連絡コード mapping not found: " + oldCode);
+        log.warn("連絡コード mapping not found: {}", oldCode);
         return oldCode;
     }
     

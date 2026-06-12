@@ -25,6 +25,11 @@ mybatis:
   mapper-locations: classpath*:migration/mybatis/mapper/**/*.xml
   type-aliases-package: migration.domain
 
+logging:
+  level:
+    migration: INFO
+    org.springframework.batch: INFO
+
 migration:
   management:
     batch-size: 100
