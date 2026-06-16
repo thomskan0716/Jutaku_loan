@@ -1,6 +1,6 @@
-package migration.mapper.移行管理テーブル;
+package migration.mapper.target;
 
-import migration.domain.移行管理テーブル.移行管理テーブル;
+import migration.domain.management.移行管理テーブル;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

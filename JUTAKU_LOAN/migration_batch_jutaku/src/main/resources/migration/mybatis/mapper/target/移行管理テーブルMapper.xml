@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="migration.mapper.移行管理テーブル.移行管理テーブルMapper">
+<mapper namespace="migration.mapper.target.移行管理テーブルMapper">
 
-    <resultMap id="移行管理テーブルMap" type="migration.domain.移行管理テーブル.移行管理テーブル">
+    <resultMap id="移行管理テーブルMap" type="migration.domain.management.移行管理テーブル">
         <result property="システム"  column="システム"/>
         <result property="処理FROM" column="処理FROM"/>
         <result property="処理TO"   column="処理TO"/>
@@ -17,14 +17,15 @@
     <select id="claimNextRange" resultMap="移行管理テーブルMap">
         <![CDATA[
         SELECT システム, 処理FROM, 処理TO, ステータス
-        FROM (
-            SELECT システム, 処理FROM, 処理TO, ステータス
-            FROM 移行管理テーブル
-            WHERE ステータス = 'TODO'
-              AND システム  = #{システム}
-            ORDER BY 処理FROM
-        )
-        WHERE ROWNUM = 1
+        FROM 移行管理テーブル
+        WHERE システム  = #{システム}
+          AND ステータス = 'TODO'
+          AND 処理FROM  = (
+              SELECT MIN(処理FROM)
+              FROM 移行管理テーブル
+              WHERE システム  = #{システム}
+                AND ステータス = 'TODO'
+          )
         FOR UPDATE NOWAIT
         ]]>
     </select>
