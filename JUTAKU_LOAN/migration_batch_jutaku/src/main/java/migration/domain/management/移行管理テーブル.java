@@ -1,4 +1,4 @@
-package migration.domain.移行管理テーブル;
+package migration.domain.management;
 
 import java.sql.Timestamp;
 

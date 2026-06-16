@@ -21,10 +21,6 @@ spring:
     job:
       enabled: false
 
-mybatis:
-  mapper-locations: classpath*:migration/mybatis/mapper/**/*.xml
-  type-aliases-package: migration.domain
-
 logging:
   level:
     migration: INFO

@@ -1,7 +1,7 @@
 package migration.service;
 
-import migration.domain.移行管理テーブル.移行管理テーブル;
-import migration.mapper.移行管理テーブル.移行管理テーブルMapper;
+import migration.domain.management.移行管理テーブル;
+import migration.mapper.target.移行管理テーブルMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

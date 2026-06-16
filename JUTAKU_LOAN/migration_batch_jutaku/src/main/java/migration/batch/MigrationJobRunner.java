@@ -23,7 +23,7 @@ public class MigrationJobRunner implements ApplicationRunner {
     @Autowired
     private Job migrationJob;
 
-    @Value("${test.process.id:0}")
+    @Value("${migration.process.id:0}")
     private long processId;
 
     @Override

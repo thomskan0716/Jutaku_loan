@@ -1,6 +1,6 @@
 package migration.batch;
 
-import migration.domain.移行管理テーブル.移行管理テーブル;
+import migration.domain.management.移行管理テーブル;
 import migration.service.移行管理Service;
 import migration.service.JutakuLoanService;
 import org.springframework.batch.core.StepContribution;
