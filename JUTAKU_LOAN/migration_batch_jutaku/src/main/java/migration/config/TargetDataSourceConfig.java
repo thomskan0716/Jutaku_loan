@@ -50,8 +50,8 @@ public class TargetDataSourceConfig {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] targetXmls = resolver.getResources("classpath*:migration/mybatis/mapper/target/*.xml");
-        Resource[] managementXmls = resolver.getResources("classpath*:migration/mybatis/mapper/移行管理テーブル/*.xml");
+        Resource[] targetXmls = resolver.getResources("classpath:migration/mybatis/mapper/target/*.xml");
+        Resource[] managementXmls = resolver.getResources("classpath:migration/mybatis/mapper/移行管理テーブル/*.xml");
         Resource[] allXmls = new Resource[targetXmls.length + managementXmls.length];
         System.arraycopy(targetXmls, 0, allXmls, 0, targetXmls.length);
         System.arraycopy(managementXmls, 0, allXmls, targetXmls.length, managementXmls.length);
