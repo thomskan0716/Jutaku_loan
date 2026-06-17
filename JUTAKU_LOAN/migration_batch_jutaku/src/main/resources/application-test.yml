@@ -3,4 +3,4 @@
 # (range claiming / locking / status transitions) WITHOUT real data migration.
 migration:
   simulate: true
-  simulate-sleep-ms: 500
+  simulate-sleep-ms: 5000
