@@ -4,26 +4,20 @@
 
 <mapper namespace="migration.mapper.target.申込TargetMapper">
 
-    <!--
-        [TEST] Insert to TEST table for connection/insert verification
-        Switch to 申込 table after testing is confirmed
-        Target: ITF_GMS.TEST (E00736SV0001)
-    -->
+    <!-- MAX 申込目的 per group only (事前: '10', 正式: '20'). 申込番号 first digit already 2→3. -->
     <insert id="insert" parameterType="migration.domain.target.申込Target">
-        INSERT INTO TEST (
-            ID,
+        INSERT INTO 申込 (
             申込番号,
             申込目的
         ) VALUES (
-            TEST_SEQ.NEXTVAL,
             #{申込番号},
             #{申込目的}
         )
     </insert>
 
-    <!-- Delete all (for testing only - remove before production) -->
+    <!-- For testing only -->
     <delete id="deleteAll">
-        DELETE FROM TEST
+        DELETE FROM 申込
     </delete>
 
 </mapper>

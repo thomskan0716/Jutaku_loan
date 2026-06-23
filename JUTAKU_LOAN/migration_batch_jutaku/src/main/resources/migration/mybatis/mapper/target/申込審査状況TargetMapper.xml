@@ -4,8 +4,9 @@
 
 <mapper namespace="migration.mapper.target.申込審査状況TargetMapper">
 
+    <!-- History parent: all completed rows per group with ascending 回数. -->
     <insert id="insert" parameterType="migration.domain.target.申込審査状況Target">
-        INSERT INTO TEST2 (
+        INSERT INTO 申込審査状況 (
             申込番号,
             申込目的,
             回数
@@ -16,8 +17,9 @@
         )
     </insert>
 
+    <!-- For testing only -->
     <delete id="deleteAll">
-        DELETE FROM TEST2
+        DELETE FROM 申込審査状況
     </delete>
 
 </mapper>

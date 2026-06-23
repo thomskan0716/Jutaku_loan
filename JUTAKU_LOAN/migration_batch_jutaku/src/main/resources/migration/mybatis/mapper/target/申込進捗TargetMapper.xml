@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.申込進捗TargetMapper">
+
+    <!-- 1:1 copy from SZB_SMS.申込進捗. 申込番号 first digit already converted (2→3) by service. -->
+    <insert id="insert" parameterType="migration.domain.target.申込進捗Target">
+        INSERT INTO 申込進捗 (
+            申込番号,
+            進捗コード,
+            状態
+        ) VALUES (
+            #{申込番号},
+            #{進捗コード},
+            #{状態}
+        )
+    </insert>
+
+</mapper>

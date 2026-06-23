@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.保証人TargetMapper">
+
+    <!-- Only guarantors for the MAX 申込目的 per group. -->
+    <insert id="insert" parameterType="migration.domain.target.保証人Target">
+        INSERT INTO 保証人 (
+            申込番号,
+            申込目的,
+            連番
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{連番}
+        )
+    </insert>
+
+</mapper>

@@ -32,6 +32,15 @@
         ]]>
     </select>
 
+    <select id="selectByApplicationIdAndPurpose" resultMap="applicationSourceMap">
+        SELECT
+            申込番号,
+            申込目的
+        FROM 申込
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+    </select>
+
     <select id="count" resultType="long">
         SELECT COUNT(*) FROM 申込
         WHERE 申込目的 IN ('10', '15', '20', '30')

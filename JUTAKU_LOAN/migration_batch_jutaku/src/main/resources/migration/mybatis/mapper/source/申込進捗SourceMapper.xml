@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.申込進捗SourceMapper">
+
+    <resultMap id="shinseiProgressSourceMap" type="migration.domain.source.申込進捗Source">
+        <id property="申込番号" column="申込番号"/>
+        <result property="進捗コード" column="進捗コード"/>
+        <result property="状態"       column="状態"/>
+    </resultMap>
+
+    <!--
+        Driving query: one row per distinct 申込番号.
+        ROW_NUMBER over 申込進捗 (one record per application) gives stable range paging.
+    -->
+    <select id="selectByRowRange" resultMap="shinseiProgressSourceMap">
+        <![CDATA[
+        SELECT 申込番号, 進捗コード, 状態
+        FROM (
+            SELECT s.申込番号,
+                   s.進捗コード,
+                   s.状態,
+                   ROW_NUMBER() OVER (ORDER BY s.申込番号) AS rn
+            FROM 申込進捗 s
+        )
+        WHERE rn BETWEEN #{fromNo} AND #{toNo}
+        ]]>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM 申込進捗
+    </select>
+
+</mapper>
