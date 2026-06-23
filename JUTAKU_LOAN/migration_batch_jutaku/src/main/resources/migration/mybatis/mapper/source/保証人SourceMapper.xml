@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.保証人SourceMapper">
+
+    <resultMap id="guarantorSourceMap" type="migration.domain.source.保証人Source">
+        <id property="申込番号"  column="申込番号"/>
+        <id property="申込目的"  column="申込目的"/>
+        <id property="連番"      column="連番"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="guarantorSourceMap">
+        SELECT
+            申込番号,
+            申込目的,
+            連番
+        FROM 保証人
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY 連番
+    </select>
+
+</mapper>

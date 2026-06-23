@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.申込審査段階TargetMapper">
+
+    <!-- MAX 申込目的 per group only (事前: '10', 正式: '20'). 審査完了区分 is always '1'. -->
+    <insert id="insert" parameterType="migration.domain.target.申込審査段階Target">
+        INSERT INTO 申込審査段階 (
+            申込番号,
+            申込目的,
+            審査完了区分
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{審査完了区分}
+        )
+    </insert>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.履歴申込審査段階TargetMapper">
+
+    <!-- All completed 申込審査段階 rows per group, keyed by 回数 (ascending: 1=oldest, max=newest). -->
+    <insert id="insert" parameterType="migration.domain.target.履歴申込審査段階Target">
+        INSERT INTO 履歴申込審査段階 (
+            申込番号,
+            申込目的,
+            回数,
+            審査完了区分
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{回数},
+            #{審査完了区分}
+        )
+    </insert>
+
+</mapper>

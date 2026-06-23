@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.履歴保証人TargetMapper">
+
+    <!-- All guarantors for all completed records in each group, keyed by (申込番号, 申込目的, 回数, 連番). -->
+    <insert id="insert" parameterType="migration.domain.target.履歴保証人Target">
+        INSERT INTO 履歴保証人 (
+            申込番号,
+            申込目的,
+            回数,
+            連番
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{回数},
+            #{連番}
+        )
+    </insert>
+
+</mapper>
