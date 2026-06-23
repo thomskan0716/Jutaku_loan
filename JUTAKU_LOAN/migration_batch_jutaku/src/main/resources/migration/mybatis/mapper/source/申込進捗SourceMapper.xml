@@ -11,25 +11,39 @@
     </resultMap>
 
     <!--
-        Driving query: one row per distinct 申込番号.
-        ROW_NUMBER over 申込進捗 (one record per application) gives stable range paging.
+        Driving query: distinct 申込番号 that have at least one completed (審査完了区分='1')
+        stage with 申込目的 IN ('10','15','20','30').
+        Excludes 申込目的='50' (途上与信) at SQL level before range paging.
     -->
     <select id="selectByRowRange" resultMap="shinseiProgressSourceMap">
         <![CDATA[
-        SELECT 申込番号, 進捗コード, 状態
+        SELECT p.申込番号, p.進捗コード, p.状態
         FROM (
-            SELECT s.申込番号,
-                   s.進捗コード,
-                   s.状態,
-                   ROW_NUMBER() OVER (ORDER BY s.申込番号) AS rn
-            FROM 申込進捗 s
-        )
-        WHERE rn BETWEEN #{fromNo} AND #{toNo}
+            SELECT inner_q.申込番号,
+                   ROW_NUMBER() OVER (ORDER BY inner_q.申込番号) AS rn
+            FROM (
+                SELECT DISTINCT M.申込番号
+                FROM 申込 M
+                JOIN 申込審査段階 MD
+                  ON M.申込番号  = MD.申込番号
+                 AND M.申込目的  = MD.申込目的
+                WHERE M.申込目的 IN ('10', '15', '20', '30')
+                  AND MD.審査完了区分 = '1'
+            ) inner_q
+        ) filtered
+        JOIN 申込進捗 p ON p.申込番号 = filtered.申込番号
+        WHERE filtered.rn BETWEEN #{fromNo} AND #{toNo}
         ]]>
     </select>
 
     <select id="count" resultType="long">
-        SELECT COUNT(*) FROM 申込進捗
+        SELECT COUNT(DISTINCT M.申込番号)
+        FROM 申込 M
+        JOIN 申込審査段階 MD
+          ON M.申込番号  = MD.申込番号
+         AND M.申込目的  = MD.申込目的
+        WHERE M.申込目的 IN ('10', '15', '20', '30')
+          AND MD.審査完了区分 = '1'
     </select>
 
 </mapper>
