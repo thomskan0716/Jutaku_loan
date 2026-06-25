@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.履歴申込_業者_住宅TargetMapper">
+
+    <!-- Phase 1: PKs only. Business columns (業者コード, 業者名, etc.) added in Phase 2. -->
+    <!-- Table name uses full-width underscores ＿ (U+FF3F) — must be double-quoted in Oracle SQL -->
+    <insert id="insert" parameterType="migration.domain.target.履歴申込_業者_住宅Target">
+        INSERT INTO "履歴申込＿業者＿住宅" (
+            申込番号,
+            申込目的,
+            回数
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{回数}
+        )
+    </insert>
+
+</mapper>

@@ -27,9 +27,5 @@ logging:
     org.springframework.batch: INFO
 
 migration:
-  management:
-    batch-size: 100
-    max-iterations: 3
-  range:
-    batch-size: 100
-    test-limit: 1000
+  simulate: false
+  simulate-sleep-ms: 5000

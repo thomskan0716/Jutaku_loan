@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.保証検討表補足TargetMapper">
+
+    <insert id="insert" parameterType="migration.domain.target.保証検討表補足Target">
+        INSERT INTO 保証検討表補足 (
+            申込番号,
+            申込目的
+        ) VALUES (
+            #{申込番号},
+            #{申込目的}
+        )
+    </insert>
+
+</mapper>

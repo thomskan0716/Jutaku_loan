@@ -9,21 +9,31 @@ import migration.domain.target.申込審査状況Target;
 import migration.domain.target.申込審査段階Target;
 import migration.domain.target.申込進捗Target;
 import migration.domain.target.履歴申込Target;
+import migration.domain.target.履歴申込_業者_住宅Target;
 import migration.domain.target.履歴申込審査段階Target;
 import migration.domain.target.履歴保証人Target;
+import migration.domain.target.履歴保証検討表補足Target;
 import migration.domain.target.保証人Target;
+import migration.domain.target.申込_業者_住宅Target;
+import migration.domain.target.保証検討表補足Target;
+import migration.domain.source.保証検討表補足Source;
 import migration.mapper.source.申込SourceMapper;
 import migration.mapper.source.申込審査段階SourceMapper;
 import migration.mapper.source.申込進捗SourceMapper;
+import migration.mapper.source.保証検討表補足SourceMapper;
 import migration.mapper.source.保証人SourceMapper;
 import migration.mapper.target.申込TargetMapper;
 import migration.mapper.target.申込審査状況TargetMapper;
 import migration.mapper.target.申込審査段階TargetMapper;
 import migration.mapper.target.申込進捗TargetMapper;
 import migration.mapper.target.履歴申込TargetMapper;
+import migration.mapper.target.履歴申込_業者_住宅TargetMapper;
 import migration.mapper.target.履歴申込審査段階TargetMapper;
 import migration.mapper.target.履歴保証人TargetMapper;
+import migration.mapper.target.履歴保証検討表補足TargetMapper;
 import migration.mapper.target.保証人TargetMapper;
+import migration.mapper.target.申込_業者_住宅TargetMapper;
+import migration.mapper.target.保証検討表補足TargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,6 +55,7 @@ public class JutakuLoanService {
     @Autowired private 申込審査段階SourceMapper 段階SourceMapper;
     @Autowired private 申込SourceMapper 申込SourceMapper;
     @Autowired private 保証人SourceMapper 保証人SourceMapper;
+    @Autowired private 保証検討表補足SourceMapper 保証検討表補足SourceMapper;
 
     // --- Target mappers ---
     @Autowired private 申込進捗TargetMapper 進捗TargetMapper;
@@ -53,8 +64,12 @@ public class JutakuLoanService {
     @Autowired private 履歴申込審査段階TargetMapper 履歴段階TargetMapper;
     @Autowired private 申込TargetMapper 申込TargetMapper;
     @Autowired private 履歴申込TargetMapper 履歴申込TargetMapper;
+    @Autowired private 履歴申込_業者_住宅TargetMapper 履歴申込_業者_住宅TargetMapper;
     @Autowired private 保証人TargetMapper 保証人TargetMapper;
+    @Autowired private 申込_業者_住宅TargetMapper 申込_業者_住宅TargetMapper;
+    @Autowired private 保証検討表補足TargetMapper 保証検討表補足TargetMapper;
     @Autowired private 履歴保証人TargetMapper 履歴保証人TargetMapper;
+    @Autowired private 履歴保証検討表補足TargetMapper 履歴保証検討表補足TargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -190,6 +205,12 @@ public class JutakuLoanService {
             appT.set申込番号(tgtNo);
             appT.set申込目的(newMokuteki);
             申込TargetMapper.insert(appT);
+
+            // ①-a 申込_業者_住宅 main (MAX only) — FK→申込
+            申込_業者_住宅Target 業者T = new 申込_業者_住宅Target();
+            業者T.set申込番号(tgtNo);
+            業者T.set申込目的(newMokuteki);
+            申込_業者_住宅TargetMapper.insert(業者T);
         }
 
         // ② 申込審査段階 main (MAX only) — FK→申込
@@ -210,7 +231,17 @@ public class JutakuLoanService {
             保証人TargetMapper.insert(gT);
         }
 
-        // ④-⑦ History for every completed record in this group
+        // ③-a 保証検討表補足 main (MAX only) — FK→申込
+        保証検討表補足Source max補足Src =
+                保証検討表補足SourceMapper.selectByApplicationIdAndPurpose(srcNo, maxOldMokuteki);
+        if (max補足Src != null) {
+            保証検討表補足Target 補足T = new 保証検討表補足Target();
+            補足T.set申込番号(tgtNo);
+            補足T.set申込目的(newMokuteki);
+            保証検討表補足TargetMapper.insert(補足T);
+        }
+
+        // ④-⑧ History for every completed record in this group
         int 回数 = 1;
         for (申込審査段階Source stage : group) {
             String oldMokuteki = stage.get申込目的();
@@ -230,6 +261,13 @@ public class JutakuLoanService {
                 hist申込T.set申込目的(newMokuteki);
                 hist申込T.set回数(回数);
                 履歴申込TargetMapper.insert(hist申込T);
+
+                // ⑤-a 履歴申込_業者_住宅 — FK→履歴申込
+                履歴申込_業者_住宅Target hist業者T = new 履歴申込_業者_住宅Target();
+                hist業者T.set申込番号(tgtNo);
+                hist業者T.set申込目的(newMokuteki);
+                hist業者T.set回数(回数);
+                履歴申込_業者_住宅TargetMapper.insert(hist業者T);
             }
 
             // ⑥ 履歴申込審査段階 — FK→履歴申込
@@ -250,6 +288,17 @@ public class JutakuLoanService {
                 hist保証人T.set回数(回数);
                 hist保証人T.set連番(g.get連番());
                 履歴保証人TargetMapper.insert(hist保証人T);
+            }
+
+            // ⑧ 履歴保証検討表補足 — FK→履歴申込
+            保証検討表補足Source hist補足Src =
+                    保証検討表補足SourceMapper.selectByApplicationIdAndPurpose(srcNo, oldMokuteki);
+            if (hist補足Src != null) {
+                履歴保証検討表補足Target hist補足T = new 履歴保証検討表補足Target();
+                hist補足T.set申込番号(tgtNo);
+                hist補足T.set申込目的(newMokuteki);
+                hist補足T.set回数(回数);
+                履歴保証検討表補足TargetMapper.insert(hist補足T);
             }
 
             回数++;
