@@ -14,6 +14,8 @@ import migration.domain.target.履歴申込審査段階Target;
 import migration.domain.target.履歴保証人Target;
 import migration.domain.target.履歴保証検討表補足Target;
 import migration.domain.target.保証人Target;
+import migration.domain.target.申込_業者_住宅Target;
+import migration.domain.target.保証検討表補足Target;
 import migration.domain.source.保証検討表補足Source;
 import migration.mapper.source.申込SourceMapper;
 import migration.mapper.source.申込審査段階SourceMapper;
@@ -30,6 +32,8 @@ import migration.mapper.target.履歴申込審査段階TargetMapper;
 import migration.mapper.target.履歴保証人TargetMapper;
 import migration.mapper.target.履歴保証検討表補足TargetMapper;
 import migration.mapper.target.保証人TargetMapper;
+import migration.mapper.target.申込_業者_住宅TargetMapper;
+import migration.mapper.target.保証検討表補足TargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,6 +66,8 @@ public class JutakuLoanService {
     @Autowired private 履歴申込TargetMapper 履歴申込TargetMapper;
     @Autowired private 履歴申込_業者_住宅TargetMapper 履歴申込_業者_住宅TargetMapper;
     @Autowired private 保証人TargetMapper 保証人TargetMapper;
+    @Autowired private 申込_業者_住宅TargetMapper 申込_業者_住宅TargetMapper;
+    @Autowired private 保証検討表補足TargetMapper 保証検討表補足TargetMapper;
     @Autowired private 履歴保証人TargetMapper 履歴保証人TargetMapper;
     @Autowired private 履歴保証検討表補足TargetMapper 履歴保証検討表補足TargetMapper;
 
@@ -199,6 +205,12 @@ public class JutakuLoanService {
             appT.set申込番号(tgtNo);
             appT.set申込目的(newMokuteki);
             申込TargetMapper.insert(appT);
+
+            // ①-a 申込_業者_住宅 main (MAX only) — FK→申込
+            申込_業者_住宅Target 業者T = new 申込_業者_住宅Target();
+            業者T.set申込番号(tgtNo);
+            業者T.set申込目的(newMokuteki);
+            申込_業者_住宅TargetMapper.insert(業者T);
         }
 
         // ② 申込審査段階 main (MAX only) — FK→申込
@@ -219,7 +231,17 @@ public class JutakuLoanService {
             保証人TargetMapper.insert(gT);
         }
 
-        // ④-⑦ History for every completed record in this group
+        // ③-a 保証検討表補足 main (MAX only) — FK→申込
+        保証検討表補足Source max補足Src =
+                保証検討表補足SourceMapper.selectByApplicationIdAndPurpose(srcNo, maxOldMokuteki);
+        if (max補足Src != null) {
+            保証検討表補足Target 補足T = new 保証検討表補足Target();
+            補足T.set申込番号(tgtNo);
+            補足T.set申込目的(newMokuteki);
+            保証検討表補足TargetMapper.insert(補足T);
+        }
+
+        // ④-⑧ History for every completed record in this group
         int 回数 = 1;
         for (申込審査段階Source stage : group) {
             String oldMokuteki = stage.get申込目的();
