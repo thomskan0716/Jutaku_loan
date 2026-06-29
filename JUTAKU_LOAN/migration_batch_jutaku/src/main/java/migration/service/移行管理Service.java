@@ -51,8 +51,8 @@ public class 移行管理Service {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void markError(String システム, long 処理FROM, String errorMessage) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        String truncated = errorMessage != null && errorMessage.length() > 200
-                ? errorMessage.substring(0, 200)
+        String truncated = errorMessage != null && errorMessage.length() > 60
+                ? errorMessage.substring(0, 60)
                 : errorMessage;
         managementMapper.updateStatusToError(システム, 処理FROM, now, truncated);
         log.error("  Marked ERROR: FROM={} - {}", 処理FROM, errorMessage);

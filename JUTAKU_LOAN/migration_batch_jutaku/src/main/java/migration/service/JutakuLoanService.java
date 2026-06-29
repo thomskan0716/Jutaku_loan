@@ -204,6 +204,7 @@ public class JutakuLoanService {
             申込Target appT = new 申込Target();
             appT.set申込番号(tgtNo);
             appT.set申込目的(newMokuteki);
+            map申込Columns(maxApp, appT);
             申込TargetMapper.insert(appT);
 
             // ①-a 申込_業者_住宅 main (MAX only) — FK→申込
@@ -315,4 +316,174 @@ public class JutakuLoanService {
         }
         return "3" + src.substring(1);
     }
+
+    /** Map all non-PK columns from 申込Source to 申込Target. */
+    private void map申込Columns(申込Source s, 申込Target t) {
+        t.set商品大分類(s.get商品大分類());
+        t.set商品コード(s.get商品コード());
+        t.set受付店舗(s.get受付店舗());
+        t.set保証番号(s.get保証番号());
+        t.set関連案件有無(s.get関連案件有無());
+        t.set申込日(s.get申込日());
+        t.set店舗(s.get店舗());
+        t.setＣＩＦ番号(s.getＣＩＦ番号());
+
+        // カナ氏名: direct + split on half-width space
+        String kana = s.getカナ氏名();
+        t.setカナ氏名(kana);
+        if (kana != null) {
+            int i = kana.indexOf(' ');
+            t.setカナ氏名姓(i >= 0 ? kana.substring(0, i) : kana);
+            t.setカナ氏名名(i >= 0 ? kana.substring(i + 1) : null);
+        }
+
+        // 漢字氏名: direct + split on full-width space (U+3000)
+        String kanji = s.get漢字氏名();
+        t.set漢字氏名(kanji);
+        if (kanji != null) {
+            int i = kanji.indexOf('　');
+            t.set漢字氏名姓(i >= 0 ? kanji.substring(0, i) : kanji);
+            t.set漢字氏名名(i >= 0 ? kanji.substring(i + 1) : null);
+        }
+
+        t.set自宅郵便番号(s.get自宅郵便番号());
+        t.set自宅住所カナ(s.get自宅住所カナ());
+        t.set自宅住所漢字(s.get自宅住所漢字());
+        t.set生年月日(s.get生年月日());
+        t.set性別(s.get性別());
+        t.set勤務先郵便番号(s.get勤務先郵便番号());
+        t.set携帯電話番号(s.get携帯電話番号());
+        t.set建物完成予定日(s.get建物完成予定日());
+        t.set検索用カナ氏名(s.get検索用カナ氏名());
+        t.set勤務先名漢字(s.get勤務先名漢字());
+        t.set勤務先入社年月(s.get勤務先入社年月());
+        t.set勤務先勤続年数(s.get勤務先勤続年数());
+        t.set勤務先業態区分(s.get上場フラグ());   // 申込ワイド.上場フラグ → 勤務先業態区分
+        t.set勤務先勤業(s.get勤務先職業());
+        t.set勤務先勤種(s.get勤務先職種役取());   // direct code copy
+        t.set勤務先勤種その他(null);               // requires 編集仕様詳細 — set null for now
+        t.set勤務先資本金区分(s.get勤務先資本金区分());
+        t.set勤務先逐業員数(s.get勤務先従業員数());
+        t.set住居形態(s.get住居区分());
+        t.set定積(s.get定積());
+        t.set展示年数(s.get展示年数());
+        t.set定積＿子の他(s.get定積＿子の他());
+
+        // 金融機関 1
+        t.set金融機関1名称(s.get借入＿利用先名1());
+        t.set金融機関1借入種類(s.get借入＿利用種類1());
+        t.set金融機関1残高(s.get借入＿利用残高1());
+        t.set金融機関1借入年間返済額(s.get借入＿年間変払額1());
+        t.set金融機関1借入期間(s.get借入＿残存期間1());
+        t.set金融機関1借入時完済解約予定(s.get借入＿解約予定1());
+        t.set金融機関1利用限度額(s.get借入＿利用限度額1());
+        // 金融機関 2
+        t.set金融機関2名称(s.get借入＿利用先名2());
+        t.set金融機関2借入種類(s.get借入＿利用種類2());
+        t.set金融機関2残高(s.get借入＿利用残高2());
+        t.set金融機関2借入年間返済額(s.get借入＿年間変払額2());
+        t.set金融機関2借入期間(s.get借入＿残存期間2());
+        t.set金融機関2借入時完済解約予定(s.get借入＿解約予定2());
+        t.set金融機関2利用限度額(s.get借入＿利用限度額2());
+        // 金融機関 3
+        t.set金融機関3名称(s.get借入＿利用先名3());
+        t.set金融機関3借入種類(s.get借入＿利用種類3());
+        t.set金融機関3残高(s.get借入＿利用残高3());
+        t.set金融機関3借入年間返済額(s.get借入＿年間変払額3());
+        t.set金融機関3借入期間(s.get借入＿残存期間3());
+        t.set金融機関3借入時完済解約予定(s.get借入＿解約予定3());
+        t.set金融機関3利用限度額(s.get借入＿利用限度額3());
+
+        t.set資金使途(s.get資金使途());
+        t.set借入金額(s.get借入金額());
+        t.set借入金額＿毎月(s.get借入金額＿毎月());
+        t.set借入金額＿半年額(s.get借入金額＿半年額());
+        t.set返済額＿毎月(s.get借入金額＿毎月());
+        t.set返済額＿半年毎(s.get借入金額＿半年額());
+        t.set借入期間(s.get借入期間());
+        t.set借入希望日(s.get借入希望日());
+        t.set借入希望日＿建物(s.get借入希望日＿建物());
+        t.set返済方法区分(s.get返済方法区分());
+        t.set金利区分(s.get金利区分());
+        t.set保証料区分(s.get保証料区分());
+        t.setボーナス返済月1(s.getボーナス返済月1());
+        t.setボーナス返済月2(s.getボーナス返済月2());
+
+        // 同居予定家族
+        t.set同居予定家族＿配偶者(s.get同居＿配偶者());
+        t.set同居予定家族＿父(s.get同居＿父());
+        t.set同居予定家族＿母(s.get同居＿母());
+        java.math.BigDecimal otherCount = s.get同居＿その他人数();
+        t.set同居予定家族＿その他(otherCount != null && otherCount.compareTo(java.math.BigDecimal.ZERO) > 0 ? "1" : "0");
+        t.set同居予定家族＿その他＿人数(otherCount);
+        t.set同居予定家族＿子供人数(s.get同居＿子の人数());
+        t.set同居予定家族＿子供年齢＿1人目(s.get同居＿子供年齢1());
+        t.set同居予定家族＿子供年齢＿2人目(s.get同居＿子供年齢2());
+        t.set同居予定家族＿子供年齢＿3人目(s.get同居＿子供年齢3());
+        t.set同居予定家族＿子供年齢＿4人目(s.get同居＿子供年齢4());
+        t.set同居予定家族＿本人("1");  // fixed: 本人入居予定
+
+        // 同居予定家族＿合計人数 = 1(本人) + 配偶者 + 父 + 母 + その他人数 + 子供人数
+        int total = 1;
+        if ("1".equals(s.get同居＿配偶者())) total++;
+        if ("1".equals(s.get同居＿父()))    total++;
+        if ("1".equals(s.get同居＿母()))    total++;
+        if (otherCount != null) total += otherCount.intValue();
+        if (s.get同居＿子の人数() != null) total += s.get同居＿子の人数().intValue();
+        t.set同居予定家族＿合計人数(new java.math.BigDecimal(total));
+
+        t.set婚姻区分(s.get婚姻区分());
+        t.set商品分類(s.get申込審区分());
+        t.set外部連携受付番号(s.get外部連携受付番号());
+        t.set勤務先資本金＿外部ローン(s.get勤務先資本金());
+        t.set土地契約予定日(s.get土地契約予定日());
+
+        t.set預金＿金融機関1＿名称(s.get預金＿金融機関名1());
+        t.set預金＿金融機関1＿本人預金(s.get預金＿本人預金1());
+        t.set預金＿金融機関1＿家族預金(s.get預金＿家族預金1());
+        t.set預金＿金融機関2＿名称(s.get預金＿金融機関名2());
+        t.set預金＿金融機関2＿本人預金(s.get預金＿本人預金2());
+        t.set預金＿金融機関2＿家族預金(s.get預金＿家族預金2());
+        t.set預金＿金融機関3＿本人預金(s.get預金＿本人預金3());
+        t.set預金＿金融機関3＿家族預金(s.get預金＿家族預金3());
+        t.set預金＿金融機関4＿本人預金(s.get預金＿本人預金4());
+        t.set預金＿金融機関4＿家族預金(s.get預金＿家族預金4());
+
+        t.set歩合給(s.get勤務先歩合給区分());
+
+        // From 申込ワイド
+        t.set国家資格(s.get国家資格());
+        t.set国家資格＿その他(s.get国家資格子の他());
+        t.set配偶者年収(s.get配偶者年収());
+
+        // 資金使途 derived columns — require 編集仕様詳細 (code tables 2332/2333/2334)
+        t.set資金使途＿マンション(null);
+        t.set資金使途＿マンション以外(null);
+        t.set資金使途＿ワイドローン一般口(null);
+        t.set資金使途＿物件種別(null);
+
+        // 必要資金
+        t.set必要資金＿土地(s.get必要資金＿土地());
+        t.set必要資金＿建物(s.get必要資金＿建物());
+        t.set必要資金＿借替(s.get必要資金＿借替());
+        t.set必要資金＿諸費用(s.get必要資金＿諸費用());
+        t.set必要資金＿その他(s.get必要資金＿その他());
+        t.set必要資金＿合計(s.get必要資金＿合計());
+        // 調達＿金融機関
+        t.set調達＿金融機関1＿名称(s.get調達＿その他1＿借入先());
+        t.set調達＿金融機関1＿金額(s.get調達＿その他1());
+        t.set調達＿金融機関1＿期間(s.get調達＿その他1＿期間());
+        t.set調達＿金融機関2＿名称(s.get調達＿その他2＿借入先());
+        t.set調達＿金融機関2＿金額(s.get調達＿その他2());
+        t.set調達＿金融機関2＿期間(s.get調達＿その他2＿期間());
+        t.set調達＿合計(s.get調達＿合計());
+        // 自己資金
+        t.set自己資金＿預貯金(s.get自己資金＿預貯金());
+        t.set自己資金＿その他(s.get自己資金＿その他());
+        t.set自己資金＿贈与(s.get自己資金＿贈与());
+        t.set給与振込(s.get勤務先給与振込());
+        t.set税込年収＿前々年(s.get年収２());
+        t.set税込年収＿３年前(s.get年収３());
+    }
+
 }
