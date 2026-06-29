@@ -21,6 +21,10 @@ spring:
     job:
       enabled: false
 
+mybatis:
+  configuration:
+    jdbc-type-for-null: NULL
+
 logging:
   level:
     migration: INFO
