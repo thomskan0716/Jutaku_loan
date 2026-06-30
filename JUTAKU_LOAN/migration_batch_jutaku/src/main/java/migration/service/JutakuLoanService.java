@@ -317,34 +317,22 @@ public class JutakuLoanService {
         return "3" + src.substring(1);
     }
 
+    /** Truncate a value to fit a target column's max length (null-safe). */
+    private static String truncate(String v, int maxLen) {
+        if (v == null) {
+            return null;
+        }
+        return v.length() > maxLen ? v.substring(0, maxLen) : v;
+    }
+
     /** Map all non-PK columns from 申込Source to 申込Target. */
     private void map申込Columns(申込Source s, 申込Target t) {
         t.set商品大分類(s.get商品大分類());
         t.set商品コード(s.get商品コード());
-        t.set受付店舗(s.get受付店舗());
         t.set保証番号(s.get保証番号());
         t.set関連案件有無(s.get関連案件有無());
         t.set申込日(s.get申込日());
-        t.set店舗(s.get店舗());
         t.setＣＩＦ番号(s.getＣＩＦ番号());
-
-        // カナ氏名: direct + split on half-width space
-        String kana = s.getカナ氏名();
-        t.setカナ氏名(kana);
-        if (kana != null) {
-            int i = kana.indexOf(' ');
-            t.setカナ氏名姓(i >= 0 ? kana.substring(0, i) : kana);
-            t.setカナ氏名名(i >= 0 ? kana.substring(i + 1) : null);
-        }
-
-        // 漢字氏名: direct + split on full-width space (U+3000)
-        String kanji = s.get漢字氏名();
-        t.set漢字氏名(kanji);
-        if (kanji != null) {
-            int i = kanji.indexOf('　');
-            t.set漢字氏名姓(i >= 0 ? kanji.substring(0, i) : kanji);
-            t.set漢字氏名名(i >= 0 ? kanji.substring(i + 1) : null);
-        }
 
         t.set自宅郵便番号(s.get自宅郵便番号());
         t.set自宅住所カナ(s.get自宅住所カナ());
@@ -358,38 +346,28 @@ public class JutakuLoanService {
         t.set勤務先名漢字(s.get勤務先名漢字());
         t.set勤務先入社年月(s.get勤務先入社年月());
         t.set勤務先勤続年数(s.get勤務先勤続年数());
-        t.set勤務先業態区分(s.get上場フラグ());   // 申込ワイド.上場フラグ → 勤務先業態区分
         t.set勤務先勤業(s.get勤務先職業());
-        t.set勤務先勤種(s.get勤務先職種役取());   // direct code copy
-        t.set勤務先勤種その他(null);               // requires 編集仕様詳細 — set null for now
         t.set勤務先資本金区分(s.get勤務先資本金区分());
         t.set勤務先逐業員数(s.get勤務先従業員数());
         t.set住居形態(s.get住居区分());
-        t.set定積(s.get定積());
-        t.set展示年数(s.get展示年数());
-        t.set定積＿子の他(s.get定積＿子の他());
-
         // 金融機関 1
-        t.set金融機関1名称(s.get借入＿利用先名1());
+        t.set金融機関1名称(truncate(s.get借入＿利用先名1(), 30));
         t.set金融機関1借入種類(s.get借入＿利用種類1());
         t.set金融機関1残高(s.get借入＿利用残高1());
-        t.set金融機関1借入年間返済額(s.get借入＿年間変払額1());
         t.set金融機関1借入期間(s.get借入＿残存期間1());
         t.set金融機関1借入時完済解約予定(s.get借入＿解約予定1());
         t.set金融機関1利用限度額(s.get借入＿利用限度額1());
         // 金融機関 2
-        t.set金融機関2名称(s.get借入＿利用先名2());
+        t.set金融機関2名称(truncate(s.get借入＿利用先名2(), 30));
         t.set金融機関2借入種類(s.get借入＿利用種類2());
         t.set金融機関2残高(s.get借入＿利用残高2());
-        t.set金融機関2借入年間返済額(s.get借入＿年間変払額2());
         t.set金融機関2借入期間(s.get借入＿残存期間2());
         t.set金融機関2借入時完済解約予定(s.get借入＿解約予定2());
         t.set金融機関2利用限度額(s.get借入＿利用限度額2());
         // 金融機関 3
-        t.set金融機関3名称(s.get借入＿利用先名3());
+        t.set金融機関3名称(truncate(s.get借入＿利用先名3(), 30));
         t.set金融機関3借入種類(s.get借入＿利用種類3());
         t.set金融機関3残高(s.get借入＿利用残高3());
-        t.set金融機関3借入年間返済額(s.get借入＿年間変払額3());
         t.set金融機関3借入期間(s.get借入＿残存期間3());
         t.set金融機関3借入時完済解約予定(s.get借入＿解約予定3());
         t.set金融機関3利用限度額(s.get借入＿利用限度額3());
@@ -397,9 +375,7 @@ public class JutakuLoanService {
         t.set資金使途(s.get資金使途());
         t.set借入金額(s.get借入金額());
         t.set借入金額＿毎月(s.get借入金額＿毎月());
-        t.set借入金額＿半年額(s.get借入金額＿半年額());
-        t.set返済額＿毎月(s.get借入金額＿毎月());
-        t.set返済額＿半年毎(s.get借入金額＿半年額());
+        t.set借入金額＿半年毎(s.get借入金額＿半年毎());
         t.set借入期間(s.get借入期間());
         t.set借入希望日(s.get借入希望日());
         t.set借入希望日＿建物(s.get借入希望日＿建物());
@@ -416,7 +392,6 @@ public class JutakuLoanService {
         java.math.BigDecimal otherCount = s.get同居＿その他人数();
         t.set同居予定家族＿その他(otherCount != null && otherCount.compareTo(java.math.BigDecimal.ZERO) > 0 ? "1" : "0");
         t.set同居予定家族＿その他＿人数(otherCount);
-        t.set同居予定家族＿子供人数(s.get同居＿子の人数());
         t.set同居予定家族＿子供年齢＿1人目(s.get同居＿子供年齢1());
         t.set同居予定家族＿子供年齢＿2人目(s.get同居＿子供年齢2());
         t.set同居予定家族＿子供年齢＿3人目(s.get同居＿子供年齢3());
@@ -429,11 +404,9 @@ public class JutakuLoanService {
         if ("1".equals(s.get同居＿父()))    total++;
         if ("1".equals(s.get同居＿母()))    total++;
         if (otherCount != null) total += otherCount.intValue();
-        if (s.get同居＿子の人数() != null) total += s.get同居＿子の人数().intValue();
         t.set同居予定家族＿合計人数(new java.math.BigDecimal(total));
 
         t.set婚姻区分(s.get婚姻区分());
-        t.set商品分類(s.get申込審区分());
         t.set外部連携受付番号(s.get外部連携受付番号());
         t.set勤務先資本金＿外部ローン(s.get勤務先資本金());
         t.set土地契約予定日(s.get土地契約予定日());
@@ -465,7 +438,6 @@ public class JutakuLoanService {
         // 必要資金
         t.set必要資金＿土地(s.get必要資金＿土地());
         t.set必要資金＿建物(s.get必要資金＿建物());
-        t.set必要資金＿借替(s.get必要資金＿借替());
         t.set必要資金＿諸費用(s.get必要資金＿諸費用());
         t.set必要資金＿その他(s.get必要資金＿その他());
         t.set必要資金＿合計(s.get必要資金＿合計());
@@ -481,7 +453,6 @@ public class JutakuLoanService {
         t.set自己資金＿預貯金(s.get自己資金＿預貯金());
         t.set自己資金＿その他(s.get自己資金＿その他());
         t.set自己資金＿贈与(s.get自己資金＿贈与());
-        t.set給与振込(s.get勤務先給与振込());
         t.set税込年収＿前々年(s.get年収２());
         t.set税込年収＿３年前(s.get年収３());
     }
