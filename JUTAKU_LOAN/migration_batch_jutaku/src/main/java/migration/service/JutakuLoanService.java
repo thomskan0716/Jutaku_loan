@@ -317,12 +317,20 @@ public class JutakuLoanService {
         return "3" + src.substring(1);
     }
 
-    /** Truncate a value to fit a target column's max length (null-safe). */
-    private static String truncate(String v, int maxLen) {
-        if (v == null) {
-            return null;
+    /** Truncate a value to fit within maxBytes bytes in MS932 (Shift-JIS) encoding (null-safe).
+     *  Use for VARCHAR2(N) columns where N is the BYTE limit in an Oracle Shift-JIS database. */
+    private static String truncate(String v, int maxBytes) {
+        if (v == null) return null;
+        try {
+            if (v.getBytes("MS932").length <= maxBytes) return v;
+            int len = v.length();
+            while (len > 0 && v.substring(0, len).getBytes("MS932").length > maxBytes) {
+                len--;
+            }
+            return v.substring(0, len);
+        } catch (java.io.UnsupportedEncodingException e) {
+            return v.length() > maxBytes ? v.substring(0, maxBytes) : v;
         }
-        return v.length() > maxLen ? v.substring(0, maxLen) : v;
     }
 
     /** Map all non-PK columns from 申込Source to 申込Target. */
@@ -342,8 +350,8 @@ public class JutakuLoanService {
         t.set勤務先郵便番号(s.get勤務先郵便番号());
         t.set携帯電話番号(s.get携帯電話番号());
         t.set建物完成予定日(s.get建物完成予定日());
-        t.set検索用カナ氏名(s.get検索用カナ氏名());
-        t.set勤務先名漢字(s.get勤務先名漢字());
+        t.set検索用カナ氏名(s.get検索用カナ氏名());   // TODO: confirm target char_length and add truncate if needed
+        t.set勤務先名漢字(truncate(s.get勤務先名漢字(), 120));
         t.set勤務先入社年月(s.get勤務先入社年月());
         t.set勤務先勤続年数(s.get勤務先勤続年数());
         t.set勤務先勤業(s.get勤務先職業());
@@ -411,10 +419,10 @@ public class JutakuLoanService {
         t.set勤務先資本金＿外部ローン(s.get勤務先資本金());
         t.set土地契約予定日(s.get土地契約予定日());
 
-        t.set預金＿金融機関1＿名称(s.get預金＿金融機関名1());
+        t.set預金＿金融機関1＿名称(truncate(s.get預金＿金融機関名1(), 30));
         t.set預金＿金融機関1＿本人預金(s.get預金＿本人預金1());
         t.set預金＿金融機関1＿家族預金(s.get預金＿家族預金1());
-        t.set預金＿金融機関2＿名称(s.get預金＿金融機関名2());
+        t.set預金＿金融機関2＿名称(truncate(s.get預金＿金融機関名2(), 30));
         t.set預金＿金融機関2＿本人預金(s.get預金＿本人預金2());
         t.set預金＿金融機関2＿家族預金(s.get預金＿家族預金2());
         t.set預金＿金融機関3＿本人預金(s.get預金＿本人預金3());
@@ -426,7 +434,7 @@ public class JutakuLoanService {
 
         // From 申込ワイド
         t.set国家資格(s.get国家資格());
-        t.set国家資格＿その他(s.get国家資格子の他());
+        t.set国家資格＿その他(truncate(s.get国家資格子の他(), 30));
         t.set配偶者年収(s.get配偶者年収());
 
         // 資金使途 derived columns — require 編集仕様詳細 (code tables 2332/2333/2334)
@@ -442,10 +450,10 @@ public class JutakuLoanService {
         t.set必要資金＿その他(s.get必要資金＿その他());
         t.set必要資金＿合計(s.get必要資金＿合計());
         // 調達＿金融機関
-        t.set調達＿金融機関1＿名称(s.get調達＿その他1＿借入先());
+        t.set調達＿金融機関1＿名称(truncate(s.get調達＿その他1＿借入先(), 30));
         t.set調達＿金融機関1＿金額(s.get調達＿その他1());
         t.set調達＿金融機関1＿期間(s.get調達＿その他1＿期間());
-        t.set調達＿金融機関2＿名称(s.get調達＿その他2＿借入先());
+        t.set調達＿金融機関2＿名称(truncate(s.get調達＿その他2＿借入先(), 30));
         t.set調達＿金融機関2＿金額(s.get調達＿その他2());
         t.set調達＿金融機関2＿期間(s.get調達＿その他2＿期間());
         t.set調達＿合計(s.get調達＿合計());
