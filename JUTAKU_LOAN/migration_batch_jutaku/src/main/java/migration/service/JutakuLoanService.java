@@ -205,7 +205,7 @@ public class JutakuLoanService {
             appT.set申込番号(tgtNo);
             appT.set申込目的(newMokuteki);
             map申込Columns(maxApp, appT);
-            clamp申込Numerics(tgtNo, appT);
+            // String/number fitting is handled automatically by ColumnFitInterceptor.
             try {
                 申込TargetMapper.insert(appT);
             } catch (RuntimeException ex) {
@@ -336,116 +336,6 @@ public class JutakuLoanService {
             return v.substring(0, len);
         } catch (java.io.UnsupportedEncodingException e) {
             return v.length() > maxBytes ? v.substring(0, maxBytes) : v;
-        }
-    }
-
-    /**
-     * Target 申込 NUMBER(precision, scale) limits, keyed by 申込Target field name.
-     * Used to clamp source values so they fit the column and avoid ORA-01438.
-     * Fields not listed here (e.g. unknown precision) are left untouched.
-     */
-    private static final java.util.Map<String, int[]> 申込数値桁 = new java.util.HashMap<>();
-    static {
-        申込数値桁.put("勤務先勤続年数", new int[]{3, 0});
-        申込数値桁.put("勤務先逐業員数", new int[]{12, 0});
-        申込数値桁.put("金融機関1残高", new int[]{12, 0});
-        申込数値桁.put("金融機関1借入年間返済額", new int[]{12, 0});
-        申込数値桁.put("金融機関1借入期間", new int[]{3, 0});
-        申込数値桁.put("金融機関1利用限度額", new int[]{12, 0});
-        申込数値桁.put("金融機関2残高", new int[]{12, 0});
-        申込数値桁.put("金融機関2借入年間返済額", new int[]{12, 0});
-        申込数値桁.put("金融機関2借入期間", new int[]{3, 0});
-        申込数値桁.put("金融機関2利用限度額", new int[]{12, 0});
-        申込数値桁.put("金融機関3残高", new int[]{12, 0});
-        申込数値桁.put("金融機関3借入年間返済額", new int[]{12, 0});
-        申込数値桁.put("金融機関3借入期間", new int[]{3, 0});
-        申込数値桁.put("金融機関3利用限度額", new int[]{12, 0});
-        申込数値桁.put("借入金額", new int[]{12, 0});
-        申込数値桁.put("借入金額＿毎月", new int[]{12, 0});
-        申込数値桁.put("借入金額＿半年毎", new int[]{12, 0});
-        申込数値桁.put("返済額＿毎月", new int[]{12, 0});
-        申込数値桁.put("返済額＿半年毎", new int[]{12, 0});
-        申込数値桁.put("借入期間", new int[]{3, 0});
-        申込数値桁.put("同居予定家族＿その他＿人数", new int[]{2, 0});
-        申込数値桁.put("同居予定家族＿子供人数", new int[]{2, 0});
-        申込数値桁.put("同居予定家族＿子供年齢＿1人目", new int[]{3, 0});
-        申込数値桁.put("同居予定家族＿子供年齢＿2人目", new int[]{3, 0});
-        申込数値桁.put("同居予定家族＿子供年齢＿3人目", new int[]{3, 0});
-        申込数値桁.put("同居予定家族＿子供年齢＿4人目", new int[]{3, 0});
-        申込数値桁.put("同居予定家族＿合計人数", new int[]{2, 0});
-        申込数値桁.put("勤務先資本金＿外部ローン", new int[]{16, 0});
-        申込数値桁.put("預金＿金融機関1＿本人預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関1＿家族預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関2＿本人預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関2＿家族預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関3＿本人預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関3＿家族預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関4＿本人預金", new int[]{12, 0});
-        申込数値桁.put("預金＿金融機関4＿家族預金", new int[]{12, 0});
-        申込数値桁.put("配偶者年収", new int[]{12, 0});
-        申込数値桁.put("必要資金＿土地", new int[]{12, 0});
-        申込数値桁.put("必要資金＿建物", new int[]{12, 0});
-        申込数値桁.put("必要資金＿借替", new int[]{12, 0});
-        申込数値桁.put("必要資金＿諸費用", new int[]{12, 0});
-        申込数値桁.put("必要資金＿その他", new int[]{12, 0});
-        申込数値桁.put("必要資金＿合計", new int[]{12, 0});
-        申込数値桁.put("調達＿金融機関1＿金額", new int[]{12, 0});
-        申込数値桁.put("調達＿金融機関1＿期間", new int[]{3, 0});
-        申込数値桁.put("調達＿金融機関2＿金額", new int[]{12, 0});
-        申込数値桁.put("調達＿金融機関2＿期間", new int[]{3, 0});
-        申込数値桁.put("調達＿合計", new int[]{12, 0});
-        申込数値桁.put("自己資金＿預貯金", new int[]{12, 0});
-        申込数値桁.put("自己資金＿その他", new int[]{12, 0});
-        申込数値桁.put("自己資金＿贈与", new int[]{12, 0});
-        申込数値桁.put("税込年収＿前々年", new int[]{12, 0});
-        申込数値桁.put("税込年収＿３年前", new int[]{12, 0});
-    }
-
-    /** Clamp a BigDecimal to fit NUMBER(precision, scale); null-safe. */
-    private static java.math.BigDecimal clampNumber(java.math.BigDecimal v, int precision, int scale) {
-        if (v == null) {
-            return null;
-        }
-        java.math.BigDecimal r = v;
-        if (r.scale() > scale) {
-            r = r.setScale(scale, java.math.RoundingMode.DOWN);
-        }
-        java.math.BigDecimal max = java.math.BigDecimal.TEN.pow(precision)
-                .subtract(java.math.BigDecimal.ONE).movePointLeft(scale);
-        if (r.compareTo(max) > 0) {
-            return max;
-        }
-        if (r.compareTo(max.negate()) < 0) {
-            return max.negate();
-        }
-        return r;
-    }
-
-    /**
-     * Clamp every BigDecimal field of 申込Target to its target NUMBER(p,s) limit.
-     * Values that fit pass through unchanged; oversized values are capped (logged).
-     */
-    private void clamp申込Numerics(String tgtNo, 申込Target t) {
-        for (java.lang.reflect.Field f : t.getClass().getDeclaredFields()) {
-            if (!java.math.BigDecimal.class.equals(f.getType())) {
-                continue;
-            }
-            int[] ps = 申込数値桁.get(f.getName());
-            if (ps == null) {
-                continue;
-            }
-            try {
-                f.setAccessible(true);
-                java.math.BigDecimal v = (java.math.BigDecimal) f.get(t);
-                java.math.BigDecimal c = clampNumber(v, ps[0], ps[1]);
-                if (c != null && v != null && c.compareTo(v) != 0) {
-                    log.warn("CLAMP 申込番号={} {}: {} -> {} (NUMBER({},{}))",
-                            tgtNo, f.getName(), v.toPlainString(), c.toPlainString(), ps[0], ps[1]);
-                    f.set(t, c);
-                }
-            } catch (IllegalAccessException ignore) {
-                // skip inaccessible field
-            }
         }
     }
 

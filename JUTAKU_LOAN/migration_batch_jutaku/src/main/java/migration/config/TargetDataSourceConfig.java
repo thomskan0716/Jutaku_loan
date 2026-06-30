@@ -55,6 +55,8 @@ public class TargetDataSourceConfig {
         factoryBean.setMapperLocations(allXmls);
         org.apache.ibatis.session.Configuration mybatisConfig = new org.apache.ibatis.session.Configuration();
         mybatisConfig.setJdbcTypeForNull(JdbcType.NULL);
+        // Auto-fit every INSERT value to the real target column (truncate strings / clamp numbers).
+        mybatisConfig.addInterceptor(new ColumnFitInterceptor(dataSource));
         factoryBean.setConfiguration(mybatisConfig);
         return factoryBean.getObject();
     }
