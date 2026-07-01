@@ -21,6 +21,14 @@ public class 申込Target {
     private String 携帯電話番号;
     private String 建物完成予定日;
     private String 検索用カナ氏名;
+    private String カナ氏名;
+    private String カナ氏名姓;
+    private String カナ氏名名;
+    private String 漢字氏名;
+    private String 漢字氏名姓;
+    private String 漢字氏名名;
+    private String 勤務先住所漢字;
+    private String 勤務先企業区分;
     private String 勤務先名漢字;
     private BigDecimal 勤務先入社年月;
     private BigDecimal 勤務先勤続年数;
@@ -118,6 +126,28 @@ public class 申込Target {
     private String 給与振込;
     private BigDecimal 税込年収＿前々年;
     private BigDecimal 税込年収＿３年前;
+    private String 受付店番;
+    private String 店番;
+    private String 顧客番号;
+    private String 検索用カナ氏名姓;
+    private String 検索用カナ氏名名;
+    private BigDecimal 年齢;
+    private String 自宅電話番号;
+    private String 勤務先業種名;
+    private BigDecimal 税込年収;
+    private BigDecimal 適用年収;
+    private BigDecimal 家賃等月額;
+    private BigDecimal 居住年数;
+    private BigDecimal 資産＿預金;
+    private BigDecimal 資産＿その他;
+    private String 毎月返済日;
+    private BigDecimal 調達＿本件借入＿金額;
+    private BigDecimal 調達＿金融機関1＿利率;
+    private BigDecimal 調達＿金融機関2＿利率;
+    private BigDecimal 調達＿自己資金;
+    private BigDecimal 調達＿自己資金合計;
+    private BigDecimal 自己資金＿預貯金うち当行;
+    private String 勤務先職種その他;
 
     public String get申込番号() { return 申込番号; }
     public void set申込番号(String v) { this.申込番号 = v; }
@@ -153,6 +183,22 @@ public class 申込Target {
     public void set建物完成予定日(String v) { this.建物完成予定日 = v; }
     public String get検索用カナ氏名() { return 検索用カナ氏名; }
     public void set検索用カナ氏名(String v) { this.検索用カナ氏名 = v; }
+    public String getカナ氏名() { return カナ氏名; }
+    public void setカナ氏名(String v) { this.カナ氏名 = v; }
+    public String getカナ氏名姓() { return カナ氏名姓; }
+    public void setカナ氏名姓(String v) { this.カナ氏名姓 = v; }
+    public String getカナ氏名名() { return カナ氏名名; }
+    public void setカナ氏名名(String v) { this.カナ氏名名 = v; }
+    public String get漢字氏名() { return 漢字氏名; }
+    public void set漢字氏名(String v) { this.漢字氏名 = v; }
+    public String get漢字氏名姓() { return 漢字氏名姓; }
+    public void set漢字氏名姓(String v) { this.漢字氏名姓 = v; }
+    public String get漢字氏名名() { return 漢字氏名名; }
+    public void set漢字氏名名(String v) { this.漢字氏名名 = v; }
+    public String get勤務先住所漢字() { return 勤務先住所漢字; }
+    public void set勤務先住所漢字(String v) { this.勤務先住所漢字 = v; }
+    public String get勤務先企業区分() { return 勤務先企業区分; }
+    public void set勤務先企業区分(String v) { this.勤務先企業区分 = v; }
     public String get勤務先名漢字() { return 勤務先名漢字; }
     public void set勤務先名漢字(String v) { this.勤務先名漢字 = v; }
     public BigDecimal get勤務先入社年月() { return 勤務先入社年月; }
@@ -347,4 +393,48 @@ public class 申込Target {
     public void set税込年収＿前々年(BigDecimal v) { this.税込年収＿前々年 = v; }
     public BigDecimal get税込年収＿３年前() { return 税込年収＿３年前; }
     public void set税込年収＿３年前(BigDecimal v) { this.税込年収＿３年前 = v; }
+    public String get受付店番() { return 受付店番; }
+    public void set受付店番(String v) { this.受付店番 = v; }
+    public String get店番() { return 店番; }
+    public void set店番(String v) { this.店番 = v; }
+    public String get顧客番号() { return 顧客番号; }
+    public void set顧客番号(String v) { this.顧客番号 = v; }
+    public String get検索用カナ氏名姓() { return 検索用カナ氏名姓; }
+    public void set検索用カナ氏名姓(String v) { this.検索用カナ氏名姓 = v; }
+    public String get検索用カナ氏名名() { return 検索用カナ氏名名; }
+    public void set検索用カナ氏名名(String v) { this.検索用カナ氏名名 = v; }
+    public BigDecimal get年齢() { return 年齢; }
+    public void set年齢(BigDecimal v) { this.年齢 = v; }
+    public String get自宅電話番号() { return 自宅電話番号; }
+    public void set自宅電話番号(String v) { this.自宅電話番号 = v; }
+    public String get勤務先業種名() { return 勤務先業種名; }
+    public void set勤務先業種名(String v) { this.勤務先業種名 = v; }
+    public BigDecimal get税込年収() { return 税込年収; }
+    public void set税込年収(BigDecimal v) { this.税込年収 = v; }
+    public BigDecimal get適用年収() { return 適用年収; }
+    public void set適用年収(BigDecimal v) { this.適用年収 = v; }
+    public BigDecimal get家賃等月額() { return 家賃等月額; }
+    public void set家賃等月額(BigDecimal v) { this.家賃等月額 = v; }
+    public BigDecimal get居住年数() { return 居住年数; }
+    public void set居住年数(BigDecimal v) { this.居住年数 = v; }
+    public BigDecimal get資産＿預金() { return 資産＿預金; }
+    public void set資産＿預金(BigDecimal v) { this.資産＿預金 = v; }
+    public BigDecimal get資産＿その他() { return 資産＿その他; }
+    public void set資産＿その他(BigDecimal v) { this.資産＿その他 = v; }
+    public String get毎月返済日() { return 毎月返済日; }
+    public void set毎月返済日(String v) { this.毎月返済日 = v; }
+    public BigDecimal get調達＿本件借入＿金額() { return 調達＿本件借入＿金額; }
+    public void set調達＿本件借入＿金額(BigDecimal v) { this.調達＿本件借入＿金額 = v; }
+    public BigDecimal get調達＿金融機関1＿利率() { return 調達＿金融機関1＿利率; }
+    public void set調達＿金融機関1＿利率(BigDecimal v) { this.調達＿金融機関1＿利率 = v; }
+    public BigDecimal get調達＿金融機関2＿利率() { return 調達＿金融機関2＿利率; }
+    public void set調達＿金融機関2＿利率(BigDecimal v) { this.調達＿金融機関2＿利率 = v; }
+    public BigDecimal get調達＿自己資金() { return 調達＿自己資金; }
+    public void set調達＿自己資金(BigDecimal v) { this.調達＿自己資金 = v; }
+    public BigDecimal get調達＿自己資金合計() { return 調達＿自己資金合計; }
+    public void set調達＿自己資金合計(BigDecimal v) { this.調達＿自己資金合計 = v; }
+    public BigDecimal get自己資金＿預貯金うち当行() { return 自己資金＿預貯金うち当行; }
+    public void set自己資金＿預貯金うち当行(BigDecimal v) { this.自己資金＿預貯金うち当行 = v; }
+    public String get勤務先職種その他() { return 勤務先職種その他; }
+    public void set勤務先職種その他(String v) { this.勤務先職種その他 = v; }
 }

@@ -99,6 +99,31 @@
         <result property="預金＿家族預金3"   column="預金＿家族預金３"/>
         <result property="預金＿本人預金4"   column="預金＿本人預金４"/>
         <result property="預金＿家族預金4"   column="預金＿家族預金４"/>
+        <result property="カナ氏名"          column="カナ氏名"/>
+        <result property="漢字氏名"          column="漢字氏名"/>
+        <result property="勤務先住所漢字"    column="勤務先住所漢字"/>
+        <result property="借入＿年間支払額1" column="借入＿年間支払額１"/>
+        <result property="借入＿年間支払額2" column="借入＿年間支払額２"/>
+        <result property="借入＿年間支払額3" column="借入＿年間支払額３"/>
+        <result property="受付店番"          column="受付店番"/>
+        <result property="店番"              column="店番"/>
+        <result property="年齢"              column="年齢"/>
+        <result property="自宅電話番号"      column="自宅電話番号"/>
+        <result property="勤務先業種"        column="勤務先業種"/>
+        <result property="年収１"            column="年収１"/>
+        <result property="適用年収"          column="適用年収"/>
+        <result property="家賃"              column="家賃"/>
+        <result property="居住年数"          column="居住年数"/>
+        <result property="資産＿本人＿預金"  column="資産＿本人＿預金"/>
+        <result property="資産＿本人＿その他" column="資産＿本人＿その他"/>
+        <result property="毎月返済日"        column="毎月返済日"/>
+        <result property="調達＿本件借入"    column="調達＿本件借入"/>
+        <result property="調達＿その他1＿利率" column="調達＿その他１＿利率"/>
+        <result property="調達＿その他2＿利率" column="調達＿その他２＿利率"/>
+        <result property="調達＿自己資金"    column="調達＿自己資金"/>
+        <result property="調達＿自己資金合計" column="調達＿自己資金合計"/>
+        <result property="自己資金＿預貯金ウチ当行" column="自己資金＿預貯金ウチ当行"/>
+        <result property="勤務先職種役職"    column="勤務先職種役職"/>
         <!-- From 申込ワイド — aliased to avoid ambiguity -->
         <result property="上場フラグ"        column="w上場フラグ"/>
         <result property="国家資格"          column="w国家資格"/>
