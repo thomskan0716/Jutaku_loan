@@ -3,6 +3,8 @@ package migration.service;
 import migration.domain.source.申込Source;
 import migration.domain.source.申込審査段階Source;
 import migration.domain.source.申込進捗Source;
+import migration.domain.source.申込担保回答ＰＤＦSource;
+import migration.domain.source.申込審査履歴Source;
 import migration.domain.source.保証人Source;
 import migration.domain.target.申込Target;
 import migration.domain.target.申込審査状況Target;
@@ -16,12 +18,16 @@ import migration.domain.target.履歴保証検討表補足Target;
 import migration.domain.target.保証人Target;
 import migration.domain.target.申込_業者_住宅Target;
 import migration.domain.target.保証検討表補足Target;
+import migration.domain.target.申込担保情報ＰＤＦTarget;
+import migration.domain.target.申込審査履歴Target;
 import migration.domain.source.保証検討表補足Source;
 import migration.mapper.source.申込SourceMapper;
 import migration.mapper.source.申込審査段階SourceMapper;
 import migration.mapper.source.申込進捗SourceMapper;
 import migration.mapper.source.保証検討表補足SourceMapper;
 import migration.mapper.source.保証人SourceMapper;
+import migration.mapper.source.申込担保回答ＰＤＦSourceMapper;
+import migration.mapper.source.申込審査履歴SourceMapper;
 import migration.mapper.target.申込TargetMapper;
 import migration.mapper.target.申込審査状況TargetMapper;
 import migration.mapper.target.申込審査段階TargetMapper;
@@ -34,6 +40,8 @@ import migration.mapper.target.履歴保証検討表補足TargetMapper;
 import migration.mapper.target.保証人TargetMapper;
 import migration.mapper.target.申込_業者_住宅TargetMapper;
 import migration.mapper.target.保証検討表補足TargetMapper;
+import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
+import migration.mapper.target.申込審査履歴TargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,6 +64,8 @@ public class JutakuLoanService {
     @Autowired private 申込SourceMapper 申込SourceMapper;
     @Autowired private 保証人SourceMapper 保証人SourceMapper;
     @Autowired private 保証検討表補足SourceMapper 保証検討表補足SourceMapper;
+    @Autowired private 申込担保回答ＰＤＦSourceMapper 担保回答ＰＤＦSourceMapper;
+    @Autowired private 申込審査履歴SourceMapper 審査履歴SourceMapper;
 
     // --- Target mappers ---
     @Autowired private 申込進捗TargetMapper 進捗TargetMapper;
@@ -70,6 +80,8 @@ public class JutakuLoanService {
     @Autowired private 保証検討表補足TargetMapper 保証検討表補足TargetMapper;
     @Autowired private 履歴保証人TargetMapper 履歴保証人TargetMapper;
     @Autowired private 履歴保証検討表補足TargetMapper 履歴保証検討表補足TargetMapper;
+    @Autowired private 申込担保情報ＰＤＦTargetMapper 担保情報ＰＤＦTargetMapper;
+    @Autowired private 申込審査履歴TargetMapper 審査履歴TargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -240,6 +252,37 @@ public class JutakuLoanService {
             補足T.set申込番号(tgtNo);
             補足T.set申込目的(newMokuteki);
             保証検討表補足TargetMapper.insert(補足T);
+        }
+
+        // 申込担保情報ＰＤＦ target is loaded from 申込担保回答ＰＤＦ source. MAX only, FK to 申込, 1:N per application+purpose.
+        // ファイル種別 passes through from ファイル種類. Source has one file-name column, used for both target file-name columns.
+        List<申込担保回答ＰＤＦSource> pdfs =
+                担保回答ＰＤＦSourceMapper.selectByApplicationIdAndPurpose(srcNo, maxOldMokuteki);
+        for (申込担保回答ＰＤＦSource pdf : pdfs) {
+            申込担保情報ＰＤＦTarget pdfT = new 申込担保情報ＰＤＦTarget();
+            pdfT.set申込番号(tgtNo);
+            pdfT.set申込目的(newMokuteki);
+            pdfT.setファイル種別(pdf.getファイル種類());
+            pdfT.setファイル名称(pdf.getファイル名());
+            pdfT.setデータファイル名(pdf.getファイル名());
+            担保情報ＰＤＦTargetMapper.insert(pdfT);
+        }
+
+        // ③-c 申込審査履歴 event log (MAX only) — FK→申込. 1:N per (申込番号, 申込目的).
+        // All columns passthrough with source-provided 回数. 進捗コード conversion is a later 編集仕様詳細 task.
+        List<申込審査履歴Source> reviewLogs =
+                審査履歴SourceMapper.selectByApplicationIdAndPurpose(srcNo, maxOldMokuteki);
+        for (申込審査履歴Source rh : reviewLogs) {
+            申込審査履歴Target rhT = new 申込審査履歴Target();
+            rhT.set申込番号(tgtNo);
+            rhT.set申込目的(newMokuteki);
+            rhT.setイベント(rh.getイベント());
+            rhT.setイベント日時(rh.getイベント日時());
+            rhT.set進捗コード(rh.get進捗コード());
+            rhT.setユーザID(rh.getユーザID());
+            rhT.setユーザ名(rh.getユーザ名());
+            rhT.set回数(rh.get回数());
+            審査履歴TargetMapper.insert(rhT);
         }
 
         // ④-⑧ History for every completed record in this group

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.申込担保回答ＰＤＦSourceMapper">
+
+    <resultMap id="collateralPdfSourceMap" type="migration.domain.source.申込担保回答ＰＤＦSource">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="ファイル種類" column="ファイル種類"/>
+        <result property="ファイル名" column="ファイル名"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="collateralPdfSourceMap">
+        SELECT
+            申込番号,
+            申込目的,
+            ファイル種類,
+            ファイル名
+        FROM 申込担保回答ＰＤＦ
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY ファイル種類
+    </select>
+
+</mapper>
