@@ -8,6 +8,12 @@
         <id property="申込番号" column="申込番号"/>
         <result property="進捗コード" column="進捗コード"/>
         <result property="状態"       column="状態"/>
+        <result property="進捗移動日時"         column="進捗移動日時"/>
+        <result property="表示形式"             column="表示形式"/>
+        <result property="優先度"               column="優先度"/>
+        <result property="コメント"             column="コメント"/>
+        <result property="前進捗コード"         column="前進捗コード"/>
+        <result property="進捗移動担当者コード" column="進捗移動担当者コード"/>
     </resultMap>
 
     <!--
@@ -17,7 +23,9 @@
     -->
     <select id="selectByRowRange" resultMap="shinseiProgressSourceMap">
         <![CDATA[
-        SELECT p.申込番号, p.進捗コード, p.状態
+        SELECT p.申込番号, p.進捗コード, p.状態,
+               p.進捗移動日時, p.表示形式, p.優先度,
+               p.コメント, p.前進捗コード, p.進捗移動担当者コード
         FROM (
             SELECT inner_q.申込番号,
                    ROW_NUMBER() OVER (ORDER BY inner_q.申込番号) AS rn

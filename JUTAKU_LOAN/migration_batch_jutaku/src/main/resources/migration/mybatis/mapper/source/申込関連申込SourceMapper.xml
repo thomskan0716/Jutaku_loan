@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.申込関連申込SourceMapper">
+
+    <resultMap id="relatedAppSourceMap" type="migration.domain.source.申込関連申込Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="関連申込番号" column="関連申込番号"/>
+        <result property="関連区分" column="関連区分"/>
+    </resultMap>
+
+    <select id="selectByApplicationId" resultMap="relatedAppSourceMap">
+        SELECT 申込番号, 関連区分, 関連申込番号
+        FROM 申込関連申込
+        WHERE 申込番号 = #{申込番号}
+        ORDER BY 関連申込番号
+    </select>
+
+</mapper>
