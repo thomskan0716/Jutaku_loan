@@ -205,7 +205,13 @@ public class JutakuLoanService {
             appT.set申込番号(tgtNo);
             appT.set申込目的(newMokuteki);
             map申込Columns(maxApp, appT);
-            申込TargetMapper.insert(appT);
+            // String/number fitting is handled automatically by ColumnFitInterceptor.
+            try {
+                申込TargetMapper.insert(appT);
+            } catch (RuntimeException ex) {
+                dump申込Numerics(tgtNo, appT);
+                throw ex;
+            }
 
             // ①-a 申込_業者_住宅 main (MAX only) — FK→申込
             申込_業者_住宅Target 業者T = new 申込_業者_住宅Target();
@@ -317,89 +323,140 @@ public class JutakuLoanService {
         return "3" + src.substring(1);
     }
 
+    /** Truncate a value to fit within maxBytes bytes in MS932 (Shift-JIS) encoding (null-safe).
+     *  Use for VARCHAR2(N) columns where N is the BYTE limit in an Oracle Shift-JIS database. */
+    private static String truncate(String v, int maxBytes) {
+        if (v == null) return null;
+        try {
+            if (v.getBytes("MS932").length <= maxBytes) return v;
+            int len = v.length();
+            while (len > 0 && v.substring(0, len).getBytes("MS932").length > maxBytes) {
+                len--;
+            }
+            return v.substring(0, len);
+        } catch (java.io.UnsupportedEncodingException e) {
+            return v.length() > maxBytes ? v.substring(0, maxBytes) : v;
+        }
+    }
+
+    /**
+     * Split a full name into [surname, givenName] on the first occurrence of {@code delim}.
+     * Returns {full, null} when no delimiter is present, {null, null} when input is null.
+     */
+    private static String[] splitName(String full, String delim) {
+        if (full == null) {
+            return new String[]{null, null};
+        }
+        int i = full.indexOf(delim);
+        if (i < 0) {
+            return new String[]{full, null};
+        }
+        String sei = full.substring(0, i);
+        String mei = full.substring(i + delim.length());
+        return new String[]{sei.isEmpty() ? null : sei, mei.isEmpty() ? null : mei};
+    }
+
+    /**
+     * Diagnostic: ORA-01438 does not name the offending column, so on insert
+     * failure we log every non-null BigDecimal field with its precision/scale.
+     * The field with the largest precision is the likely ORA-01438 culprit.
+     */
+    private void dump申込Numerics(String tgtNo, 申込Target t) {
+        log.error("=== ORA diagnostic: numeric fields for 申込番号={} ===", tgtNo);
+        for (java.lang.reflect.Field f : t.getClass().getDeclaredFields()) {
+            if (!java.math.BigDecimal.class.equals(f.getType())) {
+                continue;
+            }
+            try {
+                f.setAccessible(true);
+                java.math.BigDecimal v = (java.math.BigDecimal) f.get(t);
+                if (v != null) {
+                    log.error("  {} = {} (precision={}, scale={})",
+                            f.getName(), v.toPlainString(), v.precision(), v.scale());
+                }
+            } catch (IllegalAccessException ignore) {
+                // skip inaccessible field
+            }
+        }
+        log.error("=== end diagnostic ===");
+    }
+
     /** Map all non-PK columns from 申込Source to 申込Target. */
     private void map申込Columns(申込Source s, 申込Target t) {
         t.set商品大分類(s.get商品大分類());
         t.set商品コード(s.get商品コード());
-        t.set受付店舗(s.get受付店舗());
         t.set保証番号(s.get保証番号());
         t.set関連案件有無(s.get関連案件有無());
         t.set申込日(s.get申込日());
-        t.set店舗(s.get店舗());
         t.setＣＩＦ番号(s.getＣＩＦ番号());
-
-        // カナ氏名: direct + split on half-width space
-        String kana = s.getカナ氏名();
-        t.setカナ氏名(kana);
-        if (kana != null) {
-            int i = kana.indexOf(' ');
-            t.setカナ氏名姓(i >= 0 ? kana.substring(0, i) : kana);
-            t.setカナ氏名名(i >= 0 ? kana.substring(i + 1) : null);
-        }
-
-        // 漢字氏名: direct + split on full-width space (U+3000)
-        String kanji = s.get漢字氏名();
-        t.set漢字氏名(kanji);
-        if (kanji != null) {
-            int i = kanji.indexOf('　');
-            t.set漢字氏名姓(i >= 0 ? kanji.substring(0, i) : kanji);
-            t.set漢字氏名名(i >= 0 ? kanji.substring(i + 1) : null);
-        }
+        t.set顧客番号(s.getＣＩＦ番号());
+        t.set受付店番(s.get受付店番());
+        t.set店番(s.get店番());
 
         t.set自宅郵便番号(s.get自宅郵便番号());
         t.set自宅住所カナ(s.get自宅住所カナ());
         t.set自宅住所漢字(s.get自宅住所漢字());
         t.set生年月日(s.get生年月日());
         t.set性別(s.get性別());
+        t.set年齢(s.get年齢());
         t.set勤務先郵便番号(s.get勤務先郵便番号());
         t.set携帯電話番号(s.get携帯電話番号());
+        t.set自宅電話番号(s.get自宅電話番号());
         t.set建物完成予定日(s.get建物完成予定日());
-        t.set検索用カナ氏名(s.get検索用カナ氏名());
-        t.set勤務先名漢字(s.get勤務先名漢字());
+        t.set検索用カナ氏名(s.get検索用カナ氏名());   // TODO: confirm target char_length and add truncate if needed
+        // 氏名: keep full name, and split 姓/名 on the space (kana=half-width, kanji=full-width).
+        // Over-length is auto-truncated to the target column byte size by ColumnFitInterceptor.
+        t.setカナ氏名(s.getカナ氏名());
+        String[] kanaName = splitName(s.getカナ氏名(), " ");
+        t.setカナ氏名姓(kanaName[0]);
+        t.setカナ氏名名(kanaName[1]);
+        // 検索用カナ氏名姓/名 also derive from source カナ氏名 (same split).
+        t.set検索用カナ氏名姓(kanaName[0]);
+        t.set検索用カナ氏名名(kanaName[1]);
+        t.set漢字氏名(s.get漢字氏名());
+        String[] kanjiName = splitName(s.get漢字氏名(), "\u3000"); // full-width space
+        t.set漢字氏名姓(kanjiName[0]);
+        t.set漢字氏名名(kanjiName[1]);
+        t.set勤務先名漢字(truncate(s.get勤務先名漢字(), 120));
+        t.set勤務先住所漢字(s.get勤務先住所漢字());
+        t.set勤務先企業区分(s.get上場フラグ());   // checkbox: 1=チェック有り / 0=チェック無し
+        t.set勤務先業種名(s.get勤務先業種());
+        t.set勤務先職種その他(s.get勤務先職種役職());
         t.set勤務先入社年月(s.get勤務先入社年月());
         t.set勤務先勤続年数(s.get勤務先勤続年数());
-        t.set勤務先業態区分(s.get上場フラグ());   // 申込ワイド.上場フラグ → 勤務先業態区分
         t.set勤務先勤業(s.get勤務先職業());
-        t.set勤務先勤種(s.get勤務先職種役取());   // direct code copy
-        t.set勤務先勤種その他(null);               // requires 編集仕様詳細 — set null for now
         t.set勤務先資本金区分(s.get勤務先資本金区分());
         t.set勤務先逐業員数(s.get勤務先従業員数());
         t.set住居形態(s.get住居区分());
-        t.set定積(s.get定積());
-        t.set展示年数(s.get展示年数());
-        t.set定積＿子の他(s.get定積＿子の他());
-
         // 金融機関 1
-        t.set金融機関1名称(s.get借入＿利用先名1());
+        t.set金融機関1名称(truncate(s.get借入＿利用先名1(), 30));
         t.set金融機関1借入種類(s.get借入＿利用種類1());
         t.set金融機関1残高(s.get借入＿利用残高1());
-        t.set金融機関1借入年間返済額(s.get借入＿年間変払額1());
         t.set金融機関1借入期間(s.get借入＿残存期間1());
         t.set金融機関1借入時完済解約予定(s.get借入＿解約予定1());
         t.set金融機関1利用限度額(s.get借入＿利用限度額1());
+        t.set金融機関1借入年間返済額(s.get借入＿年間支払額1());
         // 金融機関 2
-        t.set金融機関2名称(s.get借入＿利用先名2());
+        t.set金融機関2名称(truncate(s.get借入＿利用先名2(), 30));
         t.set金融機関2借入種類(s.get借入＿利用種類2());
         t.set金融機関2残高(s.get借入＿利用残高2());
-        t.set金融機関2借入年間返済額(s.get借入＿年間変払額2());
         t.set金融機関2借入期間(s.get借入＿残存期間2());
         t.set金融機関2借入時完済解約予定(s.get借入＿解約予定2());
         t.set金融機関2利用限度額(s.get借入＿利用限度額2());
+        t.set金融機関2借入年間返済額(s.get借入＿年間支払額2());
         // 金融機関 3
-        t.set金融機関3名称(s.get借入＿利用先名3());
+        t.set金融機関3名称(truncate(s.get借入＿利用先名3(), 30));
         t.set金融機関3借入種類(s.get借入＿利用種類3());
         t.set金融機関3残高(s.get借入＿利用残高3());
-        t.set金融機関3借入年間返済額(s.get借入＿年間変払額3());
         t.set金融機関3借入期間(s.get借入＿残存期間3());
         t.set金融機関3借入時完済解約予定(s.get借入＿解約予定3());
         t.set金融機関3利用限度額(s.get借入＿利用限度額3());
+        t.set金融機関3借入年間返済額(s.get借入＿年間支払額3());
 
         t.set資金使途(s.get資金使途());
         t.set借入金額(s.get借入金額());
         t.set借入金額＿毎月(s.get借入金額＿毎月());
-        t.set借入金額＿半年額(s.get借入金額＿半年額());
-        t.set返済額＿毎月(s.get借入金額＿毎月());
-        t.set返済額＿半年毎(s.get借入金額＿半年額());
+        t.set借入金額＿半年毎(s.get借入金額＿半年毎());
         t.set借入期間(s.get借入期間());
         t.set借入希望日(s.get借入希望日());
         t.set借入希望日＿建物(s.get借入希望日＿建物());
@@ -416,7 +473,6 @@ public class JutakuLoanService {
         java.math.BigDecimal otherCount = s.get同居＿その他人数();
         t.set同居予定家族＿その他(otherCount != null && otherCount.compareTo(java.math.BigDecimal.ZERO) > 0 ? "1" : "0");
         t.set同居予定家族＿その他＿人数(otherCount);
-        t.set同居予定家族＿子供人数(s.get同居＿子の人数());
         t.set同居予定家族＿子供年齢＿1人目(s.get同居＿子供年齢1());
         t.set同居予定家族＿子供年齢＿2人目(s.get同居＿子供年齢2());
         t.set同居予定家族＿子供年齢＿3人目(s.get同居＿子供年齢3());
@@ -429,19 +485,17 @@ public class JutakuLoanService {
         if ("1".equals(s.get同居＿父()))    total++;
         if ("1".equals(s.get同居＿母()))    total++;
         if (otherCount != null) total += otherCount.intValue();
-        if (s.get同居＿子の人数() != null) total += s.get同居＿子の人数().intValue();
         t.set同居予定家族＿合計人数(new java.math.BigDecimal(total));
 
         t.set婚姻区分(s.get婚姻区分());
-        t.set商品分類(s.get申込審区分());
-        t.set外部連携受付番号(s.get外部連携受付番号());
+        t.set外部連携受付番号(truncate(s.get外部連携受付番号(), 12));
         t.set勤務先資本金＿外部ローン(s.get勤務先資本金());
         t.set土地契約予定日(s.get土地契約予定日());
 
-        t.set預金＿金融機関1＿名称(s.get預金＿金融機関名1());
+        t.set預金＿金融機関1＿名称(truncate(s.get預金＿金融機関名1(), 30));
         t.set預金＿金融機関1＿本人預金(s.get預金＿本人預金1());
         t.set預金＿金融機関1＿家族預金(s.get預金＿家族預金1());
-        t.set預金＿金融機関2＿名称(s.get預金＿金融機関名2());
+        t.set預金＿金融機関2＿名称(truncate(s.get預金＿金融機関名2(), 30));
         t.set預金＿金融機関2＿本人預金(s.get預金＿本人預金2());
         t.set預金＿金融機関2＿家族預金(s.get預金＿家族預金2());
         t.set預金＿金融機関3＿本人預金(s.get預金＿本人預金3());
@@ -453,7 +507,7 @@ public class JutakuLoanService {
 
         // From 申込ワイド
         t.set国家資格(s.get国家資格());
-        t.set国家資格＿その他(s.get国家資格子の他());
+        t.set国家資格＿その他(truncate(s.get国家資格子の他(), 30));
         t.set配偶者年収(s.get配偶者年収());
 
         // 資金使途 derived columns — require 編集仕様詳細 (code tables 2332/2333/2334)
@@ -465,25 +519,38 @@ public class JutakuLoanService {
         // 必要資金
         t.set必要資金＿土地(s.get必要資金＿土地());
         t.set必要資金＿建物(s.get必要資金＿建物());
-        t.set必要資金＿借替(s.get必要資金＿借替());
         t.set必要資金＿諸費用(s.get必要資金＿諸費用());
         t.set必要資金＿その他(s.get必要資金＿その他());
         t.set必要資金＿合計(s.get必要資金＿合計());
         // 調達＿金融機関
-        t.set調達＿金融機関1＿名称(s.get調達＿その他1＿借入先());
+        t.set調達＿本件借入＿金額(s.get調達＿本件借入());
+        t.set調達＿金融機関1＿名称(truncate(s.get調達＿その他1＿借入先(), 30));
         t.set調達＿金融機関1＿金額(s.get調達＿その他1());
         t.set調達＿金融機関1＿期間(s.get調達＿その他1＿期間());
-        t.set調達＿金融機関2＿名称(s.get調達＿その他2＿借入先());
+        t.set調達＿金融機関1＿利率(s.get調達＿その他1＿利率());
+        t.set調達＿金融機関2＿名称(truncate(s.get調達＿その他2＿借入先(), 30));
         t.set調達＿金融機関2＿金額(s.get調達＿その他2());
         t.set調達＿金融機関2＿期間(s.get調達＿その他2＿期間());
+        t.set調達＿金融機関2＿利率(s.get調達＿その他2＿利率());
+        t.set調達＿自己資金(s.get調達＿自己資金());
+        t.set調達＿自己資金合計(s.get調達＿自己資金合計());
         t.set調達＿合計(s.get調達＿合計());
         // 自己資金
         t.set自己資金＿預貯金(s.get自己資金＿預貯金());
+        t.set自己資金＿預貯金うち当行(s.get自己資金＿預貯金ウチ当行());
         t.set自己資金＿その他(s.get自己資金＿その他());
         t.set自己資金＿贈与(s.get自己資金＿贈与());
-        t.set給与振込(s.get勤務先給与振込());
+        // 税込年収: 前年=年収１ / 前々年=年収２ / ３年前=年収３
+        t.set税込年収(s.get年収１());
         t.set税込年収＿前々年(s.get年収２());
         t.set税込年収＿３年前(s.get年収３());
+        // その他 申込 項目
+        t.set適用年収(s.get適用年収());
+        t.set家賃等月額(s.get家賃());
+        t.set居住年数(s.get居住年数());
+        t.set資産＿預金(s.get資産＿本人＿預金());
+        t.set資産＿その他(s.get資産＿本人＿その他());
+        t.set毎月返済日(s.get毎月返済日());
     }
 
 }
