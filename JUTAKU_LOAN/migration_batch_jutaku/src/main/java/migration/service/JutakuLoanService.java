@@ -3,11 +3,13 @@ package migration.service;
 import migration.domain.source.申込Source;
 import migration.domain.source.申込審査段階Source;
 import migration.domain.source.申込進捗Source;
+import migration.domain.source.申込関連申込Source;
 import migration.domain.source.保証人Source;
 import migration.domain.target.申込Target;
 import migration.domain.target.申込審査状況Target;
 import migration.domain.target.申込審査段階Target;
 import migration.domain.target.申込進捗Target;
+import migration.domain.target.申込関連申込Target;
 import migration.domain.target.履歴申込Target;
 import migration.domain.target.履歴申込_業者_住宅Target;
 import migration.domain.target.履歴申込審査段階Target;
@@ -20,12 +22,14 @@ import migration.domain.source.保証検討表補足Source;
 import migration.mapper.source.申込SourceMapper;
 import migration.mapper.source.申込審査段階SourceMapper;
 import migration.mapper.source.申込進捗SourceMapper;
+import migration.mapper.source.申込関連申込SourceMapper;
 import migration.mapper.source.保証検討表補足SourceMapper;
 import migration.mapper.source.保証人SourceMapper;
 import migration.mapper.target.申込TargetMapper;
 import migration.mapper.target.申込審査状況TargetMapper;
 import migration.mapper.target.申込審査段階TargetMapper;
 import migration.mapper.target.申込進捗TargetMapper;
+import migration.mapper.target.申込関連申込TargetMapper;
 import migration.mapper.target.履歴申込TargetMapper;
 import migration.mapper.target.履歴申込_業者_住宅TargetMapper;
 import migration.mapper.target.履歴申込審査段階TargetMapper;
@@ -56,6 +60,7 @@ public class JutakuLoanService {
     @Autowired private 申込SourceMapper 申込SourceMapper;
     @Autowired private 保証人SourceMapper 保証人SourceMapper;
     @Autowired private 保証検討表補足SourceMapper 保証検討表補足SourceMapper;
+    @Autowired private 申込関連申込SourceMapper 申込関連申込SourceMapper;
 
     // --- Target mappers ---
     @Autowired private 申込進捗TargetMapper 進捗TargetMapper;
@@ -70,6 +75,7 @@ public class JutakuLoanService {
     @Autowired private 保証検討表補足TargetMapper 保証検討表補足TargetMapper;
     @Autowired private 履歴保証人TargetMapper 履歴保証人TargetMapper;
     @Autowired private 履歴保証検討表補足TargetMapper 履歴保証検討表補足TargetMapper;
+    @Autowired private 申込関連申込TargetMapper 申込関連申込TargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -149,11 +155,19 @@ public class JutakuLoanService {
             return false;
         }
 
-        // 申込進捗: 1:1 copy (申込番号 converted; 進捗コード/状態 passed through — NOT NULL in target)
+        // 申込進捗: 1:1 copy (申込番号 converted; other columns passed through)
+        // TODO(編集仕様詳細): 進捗コード requires code conversion based on 申込.商品大分類
+        //   (e.g. 住宅ローン→'Z73E00', 外部ローン→'E5010'). Currently passthrough.
         申込進捗Target 進捗Target = new 申込進捗Target();
         進捗Target.set申込番号(tgtNo);
         進捗Target.set進捗コード(進捗.get進捗コード());
         進捗Target.set状態(進捗.get状態());
+        進捗Target.set進捗移動日時(進捗.get進捗移動日時());
+        進捗Target.set表示形式(進捗.get表示形式());
+        進捗Target.set優先度(進捗.get優先度());
+        進捗Target.setコメント(進捗.getコメント());
+        進捗Target.set前進捗コード(進捗.get前進捗コード());
+        進捗Target.set進捗移動担当者コード(進捗.get進捗移動担当者コード());
         進捗TargetMapper.insert(進捗Target);
 
         // 事前審査グループ (申込目的: 10, 15 → new '10')
@@ -168,6 +182,15 @@ public class JutakuLoanService {
 
         processGroup(srcNo, tgtNo, 事前, "10");
         processGroup(srcNo, tgtNo, 正式, "20");
+
+        // 申込関連申込: 1:N per 申込番号 (no 申込目的). Both 申込番号 and 関連申込番号 are 2→3 converted.
+        for (申込関連申込Source rel : 申込関連申込SourceMapper.selectByApplicationId(srcNo)) {
+            申込関連申込Target relT = new 申込関連申込Target();
+            relT.set申込番号(tgtNo);
+            relT.set関連区分(rel.get関連区分());
+            relT.set関連申込番号(convertApplicationNumber(rel.get関連申込番号()));
+            申込関連申込TargetMapper.insert(relT);
+        }
 
         log.debug("Migrated 申込番号={} → {} (事前={}, 正式={})", srcNo, tgtNo, 事前.size(), 正式.size());
         return true;
