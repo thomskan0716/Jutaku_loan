@@ -1,0 +1,59 @@
+---
+description: Always apply 編集仕様詳細 code conversions when migrating any table/column
+alwaysApply: true
+---
+
+# 編集仕様詳細 (edit-spec) is mandatory for every table
+
+When implementing migration for ANY table/column (not just 申込), you MUST check the
+`(別紙)編集仕様詳細` sheet of `詳細設計書_住宅ローンデータ移行` for that column BEFORE mapping it.
+Never assume a column is a plain 1:1 pass-through — many require code conversion or are derived.
+
+**Source of truth (read these first)** — durable transcriptions in `JUTAKU_LOAN/project_manual/`:
+- `編集仕様詳細_CODE_TABLES.md` — every code-conversion table.
+- `テーブルマッピング_TABLE_MAPPING.md` — in-scope target←source table mappings.
+- `カラムマッピング_COLUMN_MAPPING.md` — per-column source→target mappings (add when shared).
+
+Always consult these (and any newly shared design-doc images) before implementing a table.
+When the user shares new spec images, transcribe them into the matching file so nothing is lost
+across sessions (chat images are NOT reloaded in later sessions).
+
+## Rules
+
+- **Look up every coded column** in 編集仕様詳細 (code tables like 商品大分類, 借入種類,
+  住居形態, 進捗コード, 続柄, 保証人事由, 審査結果, 職業形態 2080/2083, 職種 2085/2084, etc.).
+- **Branching specs**: some conversions branch on `申込.商品大分類` (住宅=1 / ワイド=2 / 外部ローン=4)
+  or on other fields (e.g. 続柄 branches on 商品大分類 + 保証人事由). Honor the branch.
+- **Derived columns**: some source columns explode into several target columns
+  (e.g. 資金使途 → 物件種別 / マンション / マンション以外). Implement the derivation.
+- **縦持ち→横持ち**: some details are vertical→horizontal transforms (e.g. 審査結果事由). Handle accordingly.
+- **Never guess financial codes.** Any yellow/undecided cell must be left as the source
+  value (or null per spec) with an explicit `TODO(編集仕様詳細)` comment.
+
+## Pattern to follow
+
+Implement each conversion as a small, null-safe `conv***()` helper (switch-based) in the
+service, then call it from the `map***Columns` method — mirror the existing `conv商品大分類`,
+`conv借入種類`, `conv進捗コード`, `map資金使途Derived` helpers in
+`JUTAKU_LOAN/.../service/JutakuLoanService.java`.
+
+```java
+private static String conv借入時完済解約予定(String v) {
+    if (v == null) return null;
+    switch (v) {
+        case "0": return "2"; // 無 → なし
+        case "1": return "1"; // 有 → あり
+        default:  return v;   // TODO(編集仕様詳細): 未定
+    }
+}
+```
+
+DB column names and code values use full-width Japanese characters where the schema does.
+
+## Documentation style (all project_manual docs)
+
+- Write prose/explanations in **English**.
+- Keep **table and column names in Japanese**, followed by the reading + English gloss in
+  brackets on first use: `名前 (よみがな / English)`.
+  - e.g. `申込 (もうしこみ / Application)`, `商品大分類 (しょうひんだいぶんるい / Product Major Category)`.
+- Code values / enum labels stay as-is (e.g. `1→8`, `JT0010`).

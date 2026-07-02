@@ -9,4 +9,3 @@ public interface 申込関連申込SourceMapper {
 
     List<申込関連申込Source> selectByApplicationId(@Param("申込番号") String 申込番号);
 }
-

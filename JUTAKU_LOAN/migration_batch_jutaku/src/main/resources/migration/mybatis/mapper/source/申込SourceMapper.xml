@@ -9,21 +9,15 @@
         <id  property="申込目的"            column="申込目的"/>
         <result property="商品大分類"        column="商品大分類"/>
         <result property="商品コード"        column="商品コード"/>
-        <result property="受付店舗"          column="受付店舗"/>
         <result property="保証番号"          column="保証番号"/>
         <result property="関連案件有無"      column="関連案件有無"/>
         <result property="申込日"            column="申込日"/>
-        <result property="店舗"              column="店舗"/>
         <result property="ＣＩＦ番号"        column="ＣＩＦ番号"/>
-        <result property="カナ氏名"          column="カナ氏名"/>
-        <result property="漢字氏名"          column="漢字氏名"/>
         <result property="自宅郵便番号"      column="自宅郵便番号"/>
         <result property="自宅住所カナ"      column="自宅住所カナ"/>
         <result property="自宅住所漢字"      column="自宅住所漢字"/>
         <result property="生年月日"          column="生年月日"/>
         <result property="性別"              column="性別"/>
-        <result property="自宅申込番号"      column="自宅申込番号"/>
-        <result property="担保申込番号"      column="担保申込番号"/>
         <result property="勤務先郵便番号"    column="勤務先郵便番号"/>
         <result property="携帯電話番号"      column="携帯電話番号"/>
         <result property="建物完成予定日"    column="建物完成予定日"/>
@@ -32,41 +26,33 @@
         <result property="勤務先入社年月"    column="勤務先入社年月"/>
         <result property="勤務先勤続年数"    column="勤務先勤続年数"/>
         <result property="勤務先職業"        column="勤務先職業"/>
-        <result property="勤務先職種役取"    column="勤務先職種役取"/>
         <result property="勤務先資本金区分"  column="勤務先資本金区分"/>
         <result property="勤務先従業員数"    column="勤務先従業員数"/>
         <result property="住居区分"          column="住居区分"/>
-        <result property="定積"              column="定積"/>
-        <result property="展示年数"          column="展示年数"/>
-        <result property="定積＿子の他"      column="定積＿子の他"/>
         <result property="勤務先歩合給区分"  column="勤務先歩合給区分"/>
-        <result property="勤務先給料払込"    column="勤務先給料払込"/>
         <result property="勤務先資本金"      column="勤務先資本金"/>
         <result property="借入＿利用先名1"   column="借入＿利用先名１"/>
         <result property="借入＿利用種類1"   column="借入＿利用種類１"/>
         <result property="借入＿利用残高1"   column="借入＿利用残高１"/>
-        <result property="借入＿年間変払額1" column="借入＿年間変払額１"/>
         <result property="借入＿残存期間1"   column="借入＿残存期間１"/>
         <result property="借入＿解約予定1"   column="借入＿解約予定１"/>
         <result property="借入＿利用限度額1" column="借入＿利用限度額１"/>
         <result property="借入＿利用先名2"   column="借入＿利用先名２"/>
         <result property="借入＿利用種類2"   column="借入＿利用種類２"/>
         <result property="借入＿利用残高2"   column="借入＿利用残高２"/>
-        <result property="借入＿年間変払額2" column="借入＿年間変払額２"/>
         <result property="借入＿残存期間2"   column="借入＿残存期間２"/>
         <result property="借入＿解約予定2"   column="借入＿解約予定２"/>
         <result property="借入＿利用限度額2" column="借入＿利用限度額２"/>
         <result property="借入＿利用先名3"   column="借入＿利用先名３"/>
         <result property="借入＿利用種類3"   column="借入＿利用種類３"/>
         <result property="借入＿利用残高3"   column="借入＿利用残高３"/>
-        <result property="借入＿年間変払額3" column="借入＿年間変払額３"/>
         <result property="借入＿残存期間3"   column="借入＿残存期間３"/>
         <result property="借入＿解約予定3"   column="借入＿解約予定３"/>
         <result property="借入＿利用限度額3" column="借入＿利用限度額３"/>
         <result property="資金使途"          column="資金使途"/>
         <result property="借入金額"          column="借入金額"/>
         <result property="借入金額＿毎月"    column="借入金額＿毎月"/>
-        <result property="借入金額＿半年額"  column="借入金額＿半年額"/>
+        <result property="借入金額＿半年毎"  column="借入金額＿半年毎"/>
         <result property="借入期間"          column="借入期間"/>
         <result property="借入希望日"        column="借入希望日"/>
         <result property="借入希望日＿建物"  column="借入希望日＿建物"/>
@@ -75,11 +61,8 @@
         <result property="保証料区分"        column="保証料区分"/>
         <result property="ボーナス返済月1"   column="ボーナス返済月１"/>
         <result property="ボーナス返済月2"   column="ボーナス返済月２"/>
-        <result property="返済比率2"         column="返済比率２"/>
-        <result property="返済比率3"         column="返済比率３"/>
         <result property="必要資金＿土地"        column="必要資金＿土地"/>
         <result property="必要資金＿建物"        column="必要資金＿建物"/>
-        <result property="必要資金＿借替"        column="必要資金＿借替"/>
         <result property="必要資金＿諸費用"      column="必要資金＿諸費用"/>
         <result property="必要資金＿その他"      column="必要資金＿その他"/>
         <result property="必要資金＿合計"        column="必要資金＿合計"/>
@@ -93,23 +76,19 @@
         <result property="自己資金＿預貯金"      column="自己資金＿預貯金"/>
         <result property="自己資金＿その他"      column="自己資金＿その他"/>
         <result property="自己資金＿贈与"        column="自己資金＿贈与"/>
-        <result property="勤務先給与振込"        column="勤務先給与振込"/>
         <result property="同居＿配偶者"      column="同居＿配偶者"/>
         <result property="同居＿父"          column="同居＿父"/>
         <result property="同居＿母"          column="同居＿母"/>
         <result property="同居＿その他人数"  column="同居＿その他人数"/>
-        <result property="同居＿子の人数"    column="同居＿子の人数"/>
         <result property="同居＿子供年齢1"   column="同居＿子供年齢１"/>
         <result property="同居＿子供年齢2"   column="同居＿子供年齢２"/>
         <result property="同居＿子供年齢3"   column="同居＿子供年齢３"/>
         <result property="同居＿子供年齢4"   column="同居＿子供年齢４"/>
         <result property="婚姻区分"          column="婚姻区分"/>
-        <result property="申込審区分"        column="申込審区分"/>
         <result property="年収２"            column="年収２"/>
         <result property="年収３"            column="年収３"/>
         <result property="外部連携受付番号"  column="外部連携受付番号"/>
         <result property="土地契約予定日"    column="土地契約予定日"/>
-        <result property="担保完成予定日"    column="担保完成予定日"/>
         <result property="預金＿金融機関名1" column="預金＿金融機関名１"/>
         <result property="預金＿本人預金1"   column="預金＿本人預金１"/>
         <result property="預金＿家族預金1"   column="預金＿家族預金１"/>
@@ -120,6 +99,31 @@
         <result property="預金＿家族預金3"   column="預金＿家族預金３"/>
         <result property="預金＿本人預金4"   column="預金＿本人預金４"/>
         <result property="預金＿家族預金4"   column="預金＿家族預金４"/>
+        <result property="カナ氏名"          column="カナ氏名"/>
+        <result property="漢字氏名"          column="漢字氏名"/>
+        <result property="勤務先住所漢字"    column="勤務先住所漢字"/>
+        <result property="借入＿年間支払額1" column="借入＿年間支払額１"/>
+        <result property="借入＿年間支払額2" column="借入＿年間支払額２"/>
+        <result property="借入＿年間支払額3" column="借入＿年間支払額３"/>
+        <result property="受付店番"          column="受付店番"/>
+        <result property="店番"              column="店番"/>
+        <result property="年齢"              column="年齢"/>
+        <result property="自宅電話番号"      column="自宅電話番号"/>
+        <result property="勤務先業種"        column="勤務先業種"/>
+        <result property="年収１"            column="年収１"/>
+        <result property="適用年収"          column="適用年収"/>
+        <result property="家賃"              column="家賃"/>
+        <result property="居住年数"          column="居住年数"/>
+        <result property="資産＿本人＿預金"  column="資産＿本人＿預金"/>
+        <result property="資産＿本人＿その他" column="資産＿本人＿その他"/>
+        <result property="毎月返済日"        column="毎月返済日"/>
+        <result property="調達＿本件借入"    column="調達＿本件借入"/>
+        <result property="調達＿その他1＿利率" column="調達＿その他１＿利率"/>
+        <result property="調達＿その他2＿利率" column="調達＿その他２＿利率"/>
+        <result property="調達＿自己資金"    column="調達＿自己資金"/>
+        <result property="調達＿自己資金合計" column="調達＿自己資金合計"/>
+        <result property="自己資金＿預貯金ウチ当行" column="自己資金＿預貯金ウチ当行"/>
+        <result property="勤務先職種役職"    column="勤務先職種役職"/>
         <!-- From 申込ワイド — aliased to avoid ambiguity -->
         <result property="上場フラグ"        column="w上場フラグ"/>
         <result property="国家資格"          column="w国家資格"/>

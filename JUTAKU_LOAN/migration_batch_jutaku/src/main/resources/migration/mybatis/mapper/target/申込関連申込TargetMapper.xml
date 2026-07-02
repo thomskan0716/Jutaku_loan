@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.申込関連申込TargetMapper">
+
+    <!-- 1:N per 申込番号. 申込番号/関連申込番号 first digit already converted (2→3) by service. -->
+    <insert id="insert" parameterType="migration.domain.target.申込関連申込Target">
+        INSERT INTO 申込関連申込 (
+            申込番号,
+            関連区分,
+            関連申込番号
+        ) VALUES (
+            #{申込番号},
+            #{関連区分},
+            #{関連申込番号}
+        )
+    </insert>
+
+</mapper>

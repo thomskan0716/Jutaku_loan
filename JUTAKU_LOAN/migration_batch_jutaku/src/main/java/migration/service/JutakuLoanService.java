@@ -5,6 +5,8 @@ import migration.domain.source.申込審査段階Source;
 import migration.domain.source.申込進捗Source;
 import migration.domain.source.申込担保回答ＰＤＦSource;
 import migration.domain.source.申込審査履歴Source;
+import migration.domain.source.申込関連申込Source;
+import migration.domain.target.申込関連申込Target;
 import migration.domain.source.保証人Source;
 import migration.domain.target.申込Target;
 import migration.domain.target.申込審査状況Target;
@@ -28,6 +30,8 @@ import migration.mapper.source.保証検討表補足SourceMapper;
 import migration.mapper.source.保証人SourceMapper;
 import migration.mapper.source.申込担保回答ＰＤＦSourceMapper;
 import migration.mapper.source.申込審査履歴SourceMapper;
+import migration.mapper.source.申込関連申込SourceMapper;
+import migration.mapper.target.申込関連申込TargetMapper;
 import migration.mapper.target.申込TargetMapper;
 import migration.mapper.target.申込審査状況TargetMapper;
 import migration.mapper.target.申込審査段階TargetMapper;
@@ -66,6 +70,7 @@ public class JutakuLoanService {
     @Autowired private 保証検討表補足SourceMapper 保証検討表補足SourceMapper;
     @Autowired private 申込担保回答ＰＤＦSourceMapper 担保回答ＰＤＦSourceMapper;
     @Autowired private 申込審査履歴SourceMapper 審査履歴SourceMapper;
+    @Autowired private 申込関連申込SourceMapper 関連申込SourceMapper;
 
     // --- Target mappers ---
     @Autowired private 申込進捗TargetMapper 進捗TargetMapper;
@@ -82,6 +87,7 @@ public class JutakuLoanService {
     @Autowired private 履歴保証検討表補足TargetMapper 履歴保証検討表補足TargetMapper;
     @Autowired private 申込担保情報ＰＤＦTargetMapper 担保情報ＰＤＦTargetMapper;
     @Autowired private 申込審査履歴TargetMapper 審査履歴TargetMapper;
+    @Autowired private 申込関連申込TargetMapper 関連申込TargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -164,8 +170,14 @@ public class JutakuLoanService {
         // 申込進捗: 1:1 copy (申込番号 converted; 進捗コード/状態 passed through — NOT NULL in target)
         申込進捗Target 進捗Target = new 申込進捗Target();
         進捗Target.set申込番号(tgtNo);
-        進捗Target.set進捗コード(進捗.get進捗コード());
+        進捗Target.set進捗コード(conv進捗コード(進捗.get進捗コード()));
         進捗Target.set状態(進捗.get状態());
+        進捗Target.set進捗移動日時(進捗.get進捗移動日時());
+        進捗Target.set表示形式(進捗.get表示形式());
+        進捗Target.set優先度(進捗.get優先度());
+        進捗Target.setコメント(進捗.getコメント());
+        進捗Target.set前進捗コード(進捗.get前進捗コード());
+        進捗Target.set進捗移動担当者コード(進捗.get進捗移動担当者コード());
         進捗TargetMapper.insert(進捗Target);
 
         // 事前審査グループ (申込目的: 10, 15 → new '10')
@@ -180,6 +192,16 @@ public class JutakuLoanService {
 
         processGroup(srcNo, tgtNo, 事前, "10");
         processGroup(srcNo, tgtNo, 正式, "20");
+
+        // 申込関連申込: 1:N per 申込番号 (no 申込目的). Both 申込番号 and 関連申込番号 are 2→3 converted.
+        // Inserted after 申込 rows exist (FK→申込).
+        for (申込関連申込Source rel : 関連申込SourceMapper.selectByApplicationId(srcNo)) {
+            申込関連申込Target relT = new 申込関連申込Target();
+            relT.set申込番号(tgtNo);
+            relT.set関連区分(rel.get関連区分());
+            relT.set関連申込番号(convertApplicationNumber(rel.get関連申込番号()));
+            関連申込TargetMapper.insert(relT);
+        }
 
         log.debug("Migrated 申込番号={} → {} (事前={}, 正式={})", srcNo, tgtNo, 事前.size(), 正式.size());
         return true;
@@ -269,7 +291,7 @@ public class JutakuLoanService {
         }
 
         // ③-c 申込審査履歴 event log (MAX only) — FK→申込. 1:N per (申込番号, 申込目的).
-        // All columns passthrough with source-provided 回数. 進捗コード conversion is a later 編集仕様詳細 task.
+        // 進捗コード is converted via 編集仕様詳細 code table; other columns passthrough with source-provided 回数.
         List<申込審査履歴Source> reviewLogs =
                 審査履歴SourceMapper.selectByApplicationIdAndPurpose(srcNo, maxOldMokuteki);
         for (申込審査履歴Source rh : reviewLogs) {
@@ -278,7 +300,7 @@ public class JutakuLoanService {
             rhT.set申込目的(newMokuteki);
             rhT.setイベント(rh.getイベント());
             rhT.setイベント日時(rh.getイベント日時());
-            rhT.set進捗コード(rh.get進捗コード());
+            rhT.set進捗コード(conv進捗コード(rh.get進捗コード()));
             rhT.setユーザID(rh.getユーザID());
             rhT.setユーザ名(rh.getユーザ名());
             rhT.set回数(rh.get回数());
@@ -360,106 +382,309 @@ public class JutakuLoanService {
         return "3" + src.substring(1);
     }
 
+    /** Truncate a value to fit within maxBytes bytes in MS932 (Shift-JIS) encoding (null-safe).
+     *  Use for VARCHAR2(N) columns where N is the BYTE limit in an Oracle Shift-JIS database. */
+    private static String truncate(String v, int maxBytes) {
+        if (v == null) return null;
+        try {
+            if (v.getBytes("MS932").length <= maxBytes) return v;
+            int len = v.length();
+            while (len > 0 && v.substring(0, len).getBytes("MS932").length > maxBytes) {
+                len--;
+            }
+            return v.substring(0, len);
+        } catch (java.io.UnsupportedEncodingException e) {
+            return v.length() > maxBytes ? v.substring(0, maxBytes) : v;
+        }
+    }
+
+    /**
+     * Split a full name into [surname, givenName] on the first occurrence of {@code delim}.
+     * Returns {full, null} when no delimiter is present, {null, null} when input is null.
+     */
+    private static String[] splitName(String full, String delim) {
+        if (full == null) {
+            return new String[]{null, null};
+        }
+        int i = full.indexOf(delim);
+        if (i < 0) {
+            return new String[]{full, null};
+        }
+        String sei = full.substring(0, i);
+        String mei = full.substring(i + delim.length());
+        return new String[]{sei.isEmpty() ? null : sei, mei.isEmpty() ? null : mei};
+    }
+
+    // ============================================================
+    // 編集仕様詳細 code conversions (申込 group).
+    // Undecided (yellow) source values are returned unchanged and left
+    // as TODO(編集仕様詳細). Financial codes are never guessed.
+    // ============================================================
+
+    /** 商品大分類: 1→1, 4→8. 2/3/8 未定. */
+    private static String conv商品大分類(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "4": return "8";
+            default:  return v; // TODO(編集仕様詳細): 2:ワイド, 3:照会専用, 8:途上与信 未定
+        }
+    }
+
+    /** 勤務先企業区分 (上場フラグ checkbox): 1→1:上場, 0→2:非上場. */
+    private static String conv勤務先企業区分(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "0": return "2";
+            default:  return v;
+        }
+    }
+
+    /** 職業形態: 住宅/ワイド(1,2)=2080, 外部(4)=2083 identity. 2:公務員(住宅)の正規/非正規は未定. */
+    private static String conv勤務先職業(String 商品大分類, String v) {
+        if (v == null) return null;
+        if ("1".equals(商品大分類) || "2".equals(商品大分類)) {
+            switch (v) {
+                case "1": return "1";
+                case "3": return "4";
+                case "4": return "5";
+                case "5": return "6";
+                case "6": return "7";
+                case "7": return "7";
+                case "8": return "7";
+                case "9": return "8";
+                default:  return v; // TODO(編集仕様詳細): 2:公務員 → 2:正規/3:非正規 未定
+            }
+        }
+        return v; // 外部ローン(4)ほか: identity
+    }
+
+    /** 住居形態: 1→1, 2→4, 3→3, 4→5. 5:その他 未定. */
+    private static String conv住居形態(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "2": return "4";
+            case "3": return "3";
+            case "4": return "5";
+            default:  return v; // TODO(編集仕様詳細): 5:その他 未定
+        }
+    }
+
+    /** 借入種類: 1..4 identity, 5/6→5:収益物件, 7/9→6:その他. */
+    private static String conv借入種類(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "2": return "2";
+            case "3": return "3";
+            case "4": return "4";
+            case "5": return "5";
+            case "6": return "5";
+            case "7": return "6";
+            case "9": return "6";
+            default:  return v;
+        }
+    }
+
+    /** 借入時完済解約予定: 0:無→2:なし, 1:有→1:あり. */
+    private static String conv借入時完済解約予定(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "0": return "2";
+            case "1": return "1";
+            default:  return v;
+        }
+    }
+
+    /** 返済方法区分: 1→1, 2→3, 3→2:期日一括. */
+    private static String conv返済方法区分(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "2": return "3";
+            case "3": return "2";
+            default:  return v;
+        }
+    }
+
+    /** 金利区分: 1→1:変動. 2/3:固定変動ミックス 未定. */
+    private static String conv金利区分(String v) {
+        if (v == null) return null;
+        if ("1".equals(v)) return "1";
+        return v; // TODO(編集仕様詳細): 2,3:固定変動ミックス型 未定
+    }
+
+    /** 歩合給: 1→1, 2→2, 3:ドライバー→1:あり. */
+    private static String conv歩合給(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1": return "1";
+            case "2": return "2";
+            case "3": return "1";
+            default:  return v;
+        }
+    }
+
+    /** 国家資格 remap (99:その他→15). */
+    private static String conv国家資格(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1":  return "3";
+            case "2":  return "8";
+            case "3":  return "2";
+            case "4":  return "7";
+            case "5":  return "6";
+            case "6":  return "10";
+            case "7":  return "9";
+            case "8":  return "5";
+            case "9":  return "13";
+            case "10": return "12";
+            case "11": return "14";
+            case "99": return "15";
+            default:   return v;
+        }
+    }
+
+    /** 同居予定家族＿配偶者 (checkbox): 1→2:配偶者同居, 0→1:予定なし. */
+    private static String conv同居配偶者(String v) {
+        if ("1".equals(v)) return "2";
+        if ("0".equals(v)) return "1";
+        return v;
+    }
+
+    /** 同居予定家族 有無 (父・母 checkbox): 1→1:予定あり, 0→2:予定なし. */
+    private static String conv同居有無(String v) {
+        if ("1".equals(v)) return "1";
+        if ("0".equals(v)) return "2";
+        return v;
+    }
+
+    /** 進捗コード: 1000→JT0010, 9100→JT9100, 9900→JT9200. 9500:振分待ち(外部のみ)未定. */
+    private static String conv進捗コード(String v) {
+        if (v == null) return null;
+        switch (v) {
+            case "1000": return "JT0010";
+            case "9100": return "JT9100";
+            case "9900": return "JT9200";
+            default:     return v; // TODO(編集仕様詳細): 9500:振分待ち 未定 (ARUHI/外部ローンのみ)
+        }
+    }
+
+    /**
+     * 資金使途 派生列 (2332:物件種別 / 2333:マンション / 2334:マンション以外).
+     * 住宅ローン(1)・ワイドローン(2)のみ。外部ローン(4)等は plain 資金使途 のみ(identity)。
+     * 7:増改築 以降は未定 (TODO)。
+     */
+    private void map資金使途Derived(申込Source s, 申込Target t) {
+        String 大分類 = s.get商品大分類();
+        if (!"1".equals(大分類) && !"2".equals(大分類)) return;
+        String use = s.get資金使途();
+        if (use == null) return;
+        switch (use) {
+            case "1": t.set資金使途＿物件種別("2"); t.set資金使途＿マンション以外("6"); break; // 建物新築
+            case "2": t.set資金使途＿物件種別("2"); t.set資金使途＿マンション以外("5"); break; // 土地購入
+            case "3": t.set資金使途＿物件種別("2"); t.set資金使途＿マンション以外("1"); break; // 戸建購入(新築)
+            case "4": t.set資金使途＿物件種別("1"); t.set資金使途＿マンション("1");     break; // マンション購入(新築)
+            case "5": t.set資金使途＿物件種別("2"); t.set資金使途＿マンション以外("2"); break; // 中古(戸建)
+            case "6": t.set資金使途＿物件種別("1"); t.set資金使途＿マンション("2");     break; // 中古(マンション)
+            default:  break; // TODO(編集仕様詳細): 7:増改築,8:借替,9,10,11 未定
+        }
+    }
+
     /** Map all non-PK columns from 申込Source to 申込Target. */
     private void map申込Columns(申込Source s, 申込Target t) {
-        t.set商品大分類(s.get商品大分類());
-        t.set商品コード(s.get商品コード());
-        t.set受付店舗(s.get受付店舗());
+        t.set商品大分類(conv商品大分類(s.get商品大分類()));
+        t.set商品コード(s.get商品コード());   // TODO(編集仕様詳細): 商品コードマッピングは大半が未定
         t.set保証番号(s.get保証番号());
         t.set関連案件有無(s.get関連案件有無());
         t.set申込日(s.get申込日());
-        t.set店舗(s.get店舗());
         t.setＣＩＦ番号(s.getＣＩＦ番号());
-
-        // カナ氏名: direct + split on half-width space
-        String kana = s.getカナ氏名();
-        t.setカナ氏名(kana);
-        if (kana != null) {
-            int i = kana.indexOf(' ');
-            t.setカナ氏名姓(i >= 0 ? kana.substring(0, i) : kana);
-            t.setカナ氏名名(i >= 0 ? kana.substring(i + 1) : null);
-        }
-
-        // 漢字氏名: direct + split on full-width space (U+3000)
-        String kanji = s.get漢字氏名();
-        t.set漢字氏名(kanji);
-        if (kanji != null) {
-            int i = kanji.indexOf('　');
-            t.set漢字氏名姓(i >= 0 ? kanji.substring(0, i) : kanji);
-            t.set漢字氏名名(i >= 0 ? kanji.substring(i + 1) : null);
-        }
+        t.set顧客番号(s.getＣＩＦ番号());
+        t.set受付店番(s.get受付店番());
+        t.set店番(s.get店番());
 
         t.set自宅郵便番号(s.get自宅郵便番号());
         t.set自宅住所カナ(s.get自宅住所カナ());
         t.set自宅住所漢字(s.get自宅住所漢字());
         t.set生年月日(s.get生年月日());
         t.set性別(s.get性別());
+        t.set年齢(s.get年齢());
         t.set勤務先郵便番号(s.get勤務先郵便番号());
         t.set携帯電話番号(s.get携帯電話番号());
+        t.set自宅電話番号(s.get自宅電話番号());
         t.set建物完成予定日(s.get建物完成予定日());
-        t.set検索用カナ氏名(s.get検索用カナ氏名());
-        t.set勤務先名漢字(s.get勤務先名漢字());
+        t.set検索用カナ氏名(s.get検索用カナ氏名());   // TODO: confirm target char_length and add truncate if needed
+        // 氏名: keep full name, and split 姓/名 on the space (kana=half-width, kanji=full-width).
+        // Over-length is auto-truncated to the target column byte size by ColumnFitInterceptor.
+        t.setカナ氏名(s.getカナ氏名());
+        String[] kanaName = splitName(s.getカナ氏名(), " ");
+        t.setカナ氏名姓(kanaName[0]);
+        t.setカナ氏名名(kanaName[1]);
+        // 検索用カナ氏名姓/名 also derive from source カナ氏名 (same split).
+        t.set検索用カナ氏名姓(kanaName[0]);
+        t.set検索用カナ氏名名(kanaName[1]);
+        t.set漢字氏名(s.get漢字氏名());
+        String[] kanjiName = splitName(s.get漢字氏名(), "\u3000"); // full-width space
+        t.set漢字氏名姓(kanjiName[0]);
+        t.set漢字氏名名(kanjiName[1]);
+        t.set勤務先名漢字(truncate(s.get勤務先名漢字(), 120));
+        t.set勤務先住所漢字(s.get勤務先住所漢字());
+        t.set勤務先企業区分(conv勤務先企業区分(s.get上場フラグ()));   // checkbox: 1=上場 / 0=非上場
+        t.set勤務先業種名(s.get勤務先業種());
+        t.set勤務先職種その他(s.get勤務先職種役職());
         t.set勤務先入社年月(s.get勤務先入社年月());
         t.set勤務先勤続年数(s.get勤務先勤続年数());
-        t.set勤務先業態区分(s.get上場フラグ());   // 申込ワイド.上場フラグ → 勤務先業態区分
-        t.set勤務先勤業(s.get勤務先職業());
-        t.set勤務先勤種(s.get勤務先職種役取());   // direct code copy
-        t.set勤務先勤種その他(null);               // requires 編集仕様詳細 — set null for now
+        t.set勤務先勤業(conv勤務先職業(s.get商品大分類(), s.get勤務先職業()));   // 職業形態 2080/2083
         t.set勤務先資本金区分(s.get勤務先資本金区分());
         t.set勤務先逐業員数(s.get勤務先従業員数());
-        t.set住居形態(s.get住居区分());
-        t.set定積(s.get定積());
-        t.set展示年数(s.get展示年数());
-        t.set定積＿子の他(s.get定積＿子の他());
-
+        t.set住居形態(conv住居形態(s.get住居区分()));
         // 金融機関 1
-        t.set金融機関1名称(s.get借入＿利用先名1());
-        t.set金融機関1借入種類(s.get借入＿利用種類1());
+        t.set金融機関1名称(truncate(s.get借入＿利用先名1(), 30));
+        t.set金融機関1借入種類(conv借入種類(s.get借入＿利用種類1()));
         t.set金融機関1残高(s.get借入＿利用残高1());
-        t.set金融機関1借入年間返済額(s.get借入＿年間変払額1());
         t.set金融機関1借入期間(s.get借入＿残存期間1());
-        t.set金融機関1借入時完済解約予定(s.get借入＿解約予定1());
+        t.set金融機関1借入時完済解約予定(conv借入時完済解約予定(s.get借入＿解約予定1()));
         t.set金融機関1利用限度額(s.get借入＿利用限度額1());
+        t.set金融機関1借入年間返済額(s.get借入＿年間支払額1());
         // 金融機関 2
-        t.set金融機関2名称(s.get借入＿利用先名2());
-        t.set金融機関2借入種類(s.get借入＿利用種類2());
+        t.set金融機関2名称(truncate(s.get借入＿利用先名2(), 30));
+        t.set金融機関2借入種類(conv借入種類(s.get借入＿利用種類2()));
         t.set金融機関2残高(s.get借入＿利用残高2());
-        t.set金融機関2借入年間返済額(s.get借入＿年間変払額2());
         t.set金融機関2借入期間(s.get借入＿残存期間2());
-        t.set金融機関2借入時完済解約予定(s.get借入＿解約予定2());
+        t.set金融機関2借入時完済解約予定(conv借入時完済解約予定(s.get借入＿解約予定2()));
         t.set金融機関2利用限度額(s.get借入＿利用限度額2());
+        t.set金融機関2借入年間返済額(s.get借入＿年間支払額2());
         // 金融機関 3
-        t.set金融機関3名称(s.get借入＿利用先名3());
-        t.set金融機関3借入種類(s.get借入＿利用種類3());
+        t.set金融機関3名称(truncate(s.get借入＿利用先名3(), 30));
+        t.set金融機関3借入種類(conv借入種類(s.get借入＿利用種類3()));
         t.set金融機関3残高(s.get借入＿利用残高3());
-        t.set金融機関3借入年間返済額(s.get借入＿年間変払額3());
         t.set金融機関3借入期間(s.get借入＿残存期間3());
-        t.set金融機関3借入時完済解約予定(s.get借入＿解約予定3());
+        t.set金融機関3借入時完済解約予定(conv借入時完済解約予定(s.get借入＿解約予定3()));
         t.set金融機関3利用限度額(s.get借入＿利用限度額3());
+        t.set金融機関3借入年間返済額(s.get借入＿年間支払額3());
 
         t.set資金使途(s.get資金使途());
         t.set借入金額(s.get借入金額());
         t.set借入金額＿毎月(s.get借入金額＿毎月());
-        t.set借入金額＿半年額(s.get借入金額＿半年額());
-        t.set返済額＿毎月(s.get借入金額＿毎月());
-        t.set返済額＿半年毎(s.get借入金額＿半年額());
+        t.set借入金額＿半年毎(s.get借入金額＿半年毎());
         t.set借入期間(s.get借入期間());
         t.set借入希望日(s.get借入希望日());
         t.set借入希望日＿建物(s.get借入希望日＿建物());
-        t.set返済方法区分(s.get返済方法区分());
-        t.set金利区分(s.get金利区分());
+        t.set返済方法区分(conv返済方法区分(s.get返済方法区分()));
+        t.set金利区分(conv金利区分(s.get金利区分()));
         t.set保証料区分(s.get保証料区分());
         t.setボーナス返済月1(s.getボーナス返済月1());
         t.setボーナス返済月2(s.getボーナス返済月2());
 
-        // 同居予定家族
-        t.set同居予定家族＿配偶者(s.get同居＿配偶者());
-        t.set同居予定家族＿父(s.get同居＿父());
-        t.set同居予定家族＿母(s.get同居＿母());
+        // 同居予定家族 (checkbox → 予定あり/なしコード)
+        t.set同居予定家族＿配偶者(conv同居配偶者(s.get同居＿配偶者()));
+        t.set同居予定家族＿父(conv同居有無(s.get同居＿父()));
+        t.set同居予定家族＿母(conv同居有無(s.get同居＿母()));
         java.math.BigDecimal otherCount = s.get同居＿その他人数();
-        t.set同居予定家族＿その他(otherCount != null && otherCount.compareTo(java.math.BigDecimal.ZERO) > 0 ? "1" : "0");
+        t.set同居予定家族＿その他(otherCount != null && otherCount.compareTo(java.math.BigDecimal.ZERO) > 0 ? "1" : "2");
         t.set同居予定家族＿その他＿人数(otherCount);
-        t.set同居予定家族＿子供人数(s.get同居＿子の人数());
         t.set同居予定家族＿子供年齢＿1人目(s.get同居＿子供年齢1());
         t.set同居予定家族＿子供年齢＿2人目(s.get同居＿子供年齢2());
         t.set同居予定家族＿子供年齢＿3人目(s.get同居＿子供年齢3());
@@ -472,19 +697,17 @@ public class JutakuLoanService {
         if ("1".equals(s.get同居＿父()))    total++;
         if ("1".equals(s.get同居＿母()))    total++;
         if (otherCount != null) total += otherCount.intValue();
-        if (s.get同居＿子の人数() != null) total += s.get同居＿子の人数().intValue();
         t.set同居予定家族＿合計人数(new java.math.BigDecimal(total));
 
         t.set婚姻区分(s.get婚姻区分());
-        t.set商品分類(s.get申込審区分());
-        t.set外部連携受付番号(s.get外部連携受付番号());
+        t.set外部連携受付番号(truncate(s.get外部連携受付番号(), 12));
         t.set勤務先資本金＿外部ローン(s.get勤務先資本金());
         t.set土地契約予定日(s.get土地契約予定日());
 
-        t.set預金＿金融機関1＿名称(s.get預金＿金融機関名1());
+        t.set預金＿金融機関1＿名称(truncate(s.get預金＿金融機関名1(), 30));
         t.set預金＿金融機関1＿本人預金(s.get預金＿本人預金1());
         t.set預金＿金融機関1＿家族預金(s.get預金＿家族預金1());
-        t.set預金＿金融機関2＿名称(s.get預金＿金融機関名2());
+        t.set預金＿金融機関2＿名称(truncate(s.get預金＿金融機関名2(), 30));
         t.set預金＿金融機関2＿本人預金(s.get預金＿本人預金2());
         t.set預金＿金融機関2＿家族預金(s.get預金＿家族預金2());
         t.set預金＿金融機関3＿本人預金(s.get預金＿本人預金3());
@@ -492,41 +715,52 @@ public class JutakuLoanService {
         t.set預金＿金融機関4＿本人預金(s.get預金＿本人預金4());
         t.set預金＿金融機関4＿家族預金(s.get預金＿家族預金4());
 
-        t.set歩合給(s.get勤務先歩合給区分());
+        t.set歩合給(conv歩合給(s.get勤務先歩合給区分()));
 
         // From 申込ワイド
-        t.set国家資格(s.get国家資格());
-        t.set国家資格＿その他(s.get国家資格子の他());
+        t.set国家資格(conv国家資格(s.get国家資格()));
+        t.set国家資格＿その他(truncate(s.get国家資格子の他(), 30));
         t.set配偶者年収(s.get配偶者年収());
 
-        // 資金使途 derived columns — require 編集仕様詳細 (code tables 2332/2333/2334)
-        t.set資金使途＿マンション(null);
-        t.set資金使途＿マンション以外(null);
-        t.set資金使途＿ワイドローン一般口(null);
-        t.set資金使途＿物件種別(null);
+        // 資金使途 派生列 (2332/2333/2334): 住宅/ワイドのみ設定。plain 資金使途 は上で identity 設定済み。
+        map資金使途Derived(s, t);
+        t.set資金使途＿ワイドローン一般口(null);   // TODO(編集仕様詳細): 未定
 
         // 必要資金
         t.set必要資金＿土地(s.get必要資金＿土地());
         t.set必要資金＿建物(s.get必要資金＿建物());
-        t.set必要資金＿借替(s.get必要資金＿借替());
         t.set必要資金＿諸費用(s.get必要資金＿諸費用());
         t.set必要資金＿その他(s.get必要資金＿その他());
         t.set必要資金＿合計(s.get必要資金＿合計());
         // 調達＿金融機関
-        t.set調達＿金融機関1＿名称(s.get調達＿その他1＿借入先());
+        t.set調達＿本件借入＿金額(s.get調達＿本件借入());
+        t.set調達＿金融機関1＿名称(truncate(s.get調達＿その他1＿借入先(), 30));
         t.set調達＿金融機関1＿金額(s.get調達＿その他1());
         t.set調達＿金融機関1＿期間(s.get調達＿その他1＿期間());
-        t.set調達＿金融機関2＿名称(s.get調達＿その他2＿借入先());
+        t.set調達＿金融機関1＿利率(s.get調達＿その他1＿利率());
+        t.set調達＿金融機関2＿名称(truncate(s.get調達＿その他2＿借入先(), 30));
         t.set調達＿金融機関2＿金額(s.get調達＿その他2());
         t.set調達＿金融機関2＿期間(s.get調達＿その他2＿期間());
+        t.set調達＿金融機関2＿利率(s.get調達＿その他2＿利率());
+        t.set調達＿自己資金(s.get調達＿自己資金());
+        t.set調達＿自己資金合計(s.get調達＿自己資金合計());
         t.set調達＿合計(s.get調達＿合計());
         // 自己資金
         t.set自己資金＿預貯金(s.get自己資金＿預貯金());
+        t.set自己資金＿預貯金うち当行(s.get自己資金＿預貯金ウチ当行());
         t.set自己資金＿その他(s.get自己資金＿その他());
         t.set自己資金＿贈与(s.get自己資金＿贈与());
-        t.set給与振込(s.get勤務先給与振込());
+        // 税込年収: 前年=年収１ / 前々年=年収２ / ３年前=年収３
+        t.set税込年収(s.get年収１());
         t.set税込年収＿前々年(s.get年収２());
         t.set税込年収＿３年前(s.get年収３());
+        // その他 申込 項目
+        t.set適用年収(s.get適用年収());
+        t.set家賃等月額(s.get家賃());
+        t.set居住年数(s.get居住年数());
+        t.set資産＿預金(s.get資産＿本人＿預金());
+        t.set資産＿その他(s.get資産＿本人＿その他());
+        t.set毎月返済日(s.get毎月返済日());
     }
 
 }
