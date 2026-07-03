@@ -98,6 +98,7 @@ public class 申込Source {
     private String 携帯電話番号;
     private String 建物完成予定日;
     private String 検索用カナ氏名;
+    // --- added for 申込 column completion ---
     private String カナ氏名;
     private String 漢字氏名;
     private String 勤務先住所漢字;
@@ -109,6 +110,7 @@ public class 申込Source {
     private String 国家資格;
     private String 国家資格子の他;
     private BigDecimal 配偶者年収;
+    // --- added for 申込 remaining columns (verified against カラムマッピング) ---
     private String 受付店番;
     private String 店番;
     private BigDecimal 年齢;
