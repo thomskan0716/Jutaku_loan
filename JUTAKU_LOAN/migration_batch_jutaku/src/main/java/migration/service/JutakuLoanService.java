@@ -46,6 +46,18 @@ import migration.mapper.target.申込_業者_住宅TargetMapper;
 import migration.mapper.target.保証検討表補足TargetMapper;
 import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
+import migration.domain.source.審査チェック照会Source;
+import migration.domain.source.担保評価回答Source;
+import migration.domain.source.担保評価連携結果ファイルSource;
+import migration.domain.target.審査チェック照会Target;
+import migration.domain.target.ＩＦ＿担保評価連携結果Target;
+import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
+import migration.mapper.source.審査チェック照会SourceMapper;
+import migration.mapper.source.担保評価回答SourceMapper;
+import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
+import migration.mapper.target.審査チェック照会TargetMapper;
+import migration.mapper.target.ＩＦ＿担保評価連携結果TargetMapper;
+import migration.mapper.target.ＩＦ＿担保評価連携結果＿ファイルTargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -72,6 +84,9 @@ public class JutakuLoanService {
     @Autowired private 申込担保回答ＰＤＦSourceMapper collateralAnswerPdfSourceMapper;
     @Autowired private 申込審査履歴SourceMapper reviewHistorySourceMapper;
     @Autowired private 申込関連申込SourceMapper relatedApplicationSourceMapper;
+    @Autowired private 審査チェック照会SourceMapper reviewCheckSourceMapper;
+    @Autowired private 担保評価回答SourceMapper collateralValuationSourceMapper;
+    @Autowired private 担保評価連携結果ファイルSourceMapper collateralValuationFileSourceMapper;
 
     // --- Target mappers (new schema writes) ---
     @Autowired private 申込進捗TargetMapper applicationProgressTargetMapper;
@@ -89,6 +104,9 @@ public class JutakuLoanService {
     @Autowired private 申込担保情報ＰＤＦTargetMapper collateralInfoPdfTargetMapper;
     @Autowired private 申込審査履歴TargetMapper reviewHistoryTargetMapper;
     @Autowired private 申込関連申込TargetMapper relatedApplicationTargetMapper;
+    @Autowired private 審査チェック照会TargetMapper reviewCheckTargetMapper;
+    @Autowired private ＩＦ＿担保評価連携結果TargetMapper collateralValuationResultTargetMapper;
+    @Autowired private ＩＦ＿担保評価連携結果＿ファイルTargetMapper collateralValuationFileTargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -104,6 +122,10 @@ public class JutakuLoanService {
     // Converted target 申込目的 for each group.
     private static final String TARGET_PURPOSE_PRELIMINARY = "10";
     private static final String TARGET_PURPOSE_FORMAL = "20";
+
+    // Fixed 一連番号 for the ＩＦ担保評価連携結果 tables: the source has no 一連番号,
+    // so this value fills the new-system key (編集仕様詳細).
+    private static final String FIXED_SEQUENCE_NUMBER = "99999";
 
     // Entry point called by 移行管理Tasklet for each claimed row range.
     // The driving table is 申込進捗 (one row per 申込番号); fromRowNumber/toRowNumber are the
@@ -299,6 +321,59 @@ public class JutakuLoanService {
             reviewHistoryTarget.setユーザ名(reviewHistory.getユーザ名());
             reviewHistoryTarget.set回数(reviewHistory.get回数());
             reviewHistoryTargetMapper.insert(reviewHistoryTarget);
+        }
+
+        // ③-d 審査チェック照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 一連番号 fixed '99999'; other columns pass through from source.
+        List<審査チェック照会Source> reviewChecks =
+                reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査チェック照会Source reviewCheck : reviewChecks) {
+            審査チェック照会Target reviewCheckTarget = new 審査チェック照会Target();
+            reviewCheckTarget.set申込番号(targetApplicationNumber);
+            reviewCheckTarget.set申込目的(convertedPurpose);
+            reviewCheckTarget.setイベント(reviewCheck.getイベント());
+            reviewCheckTarget.setイベント日時(reviewCheck.getイベント日時());
+            reviewCheckTarget.set状態(reviewCheck.get状態());
+            reviewCheckTarget.set状態説明(reviewCheck.get状態説明());
+            reviewCheckTarget.set優先度(reviewCheck.get優先度());
+            reviewCheckTargetMapper.insert(reviewCheckTarget);
+        }
+
+        // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
+        // 一連番号 fixed '99999'; valuation columns pass through.
+        List<担保評価回答Source> collateralValuations =
+                collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (担保評価回答Source collateralValuation : collateralValuations) {
+            ＩＦ＿担保評価連携結果Target valuationTarget = new ＩＦ＿担保評価連携結果Target();
+            valuationTarget.set申込番号(targetApplicationNumber);
+            valuationTarget.set申込目的(convertedPurpose);
+            valuationTarget.set一連番号(FIXED_SEQUENCE_NUMBER);
+            valuationTarget.setイベント(collateralValuation.getイベント());
+            valuationTarget.setイベント日時(collateralValuation.getイベント日時());
+            valuationTarget.set簡易評価額(collateralValuation.get簡易評価額());
+            valuationTarget.set簡易土地評価額(collateralValuation.get簡易土地評価額());
+            valuationTarget.set簡易建物評価額(collateralValuation.get簡易建物評価額());
+            valuationTarget.set土地特記事項(collateralValuation.get土地特記事項());
+            valuationTarget.set建物特記事項(collateralValuation.get建物特記事項());
+            valuationTarget.set先順位控除額(collateralValuation.get先順位控除額());
+            collateralValuationResultTargetMapper.insert(valuationTarget);
+        }
+
+        // ③-f ＩＦ＿担保評価連携結果＿ファイル (MAX only) — 担保評価回答 joined with 申込担保回答ＰＤＦ.
+        // 一連番号 fixed '99999'; ファイル種別 <- ファイル種類.
+        List<担保評価連携結果ファイルSource> valuationFiles =
+                collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (担保評価連携結果ファイルSource valuationFile : valuationFiles) {
+            ＩＦ＿担保評価連携結果＿ファイルTarget valuationFileTarget = new ＩＦ＿担保評価連携結果＿ファイルTarget();
+            valuationFileTarget.set申込番号(targetApplicationNumber);
+            valuationFileTarget.set申込目的(convertedPurpose);
+            valuationFileTarget.set一連番号(FIXED_SEQUENCE_NUMBER);
+            valuationFileTarget.setイベント(valuationFile.getイベント());
+            valuationFileTarget.setイベント日時(valuationFile.getイベント日時());
+            valuationFileTarget.setファイル種別(valuationFile.getファイル種別());
+            valuationFileTarget.setファイル名称(valuationFile.getファイル名称());
+            valuationFileTarget.setデータファイル名(valuationFile.getデータファイル名());
+            collateralValuationFileTargetMapper.insert(valuationFileTarget);
         }
 
         // ④-⑧ History rows for every completed record in this group.

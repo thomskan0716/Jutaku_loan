@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.担保評価連携結果ファイルSourceMapper">
+
+    <resultMap id="collateralValuationFileSourceMap" type="migration.domain.source.担保評価連携結果ファイルSource">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="ファイル種別"     column="ファイル種別"/>
+        <result property="ファイル名称"     column="ファイル名称"/>
+        <result property="データファイル名" column="データファイル名"/>
+    </resultMap>
+
+    <!-- イベント/イベント日時 from 担保評価回答, file columns from 申込担保回答ＰＤＦ,
+         matched on (申込番号, 申込目的). ファイル種別 <- ファイル種類; both file-name
+         target columns come from the single source ファイル名. -->
+    <select id="selectByApplicationIdAndPurpose" resultMap="collateralValuationFileSourceMap">
+        SELECT
+            d.申込番号            AS 申込番号,
+            d.申込目的            AS 申込目的,
+            d.イベント            AS イベント,
+            d.イベント日時        AS イベント日時,
+            p.ファイル種類        AS ファイル種別,
+            p.ファイル名          AS ファイル名称,
+            p.ファイル名          AS データファイル名
+        FROM 担保評価回答 d
+        JOIN 申込担保回答ＰＤＦ p
+          ON d.申込番号 = p.申込番号
+         AND d.申込目的 = p.申込目的
+        WHERE d.申込番号 = #{申込番号}
+          AND d.申込目的 = #{申込目的}
+        ORDER BY d.イベント日時, p.ファイル種類
+    </select>
+
+</mapper>

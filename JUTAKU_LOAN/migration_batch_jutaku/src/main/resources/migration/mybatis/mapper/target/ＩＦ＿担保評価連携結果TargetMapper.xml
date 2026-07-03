@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.ＩＦ＿担保評価連携結果TargetMapper">
+
+    <!-- Table name uses full-width underscores ＿ (U+FF3F) — double-quoted in Oracle SQL.
+         1:N per (申込番号, 申込目的). 申込番号 2→3 and 申込目的 converted by service.
+         一連番号 is set to the fixed value '99999' by the service. -->
+    <insert id="insert" parameterType="migration.domain.target.ＩＦ＿担保評価連携結果Target">
+        INSERT INTO "ＩＦ＿担保評価連携結果" (
+            申込番号,
+            申込目的,
+            一連番号,
+            イベント,
+            イベント日時,
+            簡易評価額,
+            簡易土地評価額,
+            簡易建物評価額,
+            土地特記事項,
+            建物特記事項,
+            先順位控除額
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{一連番号},
+            #{イベント},
+            #{イベント日時},
+            #{簡易評価額},
+            #{簡易土地評価額},
+            #{簡易建物評価額},
+            #{土地特記事項},
+            #{建物特記事項},
+            #{先順位控除額}
+        )
+    </insert>
+
+</mapper>
