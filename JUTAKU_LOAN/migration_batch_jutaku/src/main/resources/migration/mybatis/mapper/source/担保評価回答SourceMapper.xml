@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.担保評価回答SourceMapper">
+
+    <resultMap id="collateralValuationSourceMap" type="migration.domain.source.担保評価回答Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="簡易評価額"     column="簡易評価額"/>
+        <result property="簡易土地評価額" column="簡易土地評価額"/>
+        <result property="簡易建物評価額" column="簡易建物評価額"/>
+        <result property="土地特記事項"   column="土地特記事項"/>
+        <result property="建物特記事項"   column="建物特記事項"/>
+        <result property="先順位控除額"   column="先順位控除額"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="collateralValuationSourceMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            簡易評価額,
+            簡易土地評価額,
+            簡易建物評価額,
+            土地特記事項,
+            建物特記事項,
+            先順位控除額
+        FROM 担保評価回答
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時
+    </select>
+
+</mapper>
