@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.審査ＫＳＣ照会SourceMapper">
+
+    <resultMap id="reviewKscSourceMap" type="migration.domain.source.審査ＫＳＣ照会Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <id property="別名連番"     column="別名連番"/>
+        <result property="受付日時" column="受付日時"/>
+        <result property="受付番号" column="受付番号"/>
+        <result property="コメント" column="コメント"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="reviewKscSourceMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            別名連番,
+            受付日時,
+            受付番号,
+            コメント
+        FROM 審査ＫＳＣ照会
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番, 別名連番
+    </select>
+
+</mapper>

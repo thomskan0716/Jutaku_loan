@@ -36,6 +36,10 @@ DELETE FROM ITF_SMS.申込担保情報ＰＤＦ      WHERE 申込番号 LIKE '3%
 DELETE FROM ITF_SMS.申込審査履歴           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込関連申込           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査チェック照会       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＫＳＣ照会         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＫＳＣ信用情報     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＫＳＣ信用情報明細 WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＫＳＣ信用情報詳細 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 

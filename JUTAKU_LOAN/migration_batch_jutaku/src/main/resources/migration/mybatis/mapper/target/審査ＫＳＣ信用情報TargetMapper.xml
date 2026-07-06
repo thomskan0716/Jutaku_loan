@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.審査ＫＳＣ信用情報TargetMapper">
+
+    <!-- 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service.
+         Target-only columns (ＫＳＣグレー, ＫＳＣ延滞, ＫＳＣ転居歴, ＫＳＣ転職歴, ＫＳＣ反社,
+         ＫＳＣ経由ＣＩＣ延滞, ＫＳＣ経由ＪＩＣ延滞, ＫＳＣ経由ＣＩＣレコード数,
+         ＫＳＣ経由ＪＩＣレコード数) have no source and are left null. -->
+    <insert id="insert" parameterType="migration.domain.target.審査ＫＳＣ信用情報Target">
+        INSERT INTO 審査ＫＳＣ信用情報 (
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            ＫＳＣブラック,
+            ＫＳＣ経由ＣＩＣブラック,
+            ＫＳＣ経由ＪＩＣブラック,
+            ＫＳＣ照会件数,
+            ＫＳＣ契約件数,
+            ＫＳＣ極度額オーバー,
+            ＫＳＣレコード数
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{イベント},
+            #{イベント日時},
+            #{連番},
+            #{ＫＳＣブラック},
+            #{ＫＳＣ経由ＣＩＣブラック},
+            #{ＫＳＣ経由ＪＩＣブラック},
+            #{ＫＳＣ照会件数},
+            #{ＫＳＣ契約件数},
+            #{ＫＳＣ極度額オーバー},
+            #{ＫＳＣレコード数}
+        )
+    </insert>
+
+</mapper>

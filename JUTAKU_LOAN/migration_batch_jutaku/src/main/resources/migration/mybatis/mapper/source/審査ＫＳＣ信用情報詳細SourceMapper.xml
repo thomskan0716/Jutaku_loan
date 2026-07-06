@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper">
+
+    <!-- DB column names use full-width digits (判断項目名１, 判断項目１, ...);
+         Java properties keep half-width digits (判断項目名1, 判断項目1, ...). -->
+    <resultMap id="reviewKscCreditDetailMap" type="migration.domain.source.審査ＫＳＣ信用情報詳細Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <id property="別名連番"     column="別名連番"/>
+        <id property="詳細連番"     column="詳細連番"/>
+        <result property="受付日時"     column="受付日時"/>
+        <result property="受付番号"     column="受付番号"/>
+        <result property="該当者通番"   column="該当者通番"/>
+        <result property="テーブル名"   column="テーブル名"/>
+        <result property="項目名"       column="項目名"/>
+        <result property="コード番号"   column="コード番号"/>
+        <result property="コード"       column="コード"/>
+        <result property="コード名称"   column="コード名称"/>
+        <result property="氏名"         column="氏名"/>
+        <result property="氏名カナ"     column="氏名カナ"/>
+        <result property="種類"         column="種類"/>
+        <result property="信用情報判断" column="信用情報判断"/>
+        <result property="信用情報"     column="信用情報"/>
+        <result property="判断項目名1"  column="判断項目名１"/>
+        <result property="判断項目1"    column="判断項目１"/>
+        <result property="判断項目名2"  column="判断項目名２"/>
+        <result property="判断項目2"    column="判断項目２"/>
+        <result property="判断項目名3"  column="判断項目名３"/>
+        <result property="判断項目3"    column="判断項目３"/>
+        <result property="判断項目名4"  column="判断項目名４"/>
+        <result property="判断項目4"    column="判断項目４"/>
+        <result property="判断項目名5"  column="判断項目名５"/>
+        <result property="判断項目5"    column="判断項目５"/>
+        <result property="ブラック判断" column="ブラック判断"/>
+        <result property="発生日"       column="発生日"/>
+        <result property="契約日"       column="契約日"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="reviewKscCreditDetailMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            別名連番,
+            詳細連番,
+            受付日時,
+            受付番号,
+            該当者通番,
+            テーブル名,
+            項目名,
+            コード番号,
+            コード,
+            コード名称,
+            氏名,
+            氏名カナ,
+            種類,
+            信用情報判断,
+            信用情報,
+            判断項目名１,
+            判断項目１,
+            判断項目名２,
+            判断項目２,
+            判断項目名３,
+            判断項目３,
+            判断項目名４,
+            判断項目４,
+            判断項目名５,
+            判断項目５,
+            ブラック判断,
+            発生日,
+            契約日
+        FROM 審査ＫＳＣ信用情報詳細
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番, 別名連番, 詳細連番
+    </select>
+
+</mapper>
