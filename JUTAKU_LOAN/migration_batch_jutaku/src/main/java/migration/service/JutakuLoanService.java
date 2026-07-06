@@ -47,15 +47,31 @@ import migration.mapper.target.保証検討表補足TargetMapper;
 import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
 import migration.domain.source.審査チェック照会Source;
+import migration.domain.source.審査ＫＳＣ照会Source;
+import migration.domain.source.審査ＫＳＣ信用情報Source;
+import migration.domain.source.審査ＫＳＣ信用情報明細Source;
+import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
 import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
+import migration.domain.target.審査ＫＳＣ照会Target;
+import migration.domain.target.審査ＫＳＣ信用情報Target;
+import migration.domain.target.審査ＫＳＣ信用情報明細Target;
+import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
+import migration.mapper.source.審査ＫＳＣ照会SourceMapper;
+import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
+import migration.mapper.source.審査ＫＳＣ信用情報明細SourceMapper;
+import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
 import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
+import migration.mapper.target.審査ＫＳＣ照会TargetMapper;
+import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
+import migration.mapper.target.審査ＫＳＣ信用情報明細TargetMapper;
+import migration.mapper.target.審査ＫＳＣ信用情報詳細TargetMapper;
 import migration.mapper.target.ＩＦ＿担保評価連携結果TargetMapper;
 import migration.mapper.target.ＩＦ＿担保評価連携結果＿ファイルTargetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +101,10 @@ public class JutakuLoanService {
     @Autowired private 申込審査履歴SourceMapper reviewHistorySourceMapper;
     @Autowired private 申込関連申込SourceMapper relatedApplicationSourceMapper;
     @Autowired private 審査チェック照会SourceMapper reviewCheckSourceMapper;
+    @Autowired private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
+    @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
+    @Autowired private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
+    @Autowired private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
     @Autowired private 担保評価回答SourceMapper collateralValuationSourceMapper;
     @Autowired private 担保評価連携結果ファイルSourceMapper collateralValuationFileSourceMapper;
 
@@ -105,6 +125,10 @@ public class JutakuLoanService {
     @Autowired private 申込審査履歴TargetMapper reviewHistoryTargetMapper;
     @Autowired private 申込関連申込TargetMapper relatedApplicationTargetMapper;
     @Autowired private 審査チェック照会TargetMapper reviewCheckTargetMapper;
+    @Autowired private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
+    @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
+    @Autowired private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
+    @Autowired private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
     @Autowired private ＩＦ＿担保評価連携結果TargetMapper collateralValuationResultTargetMapper;
     @Autowired private ＩＦ＿担保評価連携結果＿ファイルTargetMapper collateralValuationFileTargetMapper;
 
@@ -337,6 +361,109 @@ public class JutakuLoanService {
             reviewCheckTarget.set状態説明(reviewCheck.get状態説明());
             reviewCheckTarget.set優先度(reviewCheck.get優先度());
             reviewCheckTargetMapper.insert(reviewCheckTarget);
+        }
+
+        // ③-d2 審査ＫＳＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
+        List<審査ＫＳＣ照会Source> reviewKscs =
+                reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
+            審査ＫＳＣ照会Target reviewKscTarget = new 審査ＫＳＣ照会Target();
+            reviewKscTarget.set申込番号(targetApplicationNumber);
+            reviewKscTarget.set申込目的(convertedPurpose);
+            reviewKscTarget.setイベント(reviewKsc.getイベント());
+            reviewKscTarget.setイベント日時(reviewKsc.getイベント日時());
+            reviewKscTarget.set連番(reviewKsc.get連番());
+            reviewKscTarget.set別名連番(reviewKsc.get別名連番());
+            reviewKscTarget.set受付日時(reviewKsc.get受付日時());
+            reviewKscTarget.set受付番号(reviewKsc.get受付番号());
+            reviewKscTarget.setコメント(reviewKsc.getコメント());
+            reviewKscTargetMapper.insert(reviewKscTarget);
+        }
+
+        // ③-d3 審査ＫＳＣ信用情報 (MAX only) — 1:N per (申込番号, 申込目的).
+        // Only columns present in both source and target are copied; target-only
+        // columns (ＫＳＣグレー, ＫＳＣ延滞, ＫＳＣ転居歴, etc.) are left null.
+        List<審査ＫＳＣ信用情報Source> reviewKscCredits =
+                reviewKscCreditSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＫＳＣ信用情報Source reviewKscCredit : reviewKscCredits) {
+            審査ＫＳＣ信用情報Target reviewKscCreditTarget = new 審査ＫＳＣ信用情報Target();
+            reviewKscCreditTarget.set申込番号(targetApplicationNumber);
+            reviewKscCreditTarget.set申込目的(convertedPurpose);
+            reviewKscCreditTarget.setイベント(reviewKscCredit.getイベント());
+            reviewKscCreditTarget.setイベント日時(reviewKscCredit.getイベント日時());
+            reviewKscCreditTarget.set連番(reviewKscCredit.get連番());
+            reviewKscCreditTarget.setＫＳＣブラック(reviewKscCredit.getＫＳＣブラック());
+            reviewKscCreditTarget.setＫＳＣ経由ＣＩＣブラック(reviewKscCredit.getＫＳＣ経由ＣＩＣブラック());
+            reviewKscCreditTarget.setＫＳＣ経由ＪＩＣブラック(reviewKscCredit.getＫＳＣ経由ＪＩＣブラック());
+            reviewKscCreditTarget.setＫＳＣ照会件数(reviewKscCredit.getＫＳＣ照会件数());
+            reviewKscCreditTarget.setＫＳＣ契約件数(reviewKscCredit.getＫＳＣ契約件数());
+            reviewKscCreditTarget.setＫＳＣ極度額オーバー(reviewKscCredit.getＫＳＣ極度額オーバー());
+            reviewKscCreditTarget.setＫＳＣレコード数(reviewKscCredit.getＫＳＣレコード数());
+            reviewKscCreditTargetMapper.insert(reviewKscCreditTarget);
+        }
+
+        // ③-d4 審査ＫＳＣ信用情報明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＫＳＣ信用情報明細Source> reviewKscCreditLines =
+                reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＫＳＣ信用情報明細Source reviewKscCreditLine : reviewKscCreditLines) {
+            審査ＫＳＣ信用情報明細Target reviewKscCreditLineTarget = new 審査ＫＳＣ信用情報明細Target();
+            reviewKscCreditLineTarget.set申込番号(targetApplicationNumber);
+            reviewKscCreditLineTarget.set申込目的(convertedPurpose);
+            reviewKscCreditLineTarget.setイベント(reviewKscCreditLine.getイベント());
+            reviewKscCreditLineTarget.setイベント日時(reviewKscCreditLine.getイベント日時());
+            reviewKscCreditLineTarget.set連番(reviewKscCreditLine.get連番());
+            reviewKscCreditLineTarget.set受付日時(reviewKscCreditLine.get受付日時());
+            reviewKscCreditLineTarget.set受付番号(reviewKscCreditLine.get受付番号());
+            reviewKscCreditLineTarget.setテーブル名(reviewKscCreditLine.getテーブル名());
+            reviewKscCreditLineTarget.set項目名(reviewKscCreditLine.get項目名());
+            reviewKscCreditLineTarget.setコード番号(reviewKscCreditLine.getコード番号());
+            reviewKscCreditLineTarget.setコード(reviewKscCreditLine.getコード());
+            reviewKscCreditLineTarget.setコード名称(reviewKscCreditLine.getコード名称());
+            reviewKscCreditLineTarget.setブラック判断(reviewKscCreditLine.getブラック判断());
+            reviewKscCreditLineTargetMapper.insert(reviewKscCreditLineTarget);
+        }
+
+        // ③-d5 審査ＫＳＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // Target-only column 延滞回数 has no source and is left null.
+        List<審査ＫＳＣ信用情報詳細Source> reviewKscCreditDetails =
+                reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＫＳＣ信用情報詳細Source reviewKscCreditDetail : reviewKscCreditDetails) {
+            審査ＫＳＣ信用情報詳細Target reviewKscCreditDetailTarget = new 審査ＫＳＣ信用情報詳細Target();
+            reviewKscCreditDetailTarget.set申込番号(targetApplicationNumber);
+            reviewKscCreditDetailTarget.set申込目的(convertedPurpose);
+            reviewKscCreditDetailTarget.setイベント(reviewKscCreditDetail.getイベント());
+            reviewKscCreditDetailTarget.setイベント日時(reviewKscCreditDetail.getイベント日時());
+            reviewKscCreditDetailTarget.set連番(reviewKscCreditDetail.get連番());
+            reviewKscCreditDetailTarget.set別名連番(reviewKscCreditDetail.get別名連番());
+            reviewKscCreditDetailTarget.set詳細連番(reviewKscCreditDetail.get詳細連番());
+            reviewKscCreditDetailTarget.set受付日時(reviewKscCreditDetail.get受付日時());
+            reviewKscCreditDetailTarget.set受付番号(reviewKscCreditDetail.get受付番号());
+            reviewKscCreditDetailTarget.set該当者通番(reviewKscCreditDetail.get該当者通番());
+            reviewKscCreditDetailTarget.setテーブル名(reviewKscCreditDetail.getテーブル名());
+            reviewKscCreditDetailTarget.set項目名(reviewKscCreditDetail.get項目名());
+            reviewKscCreditDetailTarget.setコード番号(reviewKscCreditDetail.getコード番号());
+            reviewKscCreditDetailTarget.setコード(reviewKscCreditDetail.getコード());
+            reviewKscCreditDetailTarget.setコード名称(reviewKscCreditDetail.getコード名称());
+            reviewKscCreditDetailTarget.set氏名(reviewKscCreditDetail.get氏名());
+            reviewKscCreditDetailTarget.set氏名カナ(reviewKscCreditDetail.get氏名カナ());
+            reviewKscCreditDetailTarget.set種類(reviewKscCreditDetail.get種類());
+            reviewKscCreditDetailTarget.set信用情報判断(reviewKscCreditDetail.get信用情報判断());
+            reviewKscCreditDetailTarget.set信用情報(reviewKscCreditDetail.get信用情報());
+            reviewKscCreditDetailTarget.set判断項目名1(reviewKscCreditDetail.get判断項目名1());
+            reviewKscCreditDetailTarget.set判断項目1(reviewKscCreditDetail.get判断項目1());
+            reviewKscCreditDetailTarget.set判断項目名2(reviewKscCreditDetail.get判断項目名2());
+            reviewKscCreditDetailTarget.set判断項目2(reviewKscCreditDetail.get判断項目2());
+            reviewKscCreditDetailTarget.set判断項目名3(reviewKscCreditDetail.get判断項目名3());
+            reviewKscCreditDetailTarget.set判断項目3(reviewKscCreditDetail.get判断項目3());
+            reviewKscCreditDetailTarget.set判断項目名4(reviewKscCreditDetail.get判断項目名4());
+            reviewKscCreditDetailTarget.set判断項目4(reviewKscCreditDetail.get判断項目4());
+            reviewKscCreditDetailTarget.set判断項目名5(reviewKscCreditDetail.get判断項目名5());
+            reviewKscCreditDetailTarget.set判断項目5(reviewKscCreditDetail.get判断項目5());
+            reviewKscCreditDetailTarget.setブラック判断(reviewKscCreditDetail.getブラック判断());
+            reviewKscCreditDetailTarget.set発生日(reviewKscCreditDetail.get発生日());
+            reviewKscCreditDetailTarget.set契約日(reviewKscCreditDetail.get契約日());
+            reviewKscCreditDetailTargetMapper.insert(reviewKscCreditDetailTarget);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

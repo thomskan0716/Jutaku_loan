@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.審査ＫＳＣ信用情報明細TargetMapper">
+
+    <!-- 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.審査ＫＳＣ信用情報明細Target">
+        INSERT INTO 審査ＫＳＣ信用情報明細 (
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            受付日時,
+            受付番号,
+            テーブル名,
+            項目名,
+            コード番号,
+            コード,
+            コード名称,
+            ブラック判断
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{イベント},
+            #{イベント日時},
+            #{連番},
+            #{受付日時},
+            #{受付番号},
+            #{テーブル名},
+            #{項目名},
+            #{コード番号},
+            #{コード},
+            #{コード名称},
+            #{ブラック判断}
+        )
+    </insert>
+
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.審査ＫＳＣ信用情報SourceMapper">
+
+    <resultMap id="reviewKscCreditMap" type="migration.domain.source.審査ＫＳＣ信用情報Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <result property="ＫＳＣブラック"         column="ＫＳＣブラック"/>
+        <result property="ＫＳＣ経由ＣＩＣブラック" column="ＫＳＣ経由ＣＩＣブラック"/>
+        <result property="ＫＳＣ経由ＪＩＣブラック" column="ＫＳＣ経由ＪＩＣブラック"/>
+        <result property="ＫＳＣ照会件数"         column="ＫＳＣ照会件数"/>
+        <result property="ＫＳＣ契約件数"         column="ＫＳＣ契約件数"/>
+        <result property="ＫＳＣ極度額オーバー"   column="ＫＳＣ極度額オーバー"/>
+        <result property="ＫＳＣレコード数"       column="ＫＳＣレコード数"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="reviewKscCreditMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            ＫＳＣブラック,
+            ＫＳＣ経由ＣＩＣブラック,
+            ＫＳＣ経由ＪＩＣブラック,
+            ＫＳＣ照会件数,
+            ＫＳＣ契約件数,
+            ＫＳＣ極度額オーバー,
+            ＫＳＣレコード数
+        FROM 審査ＫＳＣ信用情報
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番
+    </select>
+
+</mapper>
