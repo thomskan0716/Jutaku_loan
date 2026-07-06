@@ -48,6 +48,11 @@ import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
 import migration.domain.source.審査チェック照会Source;
 import migration.domain.source.審査ＫＳＣ照会Source;
+import migration.domain.source.審査ＪＩＣＣ照会Source;
+import migration.domain.source.審査ＣＩＣ照会Source;
+import migration.domain.source.個信類似照会管理Source;
+import migration.domain.source.個信類似照会明細Source;
+import migration.domain.source.個信類似明細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
 import migration.domain.source.審査ＫＳＣ信用情報明細Source;
 import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
@@ -55,6 +60,11 @@ import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
 import migration.domain.target.審査ＫＳＣ照会Target;
+import migration.domain.target.審査ＪＩＣＣ照会Target;
+import migration.domain.target.審査ＣＩＣ照会Target;
+import migration.domain.target.個信類似照会管理Target;
+import migration.domain.target.個信類似照会明細Target;
+import migration.domain.target.個信類似明細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
 import migration.domain.target.審査ＫＳＣ信用情報明細Target;
 import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
@@ -62,6 +72,11 @@ import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
 import migration.mapper.source.審査ＫＳＣ照会SourceMapper;
+import migration.mapper.source.審査ＪＩＣＣ照会SourceMapper;
+import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
+import migration.mapper.source.個信類似照会管理SourceMapper;
+import migration.mapper.source.個信類似照会明細SourceMapper;
+import migration.mapper.source.個信類似明細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報明細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
@@ -69,6 +84,11 @@ import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
 import migration.mapper.target.審査ＫＳＣ照会TargetMapper;
+import migration.mapper.target.審査ＪＩＣＣ照会TargetMapper;
+import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
+import migration.mapper.target.個信類似照会管理TargetMapper;
+import migration.mapper.target.個信類似照会明細TargetMapper;
+import migration.mapper.target.個信類似明細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報明細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報詳細TargetMapper;
@@ -102,6 +122,11 @@ public class JutakuLoanService {
     @Autowired private 申込関連申込SourceMapper relatedApplicationSourceMapper;
     @Autowired private 審査チェック照会SourceMapper reviewCheckSourceMapper;
     @Autowired private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
+    @Autowired private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
+    @Autowired private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
+    @Autowired private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
+    @Autowired private 個信類似照会明細SourceMapper kosinSimilarInquiryDetailSourceMapper;
+    @Autowired private 個信類似明細SourceMapper kosinSimilarDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
@@ -126,6 +151,11 @@ public class JutakuLoanService {
     @Autowired private 申込関連申込TargetMapper relatedApplicationTargetMapper;
     @Autowired private 審査チェック照会TargetMapper reviewCheckTargetMapper;
     @Autowired private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
+    @Autowired private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
+    @Autowired private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
+    @Autowired private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
+    @Autowired private 個信類似照会明細TargetMapper kosinSimilarInquiryDetailTargetMapper;
+    @Autowired private 個信類似明細TargetMapper kosinSimilarDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
@@ -464,6 +494,137 @@ public class JutakuLoanService {
             reviewKscCreditDetailTarget.set発生日(reviewKscCreditDetail.get発生日());
             reviewKscCreditDetailTarget.set契約日(reviewKscCreditDetail.get契約日());
             reviewKscCreditDetailTargetMapper.insert(reviewKscCreditDetailTarget);
+        }
+
+        // ③-d6 審査ＪＩＣＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
+        List<審査ＪＩＣＣ照会Source> reviewJiccs =
+                reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＪＩＣＣ照会Source reviewJicc : reviewJiccs) {
+            審査ＪＩＣＣ照会Target reviewJiccTarget = new 審査ＪＩＣＣ照会Target();
+            reviewJiccTarget.set申込番号(targetApplicationNumber);
+            reviewJiccTarget.set申込目的(convertedPurpose);
+            reviewJiccTarget.setイベント(reviewJicc.getイベント());
+            reviewJiccTarget.setイベント日時(reviewJicc.getイベント日時());
+            reviewJiccTarget.set連番(reviewJicc.get連番());
+            reviewJiccTarget.set別名連番(reviewJicc.get別名連番());
+            reviewJiccTarget.set受付日時(reviewJicc.get受付日時());
+            reviewJiccTarget.set受付番号(reviewJicc.get受付番号());
+            reviewJiccTarget.setコメント(reviewJicc.getコメント());
+            reviewJiccTargetMapper.insert(reviewJiccTarget);
+        }
+
+        // ③-d7 審査ＣＩＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
+        List<審査ＣＩＣ照会Source> reviewCics =
+                reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (審査ＣＩＣ照会Source reviewCic : reviewCics) {
+            審査ＣＩＣ照会Target reviewCicTarget = new 審査ＣＩＣ照会Target();
+            reviewCicTarget.set申込番号(targetApplicationNumber);
+            reviewCicTarget.set申込目的(convertedPurpose);
+            reviewCicTarget.setイベント(reviewCic.getイベント());
+            reviewCicTarget.setイベント日時(reviewCic.getイベント日時());
+            reviewCicTarget.set連番(reviewCic.get連番());
+            reviewCicTarget.set別名連番(reviewCic.get別名連番());
+            reviewCicTarget.set受付日時(reviewCic.get受付日時());
+            reviewCicTarget.set受付番号(reviewCic.get受付番号());
+            reviewCicTarget.setコメント(reviewCic.getコメント());
+            reviewCicTargetMapper.insert(reviewCicTarget);
+        }
+
+        // ③-d8a 個信類似照会管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似照会管理Source> kosinSimilarInquiryMgmts =
+                kosinSimilarInquiryMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (個信類似照会管理Source kosinSimilarInquiryMgmt : kosinSimilarInquiryMgmts) {
+            個信類似照会管理Target kosinSimilarInquiryMgmtTarget = new 個信類似照会管理Target();
+            kosinSimilarInquiryMgmtTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarInquiryMgmtTarget.set申込目的(convertedPurpose);
+            kosinSimilarInquiryMgmtTarget.setイベント(kosinSimilarInquiryMgmt.getイベント());
+            kosinSimilarInquiryMgmtTarget.setイベント日時(kosinSimilarInquiryMgmt.getイベント日時());
+            kosinSimilarInquiryMgmtTarget.set状態(kosinSimilarInquiryMgmt.get状態());
+            kosinSimilarInquiryMgmtTarget.set状態説明(kosinSimilarInquiryMgmt.get状態説明());
+            kosinSimilarInquiryMgmtTarget.set優先度(kosinSimilarInquiryMgmt.get優先度());
+            kosinSimilarInquiryMgmtTargetMapper.insert(kosinSimilarInquiryMgmtTarget);
+        }
+
+        // ③-d8 個信類似照会明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似照会明細Source> kosinSimilarInquiryDetails =
+                kosinSimilarInquiryDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (個信類似照会明細Source kosinSimilarInquiryDetail : kosinSimilarInquiryDetails) {
+            個信類似照会明細Target kosinSimilarInquiryDetailTarget = new 個信類似照会明細Target();
+            kosinSimilarInquiryDetailTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarInquiryDetailTarget.set申込目的(convertedPurpose);
+            kosinSimilarInquiryDetailTarget.setイベント(kosinSimilarInquiryDetail.getイベント());
+            kosinSimilarInquiryDetailTarget.setイベント日時(kosinSimilarInquiryDetail.getイベント日時());
+            kosinSimilarInquiryDetailTarget.set受付番号(kosinSimilarInquiryDetail.get受付番号());
+            kosinSimilarInquiryDetailTarget.set受付日時(kosinSimilarInquiryDetail.get受付日時());
+            kosinSimilarInquiryDetailTarget.set情報区分(kosinSimilarInquiryDetail.get情報区分());
+            kosinSimilarInquiryDetailTarget.set氏名カナ(kosinSimilarInquiryDetail.get氏名カナ());
+            kosinSimilarInquiryDetailTarget.set氏名漢字(kosinSimilarInquiryDetail.get氏名漢字());
+            kosinSimilarInquiryDetailTarget.set性別(kosinSimilarInquiryDetail.get性別());
+            kosinSimilarInquiryDetailTarget.set生年月日(kosinSimilarInquiryDetail.get生年月日());
+            kosinSimilarInquiryDetailTarget.set電話番号1(kosinSimilarInquiryDetail.get電話番号1());
+            kosinSimilarInquiryDetailTarget.set電話番号2(kosinSimilarInquiryDetail.get電話番号2());
+            kosinSimilarInquiryDetailTarget.set郵便番号(kosinSimilarInquiryDetail.get郵便番号());
+            kosinSimilarInquiryDetailTarget.set住所カナ(kosinSimilarInquiryDetail.get住所カナ());
+            kosinSimilarInquiryDetailTarget.set住所漢字(kosinSimilarInquiryDetail.get住所漢字());
+            kosinSimilarInquiryDetailTarget.set勤務先名(kosinSimilarInquiryDetail.get勤務先名());
+            kosinSimilarInquiryDetailTarget.set勤務先電話番号(kosinSimilarInquiryDetail.get勤務先電話番号());
+            kosinSimilarInquiryDetailTarget.set本人識別コード(kosinSimilarInquiryDetail.get本人識別コード());
+            kosinSimilarInquiryDetailTarget.set情報特定コード(kosinSimilarInquiryDetail.get情報特定コード());
+            kosinSimilarInquiryDetailTarget.set再照会＿情報区分(kosinSimilarInquiryDetail.get再照会＿情報区分());
+            kosinSimilarInquiryDetailTarget.set再照会＿受付番号(kosinSimilarInquiryDetail.get再照会＿受付番号());
+            kosinSimilarInquiryDetailTarget.set再照会＿受付日時(kosinSimilarInquiryDetail.get再照会＿受付日時());
+            kosinSimilarInquiryDetailTarget.set再照会＿会員名(kosinSimilarInquiryDetail.get再照会＿会員名());
+            kosinSimilarInquiryDetailTarget.set再照会＿回答通番(kosinSimilarInquiryDetail.get再照会＿回答通番());
+            kosinSimilarInquiryDetailTarget.set再照会＿電文種別(kosinSimilarInquiryDetail.get再照会＿電文種別());
+            kosinSimilarInquiryDetailTarget.set顧客コード(kosinSimilarInquiryDetail.get顧客コード());
+            kosinSimilarInquiryDetailTargetMapper.insert(kosinSimilarInquiryDetailTarget);
+        }
+
+        // ③-d9 個信類似明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似明細Source> kosinSimilarDetails =
+                kosinSimilarDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+        for (個信類似明細Source kosinSimilarDetail : kosinSimilarDetails) {
+            個信類似明細Target kosinSimilarDetailTarget = new 個信類似明細Target();
+            kosinSimilarDetailTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarDetailTarget.set申込目的(convertedPurpose);
+            kosinSimilarDetailTarget.setイベント(kosinSimilarDetail.getイベント());
+            kosinSimilarDetailTarget.setイベント日時(kosinSimilarDetail.getイベント日時());
+            kosinSimilarDetailTarget.set連番(kosinSimilarDetail.get連番());
+            kosinSimilarDetailTarget.set情報区分(kosinSimilarDetail.get情報区分());
+            kosinSimilarDetailTarget.set受付番号(kosinSimilarDetail.get受付番号());
+            kosinSimilarDetailTarget.set受付日時(kosinSimilarDetail.get受付日時());
+            kosinSimilarDetailTarget.set会員名(kosinSimilarDetail.get会員名());
+            kosinSimilarDetailTarget.set回答通番(kosinSimilarDetail.get回答通番());
+            kosinSimilarDetailTarget.set電文種別(kosinSimilarDetail.get電文種別());
+            kosinSimilarDetailTarget.set親回答通番(kosinSimilarDetail.get親回答通番());
+            kosinSimilarDetailTarget.set結付通番(kosinSimilarDetail.get結付通番());
+            kosinSimilarDetailTarget.set照会回答区分(kosinSimilarDetail.get照会回答区分());
+            kosinSimilarDetailTarget.set照会データ種別(kosinSimilarDetail.get照会データ種別());
+            kosinSimilarDetailTarget.set債権分類(kosinSimilarDetail.get債権分類());
+            kosinSimilarDetailTarget.set状態(kosinSimilarDetail.get状態());
+            kosinSimilarDetailTarget.set一致タイプ(kosinSimilarDetail.get一致タイプ());
+            kosinSimilarDetailTarget.set氏名カナ(kosinSimilarDetail.get氏名カナ());
+            kosinSimilarDetailTarget.set氏名漢字(kosinSimilarDetail.get氏名漢字());
+            kosinSimilarDetailTarget.set性別(kosinSimilarDetail.get性別());
+            kosinSimilarDetailTarget.set生年月日(kosinSimilarDetail.get生年月日());
+            kosinSimilarDetailTarget.set電話番号1(kosinSimilarDetail.get電話番号1());
+            kosinSimilarDetailTarget.set電話番号2(kosinSimilarDetail.get電話番号2());
+            kosinSimilarDetailTarget.set郵便番号(kosinSimilarDetail.get郵便番号());
+            kosinSimilarDetailTarget.set住所カナ(kosinSimilarDetail.get住所カナ());
+            kosinSimilarDetailTarget.set住所漢字(kosinSimilarDetail.get住所漢字());
+            kosinSimilarDetailTarget.set勤務先名(kosinSimilarDetail.get勤務先名());
+            kosinSimilarDetailTarget.set勤務先電話番号(kosinSimilarDetail.get勤務先電話番号());
+            kosinSimilarDetailTarget.set公的資料1区分(kosinSimilarDetail.get公的資料1区分());
+            kosinSimilarDetailTarget.set公的資料1番号(kosinSimilarDetail.get公的資料1番号());
+            kosinSimilarDetailTarget.set公的資料2区分(kosinSimilarDetail.get公的資料2区分());
+            kosinSimilarDetailTarget.set公的資料2番号(kosinSimilarDetail.get公的資料2番号());
+            kosinSimilarDetailTarget.set情報識別区分(kosinSimilarDetail.get情報識別区分());
+            kosinSimilarDetailTarget.set本人識別コード(kosinSimilarDetail.get本人識別コード());
+            kosinSimilarDetailTarget.set情報特定コード(kosinSimilarDetail.get情報特定コード());
+            kosinSimilarDetailTarget.set顧客コード(kosinSimilarDetail.get顧客コード());
+            kosinSimilarDetailTargetMapper.insert(kosinSimilarDetailTarget);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
