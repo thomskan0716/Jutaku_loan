@@ -199,7 +199,7 @@ public class JutakuLoanService {
 
         log.info("Processing range: {} ~ {}", fromRowNumber, toRowNumber);
 
-        List<申込進捗Source> progressRecords = applicationProgressSourceMapper.selectByRowRange(fromRowNumber, toRowNumber);
+        List<申込進捗Source> progressRecords = emptyIfNull(applicationProgressSourceMapper.selectByRowRange(fromRowNumber, toRowNumber));
 
         int migratedCount = 0;
         int skippedCount = 0;
@@ -225,14 +225,20 @@ public class JutakuLoanService {
     // Returns true if at least one review group was migrated, false if the application
     // was skipped because it has no completed review stage.
     private boolean migrateSingleApplication(申込進捗Source progress) {
+        if (progress == null) {
+            log.warn("SKIP: null 申込進捗 record received");
+            return false;
+        }
         String sourceApplicationNumber = progress.get申込番号();
         String targetApplicationNumber = convertApplicationNumber(sourceApplicationNumber);
 
         List<申込審査段階Source> allReviewStages =
-                reviewStageSourceMapper.selectByApplicationId(sourceApplicationNumber);
+                emptyIfNull(reviewStageSourceMapper.selectByApplicationId(sourceApplicationNumber));
         List<申込審査段階Source> completedReviewStages = allReviewStages.stream()
+                .filter(java.util.Objects::nonNull)
                 .filter(stage -> "1".equals(stage.get審査完了区分()))
-                .sorted(Comparator.comparing(申込審査段階Source::get申込目的))
+                .sorted(Comparator.comparing(申込審査段階Source::get申込目的,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 
         if (completedReviewStages.isEmpty()) {
@@ -268,7 +274,10 @@ public class JutakuLoanService {
 
         // 申込関連申込: 1:N per 申込番号 (no 申込目的). Both application numbers are converted (2→3).
         // Inserted after the 申込 rows exist because of the FK to 申込.
-        for (申込関連申込Source relatedApplication : relatedApplicationSourceMapper.selectByApplicationId(sourceApplicationNumber)) {
+        for (申込関連申込Source relatedApplication : emptyIfNull(relatedApplicationSourceMapper.selectByApplicationId(sourceApplicationNumber))) {
+            if (relatedApplication == null) {
+                continue;
+            }
             申込関連申込Target relatedApplicationTarget = new 申込関連申込Target();
             relatedApplicationTarget.set申込番号(targetApplicationNumber);
             relatedApplicationTarget.set関連区分(relatedApplication.get関連区分());
@@ -294,7 +303,8 @@ public class JutakuLoanService {
     // purpose and the highest 回数. convertedPurpose is the target 申込目的 ('10' or '20').
     private void migrateReviewGroup(String sourceApplicationNumber, String targetApplicationNumber,
                                     List<申込審査段階Source> reviewStages, String convertedPurpose) {
-        if (reviewStages.isEmpty()) {
+        if (sourceApplicationNumber == null || targetApplicationNumber == null
+                || reviewStages == null || reviewStages.isEmpty()) {
             return;
         }
 
@@ -327,7 +337,7 @@ public class JutakuLoanService {
 
         // ③ 保証人 main (MAX only) — FK to 申込.
         List<保証人Source> mainGuarantors =
-                guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証人Source guarantor : mainGuarantors) {
             保証人Target guarantorTarget = new 保証人Target();
             guarantorTarget.set申込番号(targetApplicationNumber);
@@ -349,7 +359,7 @@ public class JutakuLoanService {
         // ③-b 申込担保情報ＰＤＦ (MAX only) — FK to 申込, 1:N per application + purpose, loaded from 申込担保回答ＰＤＦ.
         // ファイル種別 passes through from ファイル種類; the single source file-name feeds both target file-name columns.
         List<申込担保回答ＰＤＦSource> collateralPdfs =
-                collateralAnswerPdfSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralAnswerPdfSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (申込担保回答ＰＤＦSource collateralPdf : collateralPdfs) {
             申込担保情報ＰＤＦTarget collateralPdfTarget = new 申込担保情報ＰＤＦTarget();
             collateralPdfTarget.set申込番号(targetApplicationNumber);
@@ -363,7 +373,7 @@ public class JutakuLoanService {
         // ③-c 申込審査履歴 event log (MAX only) — FK to 申込, 1:N per (申込番号, 申込目的).
         // 進捗コード is converted via the 編集仕様詳細 code table; other columns pass through with the source-provided 回数.
         List<申込審査履歴Source> reviewHistories =
-                reviewHistorySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewHistorySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (申込審査履歴Source reviewHistory : reviewHistories) {
             申込審査履歴Target reviewHistoryTarget = new 申込審査履歴Target();
             reviewHistoryTarget.set申込番号(targetApplicationNumber);
@@ -380,7 +390,7 @@ public class JutakuLoanService {
         // ③-d 審査チェック照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 一連番号 fixed '99999'; other columns pass through from source.
         List<審査チェック照会Source> reviewChecks =
-                reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査チェック照会Source reviewCheck : reviewChecks) {
             審査チェック照会Target reviewCheckTarget = new 審査チェック照会Target();
             reviewCheckTarget.set申込番号(targetApplicationNumber);
@@ -396,7 +406,7 @@ public class JutakuLoanService {
         // ③-d2 審査ＫＳＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＫＳＣ照会Source> reviewKscs =
-                reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
             審査ＫＳＣ照会Target reviewKscTarget = new 審査ＫＳＣ照会Target();
             reviewKscTarget.set申込番号(targetApplicationNumber);
@@ -415,7 +425,7 @@ public class JutakuLoanService {
         // Only columns present in both source and target are copied; target-only
         // columns (ＫＳＣグレー, ＫＳＣ延滞, ＫＳＣ転居歴, etc.) are left null.
         List<審査ＫＳＣ信用情報Source> reviewKscCredits =
-                reviewKscCreditSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報Source reviewKscCredit : reviewKscCredits) {
             審査ＫＳＣ信用情報Target reviewKscCreditTarget = new 審査ＫＳＣ信用情報Target();
             reviewKscCreditTarget.set申込番号(targetApplicationNumber);
@@ -435,7 +445,7 @@ public class JutakuLoanService {
 
         // ③-d4 審査ＫＳＣ信用情報明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＫＳＣ信用情報明細Source> reviewKscCreditLines =
-                reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報明細Source reviewKscCreditLine : reviewKscCreditLines) {
             審査ＫＳＣ信用情報明細Target reviewKscCreditLineTarget = new 審査ＫＳＣ信用情報明細Target();
             reviewKscCreditLineTarget.set申込番号(targetApplicationNumber);
@@ -457,7 +467,7 @@ public class JutakuLoanService {
         // ③-d5 審査ＫＳＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         // Target-only column 延滞回数 has no source and is left null.
         List<審査ＫＳＣ信用情報詳細Source> reviewKscCreditDetails =
-                reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報詳細Source reviewKscCreditDetail : reviewKscCreditDetails) {
             審査ＫＳＣ信用情報詳細Target reviewKscCreditDetailTarget = new 審査ＫＳＣ信用情報詳細Target();
             reviewKscCreditDetailTarget.set申込番号(targetApplicationNumber);
@@ -499,7 +509,7 @@ public class JutakuLoanService {
         // ③-d6 審査ＪＩＣＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＪＩＣＣ照会Source> reviewJiccs =
-                reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＪＩＣＣ照会Source reviewJicc : reviewJiccs) {
             審査ＪＩＣＣ照会Target reviewJiccTarget = new 審査ＪＩＣＣ照会Target();
             reviewJiccTarget.set申込番号(targetApplicationNumber);
@@ -517,7 +527,7 @@ public class JutakuLoanService {
         // ③-d7 審査ＣＩＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＣＩＣ照会Source> reviewCics =
-                reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＣＩＣ照会Source reviewCic : reviewCics) {
             審査ＣＩＣ照会Target reviewCicTarget = new 審査ＣＩＣ照会Target();
             reviewCicTarget.set申込番号(targetApplicationNumber);
@@ -534,7 +544,7 @@ public class JutakuLoanService {
 
         // ③-d8a 個信類似照会管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似照会管理Source> kosinSimilarInquiryMgmts =
-                kosinSimilarInquiryMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(kosinSimilarInquiryMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似照会管理Source kosinSimilarInquiryMgmt : kosinSimilarInquiryMgmts) {
             個信類似照会管理Target kosinSimilarInquiryMgmtTarget = new 個信類似照会管理Target();
             kosinSimilarInquiryMgmtTarget.set申込番号(targetApplicationNumber);
@@ -549,7 +559,7 @@ public class JutakuLoanService {
 
         // ③-d8 個信類似照会明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似照会明細Source> kosinSimilarInquiryDetails =
-                kosinSimilarInquiryDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(kosinSimilarInquiryDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似照会明細Source kosinSimilarInquiryDetail : kosinSimilarInquiryDetails) {
             個信類似照会明細Target kosinSimilarInquiryDetailTarget = new 個信類似照会明細Target();
             kosinSimilarInquiryDetailTarget.set申込番号(targetApplicationNumber);
@@ -584,7 +594,7 @@ public class JutakuLoanService {
 
         // ③-d9 個信類似明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似明細Source> kosinSimilarDetails =
-                kosinSimilarDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(kosinSimilarDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似明細Source kosinSimilarDetail : kosinSimilarDetails) {
             個信類似明細Target kosinSimilarDetailTarget = new 個信類似明細Target();
             kosinSimilarDetailTarget.set申込番号(targetApplicationNumber);
@@ -630,7 +640,7 @@ public class JutakuLoanService {
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
         // 一連番号 fixed '99999'; valuation columns pass through.
         List<担保評価回答Source> collateralValuations =
-                collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (担保評価回答Source collateralValuation : collateralValuations) {
             ＩＦ＿担保評価連携結果Target valuationTarget = new ＩＦ＿担保評価連携結果Target();
             valuationTarget.set申込番号(targetApplicationNumber);
@@ -650,7 +660,7 @@ public class JutakuLoanService {
         // ③-f ＩＦ＿担保評価連携結果＿ファイル (MAX only) — 担保評価回答 joined with 申込担保回答ＰＤＦ.
         // 一連番号 fixed '99999'; ファイル種別 <- ファイル種類.
         List<担保評価連携結果ファイルSource> valuationFiles =
-                collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (担保評価連携結果ファイルSource valuationFile : valuationFiles) {
             ＩＦ＿担保評価連携結果＿ファイルTarget valuationFileTarget = new ＩＦ＿担保評価連携結果＿ファイルTarget();
             valuationFileTarget.set申込番号(targetApplicationNumber);
@@ -704,7 +714,7 @@ public class JutakuLoanService {
 
             // ⑦ 履歴保証人 — FK to 履歴申込.
             List<保証人Source> historyGuarantors =
-                    guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose);
+                    emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose));
             for (保証人Source guarantor : historyGuarantors) {
                 履歴保証人Target historyGuarantorTarget = new 履歴保証人Target();
                 historyGuarantorTarget.set申込番号(targetApplicationNumber);
@@ -740,6 +750,12 @@ public class JutakuLoanService {
             return sourceApplicationNumber;
         }
         return "3" + sourceApplicationNumber.substring(1);
+    }
+
+    // Returns an empty list when the given list is null, so 検索結果 (search results)
+    // can be iterated safely without a NullPointerException.
+    private static <T> List<T> emptyIfNull(List<T> list) {
+        return list == null ? java.util.Collections.emptyList() : list;
     }
 
     // Truncates a value so it fits within maxBytes bytes in MS932 (Shift-JIS) encoding.
@@ -978,6 +994,9 @@ public class JutakuLoanService {
      * Source 資金使途 values 7:増改築 and above are undecided (TODO).
      */
     private void mapFundUsageDerivedColumns(申込Source source, 申込Target target) {
+        if (source == null || target == null) {
+            return;
+        }
         String productMajorCategory = source.get商品大分類();
         if (!"1".equals(productMajorCategory) && !"2".equals(productMajorCategory)) {
             return;
@@ -1001,6 +1020,9 @@ public class JutakuLoanService {
     // 編集仕様詳細 code conversions are applied via the convert* helpers, and over-length
     // text columns are trimmed with truncateToByteLimit.
     private void mapApplicationColumns(申込Source source, 申込Target target) {
+        if (source == null || target == null) {
+            return;
+        }
         target.set商品大分類(convertProductMajorCategory(source.get商品大分類()));
         target.set商品コード(source.get商品コード());   // TODO(編集仕様詳細): 商品コードマッピングは大半が未定
         target.set保証番号(source.get保証番号());
