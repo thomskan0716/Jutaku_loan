@@ -53,6 +53,12 @@ import migration.domain.source.審査ＣＩＣ照会Source;
 import migration.domain.source.個信類似照会管理Source;
 import migration.domain.source.個信類似照会明細Source;
 import migration.domain.source.個信類似明細Source;
+import migration.domain.source.個信データ編集管理Source;
+import migration.domain.source.返済比率計算Source;
+import migration.domain.source.返済比率計算結果Source;
+import migration.domain.source.返済比率計算結果明細Source;
+import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
+import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
 import migration.domain.source.審査ＫＳＣ信用情報明細Source;
 import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
@@ -65,6 +71,12 @@ import migration.domain.target.審査ＣＩＣ照会Target;
 import migration.domain.target.個信類似照会管理Target;
 import migration.domain.target.個信類似照会明細Target;
 import migration.domain.target.個信類似明細Target;
+import migration.domain.target.個信データ編集管理Target;
+import migration.domain.target.返済比率計算Target;
+import migration.domain.target.返済比率計算結果Target;
+import migration.domain.target.返済比率計算結果明細Target;
+import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
+import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
 import migration.domain.target.審査ＫＳＣ信用情報明細Target;
 import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
@@ -77,6 +89,12 @@ import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
 import migration.mapper.source.個信類似照会管理SourceMapper;
 import migration.mapper.source.個信類似照会明細SourceMapper;
 import migration.mapper.source.個信類似明細SourceMapper;
+import migration.mapper.source.個信データ編集管理SourceMapper;
+import migration.mapper.source.返済比率計算SourceMapper;
+import migration.mapper.source.返済比率計算結果SourceMapper;
+import migration.mapper.source.返済比率計算結果明細SourceMapper;
+import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
+import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報明細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
@@ -89,6 +107,12 @@ import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
 import migration.mapper.target.個信類似照会管理TargetMapper;
 import migration.mapper.target.個信類似照会明細TargetMapper;
 import migration.mapper.target.個信類似明細TargetMapper;
+import migration.mapper.target.個信データ編集管理TargetMapper;
+import migration.mapper.target.返済比率計算TargetMapper;
+import migration.mapper.target.返済比率計算結果TargetMapper;
+import migration.mapper.target.返済比率計算結果明細TargetMapper;
+import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
+import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報明細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報詳細TargetMapper;
@@ -127,6 +151,12 @@ public class JutakuLoanService {
     @Autowired private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
     @Autowired private 個信類似照会明細SourceMapper kosinSimilarInquiryDetailSourceMapper;
     @Autowired private 個信類似明細SourceMapper kosinSimilarDetailSourceMapper;
+    @Autowired private 個信データ編集管理SourceMapper kosinDataEditMgmtSourceMapper;
+    @Autowired private 返済比率計算SourceMapper repaymentRatioCalcSourceMapper;
+    @Autowired private 返済比率計算結果SourceMapper repaymentRatioResultSourceMapper;
+    @Autowired private 返済比率計算結果明細SourceMapper repaymentRatioResultDetailSourceMapper;
+    @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
+    @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
@@ -156,6 +186,12 @@ public class JutakuLoanService {
     @Autowired private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
     @Autowired private 個信類似照会明細TargetMapper kosinSimilarInquiryDetailTargetMapper;
     @Autowired private 個信類似明細TargetMapper kosinSimilarDetailTargetMapper;
+    @Autowired private 個信データ編集管理TargetMapper kosinDataEditMgmtTargetMapper;
+    @Autowired private 返済比率計算TargetMapper repaymentRatioCalcTargetMapper;
+    @Autowired private 返済比率計算結果TargetMapper repaymentRatioResultTargetMapper;
+    @Autowired private 返済比率計算結果明細TargetMapper repaymentRatioResultDetailTargetMapper;
+    @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
+    @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
@@ -635,6 +671,282 @@ public class JutakuLoanService {
             kosinSimilarDetailTarget.set情報特定コード(kosinSimilarDetail.get情報特定コード());
             kosinSimilarDetailTarget.set顧客コード(kosinSimilarDetail.get顧客コード());
             kosinSimilarDetailTargetMapper.insert(kosinSimilarDetailTarget);
+        }
+
+        // ③-d10 審査ＪＩＣＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＪＩＣＣ信用情報詳細Source> reviewJiccCreditDetails =
+                emptyIfNull(reviewJiccCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＪＩＣＣ信用情報詳細Source reviewJiccCreditDetail : reviewJiccCreditDetails) {
+            if (reviewJiccCreditDetail == null) {
+                continue;
+            }
+            審査ＪＩＣＣ信用情報詳細Target reviewJiccCreditDetailTarget = new 審査ＪＩＣＣ信用情報詳細Target();
+            reviewJiccCreditDetailTarget.set申込番号(targetApplicationNumber);
+            reviewJiccCreditDetailTarget.set申込目的(convertedPurpose);
+            reviewJiccCreditDetailTarget.setイベント(reviewJiccCreditDetail.getイベント());
+            reviewJiccCreditDetailTarget.setイベント日時(reviewJiccCreditDetail.getイベント日時());
+            reviewJiccCreditDetailTarget.set連番(reviewJiccCreditDetail.get連番());
+            reviewJiccCreditDetailTarget.set別名連番(reviewJiccCreditDetail.get別名連番());
+            reviewJiccCreditDetailTarget.set詳細連番(reviewJiccCreditDetail.get詳細連番());
+            reviewJiccCreditDetailTarget.set受付日時(reviewJiccCreditDetail.get受付日時());
+            reviewJiccCreditDetailTarget.set受付番号(reviewJiccCreditDetail.get受付番号());
+            reviewJiccCreditDetailTarget.set会員名(reviewJiccCreditDetail.get会員名());
+            reviewJiccCreditDetailTarget.set親回答通番(reviewJiccCreditDetail.get親回答通番());
+            reviewJiccCreditDetailTarget.set回答通番(reviewJiccCreditDetail.get回答通番());
+            reviewJiccCreditDetailTarget.set照会回答区分(reviewJiccCreditDetail.get照会回答区分());
+            reviewJiccCreditDetailTarget.set債権分類(reviewJiccCreditDetail.get債権分類());
+            reviewJiccCreditDetailTarget.set照会データ種別(reviewJiccCreditDetail.get照会データ種別());
+            reviewJiccCreditDetailTarget.setテーブル名(reviewJiccCreditDetail.getテーブル名());
+            reviewJiccCreditDetailTarget.set項目名(reviewJiccCreditDetail.get項目名());
+            reviewJiccCreditDetailTarget.setコード番号(reviewJiccCreditDetail.getコード番号());
+            reviewJiccCreditDetailTarget.setコード(reviewJiccCreditDetail.getコード());
+            reviewJiccCreditDetailTarget.setコード名称(reviewJiccCreditDetail.getコード名称());
+            reviewJiccCreditDetailTarget.set氏名(reviewJiccCreditDetail.get氏名());
+            reviewJiccCreditDetailTarget.set氏名カナ(reviewJiccCreditDetail.get氏名カナ());
+            reviewJiccCreditDetailTarget.set種類(reviewJiccCreditDetail.get種類());
+            reviewJiccCreditDetailTarget.set信用情報判断(reviewJiccCreditDetail.get信用情報判断());
+            reviewJiccCreditDetailTarget.set信用情報(reviewJiccCreditDetail.get信用情報());
+            reviewJiccCreditDetailTarget.set判断項目名1(reviewJiccCreditDetail.get判断項目名1());
+            reviewJiccCreditDetailTarget.set判断項目1(reviewJiccCreditDetail.get判断項目1());
+            reviewJiccCreditDetailTarget.set判断項目名2(reviewJiccCreditDetail.get判断項目名2());
+            reviewJiccCreditDetailTarget.set判断項目2(reviewJiccCreditDetail.get判断項目2());
+            reviewJiccCreditDetailTarget.set判断項目名3(reviewJiccCreditDetail.get判断項目名3());
+            reviewJiccCreditDetailTarget.set判断項目3(reviewJiccCreditDetail.get判断項目3());
+            reviewJiccCreditDetailTarget.set判断項目名4(reviewJiccCreditDetail.get判断項目名4());
+            reviewJiccCreditDetailTarget.set判断項目4(reviewJiccCreditDetail.get判断項目4());
+            reviewJiccCreditDetailTarget.set判断項目名5(reviewJiccCreditDetail.get判断項目名5());
+            reviewJiccCreditDetailTarget.set判断項目5(reviewJiccCreditDetail.get判断項目5());
+            reviewJiccCreditDetailTarget.setブラック判断(reviewJiccCreditDetail.getブラック判断());
+            reviewJiccCreditDetailTarget.set発生日(reviewJiccCreditDetail.get発生日());
+            reviewJiccCreditDetailTarget.set契約日(reviewJiccCreditDetail.get契約日());
+            reviewJiccCreditDetailTargetMapper.insert(reviewJiccCreditDetailTarget);
+        }
+
+        // ③-d11 審査ＣＩＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＣＩＣ信用情報詳細Source> reviewCicCreditDetails =
+                emptyIfNull(reviewCicCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＣＩＣ信用情報詳細Source reviewCicCreditDetail : reviewCicCreditDetails) {
+            if (reviewCicCreditDetail == null) {
+                continue;
+            }
+            審査ＣＩＣ信用情報詳細Target reviewCicCreditDetailTarget = new 審査ＣＩＣ信用情報詳細Target();
+            reviewCicCreditDetailTarget.set申込番号(targetApplicationNumber);
+            reviewCicCreditDetailTarget.set申込目的(convertedPurpose);
+            reviewCicCreditDetailTarget.setイベント(reviewCicCreditDetail.getイベント());
+            reviewCicCreditDetailTarget.setイベント日時(reviewCicCreditDetail.getイベント日時());
+            reviewCicCreditDetailTarget.set連番(reviewCicCreditDetail.get連番());
+            reviewCicCreditDetailTarget.set別名連番(reviewCicCreditDetail.get別名連番());
+            reviewCicCreditDetailTarget.set詳細連番(reviewCicCreditDetail.get詳細連番());
+            reviewCicCreditDetailTarget.set受付日時(reviewCicCreditDetail.get受付日時());
+            reviewCicCreditDetailTarget.set受付番号(reviewCicCreditDetail.get受付番号());
+            reviewCicCreditDetailTarget.set会員名(reviewCicCreditDetail.get会員名());
+            reviewCicCreditDetailTarget.set回答通番(reviewCicCreditDetail.get回答通番());
+            reviewCicCreditDetailTarget.set電文種別(reviewCicCreditDetail.get電文種別());
+            reviewCicCreditDetailTarget.setテーブル名(reviewCicCreditDetail.getテーブル名());
+            reviewCicCreditDetailTarget.set項目名(reviewCicCreditDetail.get項目名());
+            reviewCicCreditDetailTarget.setコード番号(reviewCicCreditDetail.getコード番号());
+            reviewCicCreditDetailTarget.setコード(reviewCicCreditDetail.getコード());
+            reviewCicCreditDetailTarget.setコード名称(reviewCicCreditDetail.getコード名称());
+            reviewCicCreditDetailTarget.set氏名(reviewCicCreditDetail.get氏名());
+            reviewCicCreditDetailTarget.set氏名カナ(reviewCicCreditDetail.get氏名カナ());
+            reviewCicCreditDetailTarget.set種類(reviewCicCreditDetail.get種類());
+            reviewCicCreditDetailTarget.set信用情報判断(reviewCicCreditDetail.get信用情報判断());
+            reviewCicCreditDetailTarget.set信用情報(reviewCicCreditDetail.get信用情報());
+            reviewCicCreditDetailTarget.set判断項目名1(reviewCicCreditDetail.get判断項目名1());
+            reviewCicCreditDetailTarget.set判断項目1(reviewCicCreditDetail.get判断項目1());
+            reviewCicCreditDetailTarget.set判断項目名2(reviewCicCreditDetail.get判断項目名2());
+            reviewCicCreditDetailTarget.set判断項目2(reviewCicCreditDetail.get判断項目2());
+            reviewCicCreditDetailTarget.set判断項目名3(reviewCicCreditDetail.get判断項目名3());
+            reviewCicCreditDetailTarget.set判断項目3(reviewCicCreditDetail.get判断項目3());
+            reviewCicCreditDetailTarget.set判断項目名4(reviewCicCreditDetail.get判断項目名4());
+            reviewCicCreditDetailTarget.set判断項目4(reviewCicCreditDetail.get判断項目4());
+            reviewCicCreditDetailTarget.set判断項目名5(reviewCicCreditDetail.get判断項目名5());
+            reviewCicCreditDetailTarget.set判断項目5(reviewCicCreditDetail.get判断項目5());
+            reviewCicCreditDetailTarget.setブラック判断(reviewCicCreditDetail.getブラック判断());
+            reviewCicCreditDetailTarget.set発生日(reviewCicCreditDetail.get発生日());
+            reviewCicCreditDetailTarget.set契約日(reviewCicCreditDetail.get契約日());
+            reviewCicCreditDetailTargetMapper.insert(reviewCicCreditDetailTarget);
+        }
+
+        // ③-d12 個信データ編集管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信データ編集管理Source> kosinDataEditMgmts =
+                emptyIfNull(kosinDataEditMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (個信データ編集管理Source kosinDataEditMgmt : kosinDataEditMgmts) {
+            if (kosinDataEditMgmt == null) {
+                continue;
+            }
+            個信データ編集管理Target kosinDataEditMgmtTarget = new 個信データ編集管理Target();
+            kosinDataEditMgmtTarget.set申込番号(targetApplicationNumber);
+            kosinDataEditMgmtTarget.set申込目的(convertedPurpose);
+            kosinDataEditMgmtTarget.setイベント(kosinDataEditMgmt.getイベント());
+            kosinDataEditMgmtTarget.setイベント日時(kosinDataEditMgmt.getイベント日時());
+            kosinDataEditMgmtTarget.set状態(kosinDataEditMgmt.get状態());
+            kosinDataEditMgmtTarget.set状態説明(kosinDataEditMgmt.get状態説明());
+            kosinDataEditMgmtTarget.set優先度(kosinDataEditMgmt.get優先度());
+            kosinDataEditMgmtTargetMapper.insert(kosinDataEditMgmtTarget);
+        }
+
+        // ③-d13 返済比率計算 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<返済比率計算Source> repaymentRatioCalcs =
+                emptyIfNull(repaymentRatioCalcSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算Source repaymentRatioCalc : repaymentRatioCalcs) {
+            if (repaymentRatioCalc == null) {
+                continue;
+            }
+            返済比率計算Target repaymentRatioCalcTarget = new 返済比率計算Target();
+            repaymentRatioCalcTarget.set申込番号(targetApplicationNumber);
+            repaymentRatioCalcTarget.set申込目的(convertedPurpose);
+            repaymentRatioCalcTarget.setイベント(repaymentRatioCalc.getイベント());
+            repaymentRatioCalcTarget.setイベント日時(repaymentRatioCalc.getイベント日時());
+            repaymentRatioCalcTarget.set状態(repaymentRatioCalc.get状態());
+            repaymentRatioCalcTarget.set状態説明(repaymentRatioCalc.get状態説明());
+            repaymentRatioCalcTarget.set優先度(repaymentRatioCalc.get優先度());
+            repaymentRatioCalcTargetMapper.insert(repaymentRatioCalcTarget);
+        }
+
+        // ③-d14 返済比率計算結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<返済比率計算結果Source> repaymentRatioResults =
+                emptyIfNull(repaymentRatioResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算結果Source src : repaymentRatioResults) {
+            if (src == null) {
+                continue;
+            }
+            返済比率計算結果Target t = new 返済比率計算結果Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set計算年収(src.get計算年収());
+            t.set借入総額(src.get借入総額());
+            t.set無担保借入額(src.get無担保借入額());
+            t.set年間返済額(src.get年間返済額());
+            t.set総額借入比率(src.get総額借入比率());
+            t.set無担保借入比率(src.get無担保借入比率());
+            t.set総額返済比率(src.get総額返済比率());
+            t.set無担保年間返済額(src.get無担保年間返済額());
+            t.set申告借入総額(src.get申告借入総額());
+            t.set申告無担保借入額(src.get申告無担保借入額());
+            t.set申告年間返済額(src.get申告年間返済額());
+            t.set申告総額借入比率(src.get申告総額借入比率());
+            t.set申告無担保借入比率(src.get申告無担保借入比率());
+            t.set申告総額返済比率(src.get申告総額返済比率());
+            t.set申告無担保年間返済額(src.get申告無担保年間返済額());
+            t.set今回借入総額(src.get今回借入総額());
+            t.set今回無担保借入額(src.get今回無担保借入額());
+            t.set今回年間返済額(src.get今回年間返済額());
+            t.set今回総額借入比率(src.get今回総額借入比率());
+            t.set今回無担保借入比率(src.get今回無担保借入比率());
+            t.set今回総額返済比率(src.get今回総額返済比率());
+            t.set今回無担保年間返済額(src.get今回無担保年間返済額());
+            t.set自行借入総額(src.get自行借入総額());
+            t.set自行無担保借入額(src.get自行無担保借入額());
+            t.set自行年間返済額(src.get自行年間返済額());
+            t.set自行総額借入比率(src.get自行総額借入比率());
+            t.set自行無担保借入比率(src.get自行無担保借入比率());
+            t.set自行総額返済比率(src.get自行総額返済比率());
+            t.set自行無担保年間返済額(src.get自行無担保年間返済額());
+            t.setＫＳＣ借入総額(src.getＫＳＣ借入総額());
+            t.setＫＳＣ無担保借入額(src.getＫＳＣ無担保借入額());
+            t.setＫＳＣ年間返済額(src.getＫＳＣ年間返済額());
+            t.setＫＳＣ総額借入比率(src.getＫＳＣ総額借入比率());
+            t.setＫＳＣ無担保借入比率(src.getＫＳＣ無担保借入比率());
+            t.setＫＳＣ総額返済比率(src.getＫＳＣ総額返済比率());
+            t.setＫＳＣ無担保年間返済額(src.getＫＳＣ無担保年間返済額());
+            t.setＣＩＣ借入総額(src.getＣＩＣ借入総額());
+            t.setＣＩＣ無担保借入額(src.getＣＩＣ無担保借入額());
+            t.setＣＩＣ年間返済額(src.getＣＩＣ年間返済額());
+            t.setＣＩＣ総額借入比率(src.getＣＩＣ総額借入比率());
+            t.setＣＩＣ無担保借入比率(src.getＣＩＣ無担保借入比率());
+            t.setＣＩＣ総額返済比率(src.getＣＩＣ総額返済比率());
+            t.setＣＩＣ無担保年間返済額(src.getＣＩＣ無担保年間返済額());
+            t.setＣＣＢ借入総額(src.getＣＣＢ借入総額());
+            t.setＣＣＢ無担保借入額(src.getＣＣＢ無担保借入額());
+            t.setＣＣＢ年間返済額(src.getＣＣＢ年間返済額());
+            t.setＣＣＢ総額借入比率(src.getＣＣＢ総額借入比率());
+            t.setＣＣＢ無担保借入比率(src.getＣＣＢ無担保借入比率());
+            t.setＣＣＢ総額返済比率(src.getＣＣＢ総額返済比率());
+            t.setＣＣＢ無担保年間返済額(src.getＣＣＢ無担保年間返済額());
+            t.setＪＩＣＣ借入総額(src.getＪＩＣＣ借入総額());
+            t.setＪＩＣＣ無担保借入額(src.getＪＩＣＣ無担保借入額());
+            t.setＪＩＣＣ年間返済額(src.getＪＩＣＣ年間返済額());
+            t.setＪＩＣＣ総額借入比率(src.getＪＩＣＣ総額借入比率());
+            t.setＪＩＣＣ無担保借入比率(src.getＪＩＣＣ無担保借入比率());
+            t.setＪＩＣＣ総額返済比率(src.getＪＩＣＣ総額返済比率());
+            t.setＪＩＣＣ無担保年間返済額(src.getＪＩＣＣ無担保年間返済額());
+            repaymentRatioResultTargetMapper.insert(t);
+        }
+
+        // ③-d15 返済比率計算結果明細 (MAX only) — 1:N per (申込番号, 申込目的) keyed with 連番, pass-through.
+        List<返済比率計算結果明細Source> repaymentRatioResultDetails =
+                emptyIfNull(repaymentRatioResultDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算結果明細Source src : repaymentRatioResultDetails) {
+            if (src == null) {
+                continue;
+            }
+            返済比率計算結果明細Target t = new 返済比率計算結果明細Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set連番(src.get連番());
+            t.set計算年収(src.get計算年収());
+            t.set借入総額(src.get借入総額());
+            t.set無担保借入額(src.get無担保借入額());
+            t.set年間返済額(src.get年間返済額());
+            t.set総額借入比率(src.get総額借入比率());
+            t.set無担保借入比率(src.get無担保借入比率());
+            t.set総額返済比率(src.get総額返済比率());
+            t.set無担保年間返済額(src.get無担保年間返済額());
+            t.set申告借入総額(src.get申告借入総額());
+            t.set申告無担保借入額(src.get申告無担保借入額());
+            t.set申告年間返済額(src.get申告年間返済額());
+            t.set申告総額借入比率(src.get申告総額借入比率());
+            t.set申告無担保借入比率(src.get申告無担保借入比率());
+            t.set申告総額返済比率(src.get申告総額返済比率());
+            t.set申告無担保年間返済額(src.get申告無担保年間返済額());
+            t.set今回借入総額(src.get今回借入総額());
+            t.set今回無担保借入額(src.get今回無担保借入額());
+            t.set今回年間返済額(src.get今回年間返済額());
+            t.set今回総額借入比率(src.get今回総額借入比率());
+            t.set今回無担保借入比率(src.get今回無担保借入比率());
+            t.set今回総額返済比率(src.get今回総額返済比率());
+            t.set今回無担保年間返済額(src.get今回無担保年間返済額());
+            t.set自行借入総額(src.get自行借入総額());
+            t.set自行無担保借入額(src.get自行無担保借入額());
+            t.set自行年間返済額(src.get自行年間返済額());
+            t.set自行総額借入比率(src.get自行総額借入比率());
+            t.set自行無担保借入比率(src.get自行無担保借入比率());
+            t.set自行総額返済比率(src.get自行総額返済比率());
+            t.set自行無担保年間返済額(src.get自行無担保年間返済額());
+            t.setＫＳＣ借入総額(src.getＫＳＣ借入総額());
+            t.setＫＳＣ無担保借入額(src.getＫＳＣ無担保借入額());
+            t.setＫＳＣ年間返済額(src.getＫＳＣ年間返済額());
+            t.setＫＳＣ総額借入比率(src.getＫＳＣ総額借入比率());
+            t.setＫＳＣ無担保借入比率(src.getＫＳＣ無担保借入比率());
+            t.setＫＳＣ総額返済比率(src.getＫＳＣ総額返済比率());
+            t.setＫＳＣ無担保年間返済額(src.getＫＳＣ無担保年間返済額());
+            t.setＣＩＣ借入総額(src.getＣＩＣ借入総額());
+            t.setＣＩＣ無担保借入額(src.getＣＩＣ無担保借入額());
+            t.setＣＩＣ年間返済額(src.getＣＩＣ年間返済額());
+            t.setＣＩＣ総額借入比率(src.getＣＩＣ総額借入比率());
+            t.setＣＩＣ無担保借入比率(src.getＣＩＣ無担保借入比率());
+            t.setＣＩＣ総額返済比率(src.getＣＩＣ総額返済比率());
+            t.setＣＩＣ無担保年間返済額(src.getＣＩＣ無担保年間返済額());
+            t.setＣＣＢ借入総額(src.getＣＣＢ借入総額());
+            t.setＣＣＢ無担保借入額(src.getＣＣＢ無担保借入額());
+            t.setＣＣＢ年間返済額(src.getＣＣＢ年間返済額());
+            t.setＣＣＢ総額借入比率(src.getＣＣＢ総額借入比率());
+            t.setＣＣＢ無担保借入比率(src.getＣＣＢ無担保借入比率());
+            t.setＣＣＢ総額返済比率(src.getＣＣＢ総額返済比率());
+            t.setＣＣＢ無担保年間返済額(src.getＣＣＢ無担保年間返済額());
+            t.setＪＩＣＣ借入総額(src.getＪＩＣＣ借入総額());
+            t.setＪＩＣＣ無担保借入額(src.getＪＩＣＣ無担保借入額());
+            t.setＪＩＣＣ年間返済額(src.getＪＩＣＣ年間返済額());
+            t.setＪＩＣＣ総額借入比率(src.getＪＩＣＣ総額借入比率());
+            t.setＪＩＣＣ無担保借入比率(src.getＪＩＣＣ無担保借入比率());
+            t.setＪＩＣＣ総額返済比率(src.getＪＩＣＣ総額返済比率());
+            t.setＪＩＣＣ無担保年間返済額(src.getＪＩＣＣ無担保年間返済額());
+            repaymentRatioResultDetailTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

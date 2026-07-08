@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.返済比率計算結果明細SourceMapper">
+
+    <resultMap id="repaymentRatioResultDetailMap" type="migration.domain.source.返済比率計算結果明細Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <result property="計算年収"         column="計算年収"/>
+        <result property="借入総額"         column="借入総額"/>
+        <result property="無担保借入額"     column="無担保借入額"/>
+        <result property="年間返済額"       column="年間返済額"/>
+        <result property="総額借入比率"     column="総額借入比率"/>
+        <result property="無担保借入比率"   column="無担保借入比率"/>
+        <result property="総額返済比率"     column="総額返済比率"/>
+        <result property="無担保年間返済額" column="無担保年間返済額"/>
+        <result property="申告借入総額"         column="申告借入総額"/>
+        <result property="申告無担保借入額"     column="申告無担保借入額"/>
+        <result property="申告年間返済額"       column="申告年間返済額"/>
+        <result property="申告総額借入比率"     column="申告総額借入比率"/>
+        <result property="申告無担保借入比率"   column="申告無担保借入比率"/>
+        <result property="申告総額返済比率"     column="申告総額返済比率"/>
+        <result property="申告無担保年間返済額" column="申告無担保年間返済額"/>
+        <result property="今回借入総額"         column="今回借入総額"/>
+        <result property="今回無担保借入額"     column="今回無担保借入額"/>
+        <result property="今回年間返済額"       column="今回年間返済額"/>
+        <result property="今回総額借入比率"     column="今回総額借入比率"/>
+        <result property="今回無担保借入比率"   column="今回無担保借入比率"/>
+        <result property="今回総額返済比率"     column="今回総額返済比率"/>
+        <result property="今回無担保年間返済額" column="今回無担保年間返済額"/>
+        <result property="自行借入総額"         column="自行借入総額"/>
+        <result property="自行無担保借入額"     column="自行無担保借入額"/>
+        <result property="自行年間返済額"       column="自行年間返済額"/>
+        <result property="自行総額借入比率"     column="自行総額借入比率"/>
+        <result property="自行無担保借入比率"   column="自行無担保借入比率"/>
+        <result property="自行総額返済比率"     column="自行総額返済比率"/>
+        <result property="自行無担保年間返済額" column="自行無担保年間返済額"/>
+        <result property="ＫＳＣ借入総額"         column="ＫＳＣ借入総額"/>
+        <result property="ＫＳＣ無担保借入額"     column="ＫＳＣ無担保借入額"/>
+        <result property="ＫＳＣ年間返済額"       column="ＫＳＣ年間返済額"/>
+        <result property="ＫＳＣ総額借入比率"     column="ＫＳＣ総額借入比率"/>
+        <result property="ＫＳＣ無担保借入比率"   column="ＫＳＣ無担保借入比率"/>
+        <result property="ＫＳＣ総額返済比率"     column="ＫＳＣ総額返済比率"/>
+        <result property="ＫＳＣ無担保年間返済額" column="ＫＳＣ無担保年間返済額"/>
+        <result property="ＣＩＣ借入総額"         column="ＣＩＣ借入総額"/>
+        <result property="ＣＩＣ無担保借入額"     column="ＣＩＣ無担保借入額"/>
+        <result property="ＣＩＣ年間返済額"       column="ＣＩＣ年間返済額"/>
+        <result property="ＣＩＣ総額借入比率"     column="ＣＩＣ総額借入比率"/>
+        <result property="ＣＩＣ無担保借入比率"   column="ＣＩＣ無担保借入比率"/>
+        <result property="ＣＩＣ総額返済比率"     column="ＣＩＣ総額返済比率"/>
+        <result property="ＣＩＣ無担保年間返済額" column="ＣＩＣ無担保年間返済額"/>
+        <result property="ＣＣＢ借入総額"         column="ＣＣＢ借入総額"/>
+        <result property="ＣＣＢ無担保借入額"     column="ＣＣＢ無担保借入額"/>
+        <result property="ＣＣＢ年間返済額"       column="ＣＣＢ年間返済額"/>
+        <result property="ＣＣＢ総額借入比率"     column="ＣＣＢ総額借入比率"/>
+        <result property="ＣＣＢ無担保借入比率"   column="ＣＣＢ無担保借入比率"/>
+        <result property="ＣＣＢ総額返済比率"     column="ＣＣＢ総額返済比率"/>
+        <result property="ＣＣＢ無担保年間返済額" column="ＣＣＢ無担保年間返済額"/>
+        <result property="ＪＩＣＣ借入総額"         column="ＪＩＣＣ借入総額"/>
+        <result property="ＪＩＣＣ無担保借入額"     column="ＪＩＣＣ無担保借入額"/>
+        <result property="ＪＩＣＣ年間返済額"       column="ＪＩＣＣ年間返済額"/>
+        <result property="ＪＩＣＣ総額借入比率"     column="ＪＩＣＣ総額借入比率"/>
+        <result property="ＪＩＣＣ無担保借入比率"   column="ＪＩＣＣ無担保借入比率"/>
+        <result property="ＪＩＣＣ総額返済比率"     column="ＪＩＣＣ総額返済比率"/>
+        <result property="ＪＩＣＣ無担保年間返済額" column="ＪＩＣＣ無担保年間返済額"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="repaymentRatioResultDetailMap">
+        SELECT
+            申込番号, 申込目的, イベント, イベント日時, 連番,
+            計算年収, 借入総額, 無担保借入額, 年間返済額,
+            総額借入比率, 無担保借入比率, 総額返済比率, 無担保年間返済額,
+            申告借入総額, 申告無担保借入額, 申告年間返済額,
+            申告総額借入比率, 申告無担保借入比率, 申告総額返済比率, 申告無担保年間返済額,
+            今回借入総額, 今回無担保借入額, 今回年間返済額,
+            今回総額借入比率, 今回無担保借入比率, 今回総額返済比率, 今回無担保年間返済額,
+            自行借入総額, 自行無担保借入額, 自行年間返済額,
+            自行総額借入比率, 自行無担保借入比率, 自行総額返済比率, 自行無担保年間返済額,
+            ＫＳＣ借入総額, ＫＳＣ無担保借入額, ＫＳＣ年間返済額,
+            ＫＳＣ総額借入比率, ＫＳＣ無担保借入比率, ＫＳＣ総額返済比率, ＫＳＣ無担保年間返済額,
+            ＣＩＣ借入総額, ＣＩＣ無担保借入額, ＣＩＣ年間返済額,
+            ＣＩＣ総額借入比率, ＣＩＣ無担保借入比率, ＣＩＣ総額返済比率, ＣＩＣ無担保年間返済額,
+            ＣＣＢ借入総額, ＣＣＢ無担保借入額, ＣＣＢ年間返済額,
+            ＣＣＢ総額借入比率, ＣＣＢ無担保借入比率, ＣＣＢ総額返済比率, ＣＣＢ無担保年間返済額,
+            ＪＩＣＣ借入総額, ＪＩＣＣ無担保借入額, ＪＩＣＣ年間返済額,
+            ＪＩＣＣ総額借入比率, ＪＩＣＣ無担保借入比率, ＪＩＣＣ総額返済比率, ＪＩＣＣ無担保年間返済額
+        FROM 返済比率計算結果明細
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番
+    </select>
+
+</mapper>

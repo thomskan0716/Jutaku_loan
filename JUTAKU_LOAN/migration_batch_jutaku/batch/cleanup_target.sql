@@ -45,6 +45,12 @@ DELETE FROM ITF_SMS.審査ＣＩＣ照会         WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似照会管理       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似照会明細       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似明細           WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＪＩＣＣ信用情報詳細 WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＣＩＣ信用情報詳細 WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.個信データ編集管理     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.返済比率計算           WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.返済比率計算結果       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.返済比率計算結果明細   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 
