@@ -51,6 +51,12 @@ DELETE FROM ITF_SMS.個信データ編集管理     WHERE 申込番号 LIKE '3%'
 DELETE FROM ITF_SMS.返済比率計算           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.返済比率計算結果       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.返済比率計算結果明細   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答Ｓ       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答判定     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答判定Ｓ   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答明細     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル回答明細Ｓ   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 
