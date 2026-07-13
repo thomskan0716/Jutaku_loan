@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.審査モデル照会基本ＳSourceMapper">
+
+    <resultMap id="scoringInquiryBasicSMap" type="migration.domain.source.審査モデル照会基本ＳSource">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="申込時年齢"       column="申込時年齢"/>
+        <result property="実行時年齢"       column="実行時年齢"/>
+        <result property="本人年収"         column="本人年収"/>
+        <result property="合算者年収"       column="合算者年収"/>
+        <result property="合算方法"         column="合算方法"/>
+        <result property="申込金額"         column="申込金額"/>
+        <result property="借入期間"         column="借入期間"/>
+        <result property="資金使途"         column="資金使途"/>
+        <result property="勤続年数"         column="勤続年数"/>
+        <result property="資本金区分"       column="資本金区分"/>
+        <result property="年間返済額"       column="年間返済額"/>
+        <result property="総借入額"         column="総借入額"/>
+        <result property="自己資金"         column="自己資金"/>
+        <result property="所要資金"         column="所要資金"/>
+        <result property="規定外項目"       column="規定外項目"/>
+        <result property="担保評価額"       column="担保評価額"/>
+        <result property="保証料区分"       column="保証料区分"/>
+        <result property="先順位控除額"     column="先順位控除額"/>
+        <result property="控除前担保評価額" column="控除前担保評価額"/>
+        <result property="同居家族数"       column="同居家族数"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="scoringInquiryBasicSMap">
+        SELECT 申込番号, 申込目的, イベント, イベント日時,
+               申込時年齢, 実行時年齢, 本人年収, 合算者年収, 合算方法, 申込金額,
+               借入期間, 資金使途, 勤続年数, 資本金区分, 年間返済額, 総借入額,
+               自己資金, 所要資金, 規定外項目, 担保評価額, 保証料区分, 先順位控除額,
+               控除前担保評価額, 同居家族数
+        FROM 審査モデル照会基本Ｓ
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時
+    </select>
+
+</mapper>

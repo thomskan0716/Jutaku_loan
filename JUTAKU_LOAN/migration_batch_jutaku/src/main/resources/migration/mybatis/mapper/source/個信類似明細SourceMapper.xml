@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.個信類似明細SourceMapper">
+
+    <!-- DB uses full-width digits (電話番号１, 公的資料１区分, ...); Java properties use half-width. -->
+    <resultMap id="kosinSimilarDetailMap" type="migration.domain.source.個信類似明細Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <result property="情報区分"       column="情報区分"/>
+        <result property="受付番号"       column="受付番号"/>
+        <result property="受付日時"       column="受付日時"/>
+        <result property="会員名"         column="会員名"/>
+        <result property="回答通番"       column="回答通番"/>
+        <result property="電文種別"       column="電文種別"/>
+        <result property="親回答通番"     column="親回答通番"/>
+        <result property="結付通番"       column="結付通番"/>
+        <result property="照会回答区分"   column="照会回答区分"/>
+        <result property="照会データ種別" column="照会データ種別"/>
+        <result property="債権分類"       column="債権分類"/>
+        <result property="状態"           column="状態"/>
+        <result property="一致タイプ"     column="一致タイプ"/>
+        <result property="氏名カナ"       column="氏名カナ"/>
+        <result property="氏名漢字"       column="氏名漢字"/>
+        <result property="性別"           column="性別"/>
+        <result property="生年月日"       column="生年月日"/>
+        <result property="電話番号1"      column="電話番号１"/>
+        <result property="電話番号2"      column="電話番号２"/>
+        <result property="郵便番号"       column="郵便番号"/>
+        <result property="住所カナ"       column="住所カナ"/>
+        <result property="住所漢字"       column="住所漢字"/>
+        <result property="勤務先名"       column="勤務先名"/>
+        <result property="勤務先電話番号" column="勤務先電話番号"/>
+        <result property="公的資料1区分"  column="公的資料１区分"/>
+        <result property="公的資料1番号"  column="公的資料１番号"/>
+        <result property="公的資料2区分"  column="公的資料２区分"/>
+        <result property="公的資料2番号"  column="公的資料２番号"/>
+        <result property="情報識別区分"   column="情報識別区分"/>
+        <result property="本人識別コード" column="本人識別コード"/>
+        <result property="情報特定コード" column="情報特定コード"/>
+        <result property="顧客コード"     column="顧客コード"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="kosinSimilarDetailMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            連番,
+            情報区分,
+            受付番号,
+            受付日時,
+            会員名,
+            回答通番,
+            電文種別,
+            親回答通番,
+            結付通番,
+            照会回答区分,
+            照会データ種別,
+            債権分類,
+            状態,
+            一致タイプ,
+            氏名カナ,
+            氏名漢字,
+            性別,
+            生年月日,
+            電話番号１,
+            電話番号２,
+            郵便番号,
+            住所カナ,
+            住所漢字,
+            勤務先名,
+            勤務先電話番号,
+            公的資料１区分,
+            公的資料１番号,
+            公的資料２区分,
+            公的資料２番号,
+            情報識別区分,
+            本人識別コード,
+            情報特定コード,
+            顧客コード
+        FROM 個信類似明細
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番, 回答通番
+    </select>
+
+</mapper>

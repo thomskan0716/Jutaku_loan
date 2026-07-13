@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.個信類似照会明細SourceMapper">
+
+    <!-- DB uses full-width digits (電話番号１/電話番号２); Java properties use half-width.
+         再照会＿* columns contain a full-width underscore (U+FF3F) and are double-quoted. -->
+    <resultMap id="kosinSimilarInquiryDetailMap" type="migration.domain.source.個信類似照会明細Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="受付番号"     column="受付番号"/>
+        <id property="受付日時"     column="受付日時"/>
+        <result property="情報区分"       column="情報区分"/>
+        <result property="氏名カナ"       column="氏名カナ"/>
+        <result property="氏名漢字"       column="氏名漢字"/>
+        <result property="性別"           column="性別"/>
+        <result property="生年月日"       column="生年月日"/>
+        <result property="電話番号1"      column="電話番号１"/>
+        <result property="電話番号2"      column="電話番号２"/>
+        <result property="郵便番号"       column="郵便番号"/>
+        <result property="住所カナ"       column="住所カナ"/>
+        <result property="住所漢字"       column="住所漢字"/>
+        <result property="勤務先名"       column="勤務先名"/>
+        <result property="勤務先電話番号" column="勤務先電話番号"/>
+        <result property="本人識別コード" column="本人識別コード"/>
+        <result property="情報特定コード" column="情報特定コード"/>
+        <result property="再照会＿情報区分" column="再照会＿情報区分"/>
+        <result property="再照会＿受付番号" column="再照会＿受付番号"/>
+        <result property="再照会＿受付日時" column="再照会＿受付日時"/>
+        <result property="再照会＿会員名"   column="再照会＿会員名"/>
+        <result property="再照会＿回答通番" column="再照会＿回答通番"/>
+        <result property="再照会＿電文種別" column="再照会＿電文種別"/>
+        <result property="顧客コード"       column="顧客コード"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="kosinSimilarInquiryDetailMap">
+        SELECT
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            受付番号,
+            受付日時,
+            情報区分,
+            氏名カナ,
+            氏名漢字,
+            性別,
+            生年月日,
+            電話番号１,
+            電話番号２,
+            郵便番号,
+            住所カナ,
+            住所漢字,
+            勤務先名,
+            勤務先電話番号,
+            本人識別コード,
+            情報特定コード,
+            "再照会＿情報区分",
+            "再照会＿受付番号",
+            "再照会＿受付日時",
+            "再照会＿会員名",
+            "再照会＿回答通番",
+            "再照会＿電文種別",
+            顧客コード
+        FROM 個信類似照会明細
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 受付番号, 受付日時
+    </select>
+
+</mapper>

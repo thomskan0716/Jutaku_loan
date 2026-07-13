@@ -48,6 +48,27 @@ import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
 import migration.domain.source.審査チェック照会Source;
 import migration.domain.source.審査ＫＳＣ照会Source;
+import migration.domain.source.審査ＪＩＣＣ照会Source;
+import migration.domain.source.審査ＣＩＣ照会Source;
+import migration.domain.source.個信類似照会管理Source;
+import migration.domain.source.個信類似照会明細Source;
+import migration.domain.source.個信類似明細Source;
+import migration.domain.source.個信データ編集管理Source;
+import migration.domain.source.返済比率計算Source;
+import migration.domain.source.返済比率計算結果Source;
+import migration.domain.source.返済比率計算結果明細Source;
+import migration.domain.source.審査モデル回答Source;
+import migration.domain.source.審査モデル回答ＳSource;
+import migration.domain.source.審査モデル回答判定Source;
+import migration.domain.source.審査モデル回答判定ＳSource;
+import migration.domain.source.審査モデル回答明細Source;
+import migration.domain.source.審査モデル回答明細ＳSource;
+import migration.domain.source.審査モデル照会Source;
+import migration.domain.source.審査モデル照会ＳSource;
+import migration.domain.source.審査モデル照会基本Source;
+import migration.domain.source.審査モデル照会基本ＳSource;
+import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
+import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
 import migration.domain.source.審査ＫＳＣ信用情報明細Source;
 import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
@@ -55,6 +76,27 @@ import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
 import migration.domain.target.審査ＫＳＣ照会Target;
+import migration.domain.target.審査ＪＩＣＣ照会Target;
+import migration.domain.target.審査ＣＩＣ照会Target;
+import migration.domain.target.個信類似照会管理Target;
+import migration.domain.target.個信類似照会明細Target;
+import migration.domain.target.個信類似明細Target;
+import migration.domain.target.個信データ編集管理Target;
+import migration.domain.target.返済比率計算Target;
+import migration.domain.target.返済比率計算結果Target;
+import migration.domain.target.返済比率計算結果明細Target;
+import migration.domain.target.審査モデル回答Target;
+import migration.domain.target.審査モデル回答ＳTarget;
+import migration.domain.target.審査モデル回答判定Target;
+import migration.domain.target.審査モデル回答判定ＳTarget;
+import migration.domain.target.審査モデル回答明細Target;
+import migration.domain.target.審査モデル回答明細ＳTarget;
+import migration.domain.target.審査モデル照会Target;
+import migration.domain.target.審査モデル照会ＳTarget;
+import migration.domain.target.審査モデル照会基本Target;
+import migration.domain.target.審査モデル照会基本ＳTarget;
+import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
+import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
 import migration.domain.target.審査ＫＳＣ信用情報明細Target;
 import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
@@ -62,6 +104,27 @@ import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
 import migration.mapper.source.審査ＫＳＣ照会SourceMapper;
+import migration.mapper.source.審査ＪＩＣＣ照会SourceMapper;
+import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
+import migration.mapper.source.個信類似照会管理SourceMapper;
+import migration.mapper.source.個信類似照会明細SourceMapper;
+import migration.mapper.source.個信類似明細SourceMapper;
+import migration.mapper.source.個信データ編集管理SourceMapper;
+import migration.mapper.source.返済比率計算SourceMapper;
+import migration.mapper.source.返済比率計算結果SourceMapper;
+import migration.mapper.source.返済比率計算結果明細SourceMapper;
+import migration.mapper.source.審査モデル回答SourceMapper;
+import migration.mapper.source.審査モデル回答ＳSourceMapper;
+import migration.mapper.source.審査モデル回答判定SourceMapper;
+import migration.mapper.source.審査モデル回答判定ＳSourceMapper;
+import migration.mapper.source.審査モデル回答明細SourceMapper;
+import migration.mapper.source.審査モデル回答明細ＳSourceMapper;
+import migration.mapper.source.審査モデル照会SourceMapper;
+import migration.mapper.source.審査モデル照会ＳSourceMapper;
+import migration.mapper.source.審査モデル照会基本SourceMapper;
+import migration.mapper.source.審査モデル照会基本ＳSourceMapper;
+import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
+import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報明細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
@@ -69,6 +132,27 @@ import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
 import migration.mapper.target.審査ＫＳＣ照会TargetMapper;
+import migration.mapper.target.審査ＪＩＣＣ照会TargetMapper;
+import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
+import migration.mapper.target.個信類似照会管理TargetMapper;
+import migration.mapper.target.個信類似照会明細TargetMapper;
+import migration.mapper.target.個信類似明細TargetMapper;
+import migration.mapper.target.個信データ編集管理TargetMapper;
+import migration.mapper.target.返済比率計算TargetMapper;
+import migration.mapper.target.返済比率計算結果TargetMapper;
+import migration.mapper.target.返済比率計算結果明細TargetMapper;
+import migration.mapper.target.審査モデル回答TargetMapper;
+import migration.mapper.target.審査モデル回答ＳTargetMapper;
+import migration.mapper.target.審査モデル回答判定TargetMapper;
+import migration.mapper.target.審査モデル回答判定ＳTargetMapper;
+import migration.mapper.target.審査モデル回答明細TargetMapper;
+import migration.mapper.target.審査モデル回答明細ＳTargetMapper;
+import migration.mapper.target.審査モデル照会TargetMapper;
+import migration.mapper.target.審査モデル照会ＳTargetMapper;
+import migration.mapper.target.審査モデル照会基本TargetMapper;
+import migration.mapper.target.審査モデル照会基本ＳTargetMapper;
+import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
+import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報明細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報詳細TargetMapper;
@@ -102,6 +186,27 @@ public class JutakuLoanService {
     @Autowired private 申込関連申込SourceMapper relatedApplicationSourceMapper;
     @Autowired private 審査チェック照会SourceMapper reviewCheckSourceMapper;
     @Autowired private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
+    @Autowired private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
+    @Autowired private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
+    @Autowired private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
+    @Autowired private 個信類似照会明細SourceMapper kosinSimilarInquiryDetailSourceMapper;
+    @Autowired private 個信類似明細SourceMapper kosinSimilarDetailSourceMapper;
+    @Autowired private 個信データ編集管理SourceMapper kosinDataEditMgmtSourceMapper;
+    @Autowired private 返済比率計算SourceMapper repaymentRatioCalcSourceMapper;
+    @Autowired private 返済比率計算結果SourceMapper repaymentRatioResultSourceMapper;
+    @Autowired private 返済比率計算結果明細SourceMapper repaymentRatioResultDetailSourceMapper;
+    @Autowired private 審査モデル回答SourceMapper scoringAnswerSourceMapper;
+    @Autowired private 審査モデル回答ＳSourceMapper scoringAnswerSSourceMapper;
+    @Autowired private 審査モデル回答判定SourceMapper scoringJudgeSourceMapper;
+    @Autowired private 審査モデル回答判定ＳSourceMapper scoringJudgeSSourceMapper;
+    @Autowired private 審査モデル回答明細SourceMapper scoringDetailSourceMapper;
+    @Autowired private 審査モデル回答明細ＳSourceMapper scoringDetailSSourceMapper;
+    @Autowired private 審査モデル照会SourceMapper scoringInquirySourceMapper;
+    @Autowired private 審査モデル照会ＳSourceMapper scoringInquirySSourceMapper;
+    @Autowired private 審査モデル照会基本SourceMapper scoringInquiryBasicSourceMapper;
+    @Autowired private 審査モデル照会基本ＳSourceMapper scoringInquiryBasicSSourceMapper;
+    @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
+    @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
@@ -126,6 +231,27 @@ public class JutakuLoanService {
     @Autowired private 申込関連申込TargetMapper relatedApplicationTargetMapper;
     @Autowired private 審査チェック照会TargetMapper reviewCheckTargetMapper;
     @Autowired private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
+    @Autowired private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
+    @Autowired private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
+    @Autowired private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
+    @Autowired private 個信類似照会明細TargetMapper kosinSimilarInquiryDetailTargetMapper;
+    @Autowired private 個信類似明細TargetMapper kosinSimilarDetailTargetMapper;
+    @Autowired private 個信データ編集管理TargetMapper kosinDataEditMgmtTargetMapper;
+    @Autowired private 返済比率計算TargetMapper repaymentRatioCalcTargetMapper;
+    @Autowired private 返済比率計算結果TargetMapper repaymentRatioResultTargetMapper;
+    @Autowired private 返済比率計算結果明細TargetMapper repaymentRatioResultDetailTargetMapper;
+    @Autowired private 審査モデル回答TargetMapper scoringAnswerTargetMapper;
+    @Autowired private 審査モデル回答ＳTargetMapper scoringAnswerSTargetMapper;
+    @Autowired private 審査モデル回答判定TargetMapper scoringJudgeTargetMapper;
+    @Autowired private 審査モデル回答判定ＳTargetMapper scoringJudgeSTargetMapper;
+    @Autowired private 審査モデル回答明細TargetMapper scoringDetailTargetMapper;
+    @Autowired private 審査モデル回答明細ＳTargetMapper scoringDetailSTargetMapper;
+    @Autowired private 審査モデル照会TargetMapper scoringInquiryTargetMapper;
+    @Autowired private 審査モデル照会ＳTargetMapper scoringInquirySTargetMapper;
+    @Autowired private 審査モデル照会基本TargetMapper scoringInquiryBasicTargetMapper;
+    @Autowired private 審査モデル照会基本ＳTargetMapper scoringInquiryBasicSTargetMapper;
+    @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
+    @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
@@ -169,7 +295,7 @@ public class JutakuLoanService {
 
         log.info("Processing range: {} ~ {}", fromRowNumber, toRowNumber);
 
-        List<申込進捗Source> progressRecords = applicationProgressSourceMapper.selectByRowRange(fromRowNumber, toRowNumber);
+        List<申込進捗Source> progressRecords = emptyIfNull(applicationProgressSourceMapper.selectByRowRange(fromRowNumber, toRowNumber));
 
         int migratedCount = 0;
         int skippedCount = 0;
@@ -195,14 +321,20 @@ public class JutakuLoanService {
     // Returns true if at least one review group was migrated, false if the application
     // was skipped because it has no completed review stage.
     private boolean migrateSingleApplication(申込進捗Source progress) {
+        if (progress == null) {
+            log.warn("SKIP: null 申込進捗 record received");
+            return false;
+        }
         String sourceApplicationNumber = progress.get申込番号();
         String targetApplicationNumber = convertApplicationNumber(sourceApplicationNumber);
 
         List<申込審査段階Source> allReviewStages =
-                reviewStageSourceMapper.selectByApplicationId(sourceApplicationNumber);
+                emptyIfNull(reviewStageSourceMapper.selectByApplicationId(sourceApplicationNumber));
         List<申込審査段階Source> completedReviewStages = allReviewStages.stream()
+                .filter(java.util.Objects::nonNull)
                 .filter(stage -> "1".equals(stage.get審査完了区分()))
-                .sorted(Comparator.comparing(申込審査段階Source::get申込目的))
+                .sorted(Comparator.comparing(申込審査段階Source::get申込目的,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 
         if (completedReviewStages.isEmpty()) {
@@ -238,7 +370,10 @@ public class JutakuLoanService {
 
         // 申込関連申込: 1:N per 申込番号 (no 申込目的). Both application numbers are converted (2→3).
         // Inserted after the 申込 rows exist because of the FK to 申込.
-        for (申込関連申込Source relatedApplication : relatedApplicationSourceMapper.selectByApplicationId(sourceApplicationNumber)) {
+        for (申込関連申込Source relatedApplication : emptyIfNull(relatedApplicationSourceMapper.selectByApplicationId(sourceApplicationNumber))) {
+            if (relatedApplication == null) {
+                continue;
+            }
             申込関連申込Target relatedApplicationTarget = new 申込関連申込Target();
             relatedApplicationTarget.set申込番号(targetApplicationNumber);
             relatedApplicationTarget.set関連区分(relatedApplication.get関連区分());
@@ -264,7 +399,8 @@ public class JutakuLoanService {
     // purpose and the highest 回数. convertedPurpose is the target 申込目的 ('10' or '20').
     private void migrateReviewGroup(String sourceApplicationNumber, String targetApplicationNumber,
                                     List<申込審査段階Source> reviewStages, String convertedPurpose) {
-        if (reviewStages.isEmpty()) {
+        if (sourceApplicationNumber == null || targetApplicationNumber == null
+                || reviewStages == null || reviewStages.isEmpty()) {
             return;
         }
 
@@ -297,7 +433,7 @@ public class JutakuLoanService {
 
         // ③ 保証人 main (MAX only) — FK to 申込.
         List<保証人Source> mainGuarantors =
-                guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証人Source guarantor : mainGuarantors) {
             保証人Target guarantorTarget = new 保証人Target();
             guarantorTarget.set申込番号(targetApplicationNumber);
@@ -319,7 +455,7 @@ public class JutakuLoanService {
         // ③-b 申込担保情報ＰＤＦ (MAX only) — FK to 申込, 1:N per application + purpose, loaded from 申込担保回答ＰＤＦ.
         // ファイル種別 passes through from ファイル種類; the single source file-name feeds both target file-name columns.
         List<申込担保回答ＰＤＦSource> collateralPdfs =
-                collateralAnswerPdfSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralAnswerPdfSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (申込担保回答ＰＤＦSource collateralPdf : collateralPdfs) {
             申込担保情報ＰＤＦTarget collateralPdfTarget = new 申込担保情報ＰＤＦTarget();
             collateralPdfTarget.set申込番号(targetApplicationNumber);
@@ -333,7 +469,7 @@ public class JutakuLoanService {
         // ③-c 申込審査履歴 event log (MAX only) — FK to 申込, 1:N per (申込番号, 申込目的).
         // 進捗コード is converted via the 編集仕様詳細 code table; other columns pass through with the source-provided 回数.
         List<申込審査履歴Source> reviewHistories =
-                reviewHistorySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewHistorySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (申込審査履歴Source reviewHistory : reviewHistories) {
             申込審査履歴Target reviewHistoryTarget = new 申込審査履歴Target();
             reviewHistoryTarget.set申込番号(targetApplicationNumber);
@@ -350,7 +486,7 @@ public class JutakuLoanService {
         // ③-d 審査チェック照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 一連番号 fixed '99999'; other columns pass through from source.
         List<審査チェック照会Source> reviewChecks =
-                reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査チェック照会Source reviewCheck : reviewChecks) {
             審査チェック照会Target reviewCheckTarget = new 審査チェック照会Target();
             reviewCheckTarget.set申込番号(targetApplicationNumber);
@@ -366,7 +502,7 @@ public class JutakuLoanService {
         // ③-d2 審査ＫＳＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＫＳＣ照会Source> reviewKscs =
-                reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
             審査ＫＳＣ照会Target reviewKscTarget = new 審査ＫＳＣ照会Target();
             reviewKscTarget.set申込番号(targetApplicationNumber);
@@ -385,7 +521,7 @@ public class JutakuLoanService {
         // Only columns present in both source and target are copied; target-only
         // columns (ＫＳＣグレー, ＫＳＣ延滞, ＫＳＣ転居歴, etc.) are left null.
         List<審査ＫＳＣ信用情報Source> reviewKscCredits =
-                reviewKscCreditSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報Source reviewKscCredit : reviewKscCredits) {
             審査ＫＳＣ信用情報Target reviewKscCreditTarget = new 審査ＫＳＣ信用情報Target();
             reviewKscCreditTarget.set申込番号(targetApplicationNumber);
@@ -405,7 +541,7 @@ public class JutakuLoanService {
 
         // ③-d4 審査ＫＳＣ信用情報明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＫＳＣ信用情報明細Source> reviewKscCreditLines =
-                reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報明細Source reviewKscCreditLine : reviewKscCreditLines) {
             審査ＫＳＣ信用情報明細Target reviewKscCreditLineTarget = new 審査ＫＳＣ信用情報明細Target();
             reviewKscCreditLineTarget.set申込番号(targetApplicationNumber);
@@ -427,7 +563,7 @@ public class JutakuLoanService {
         // ③-d5 審査ＫＳＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
         // Target-only column 延滞回数 has no source and is left null.
         List<審査ＫＳＣ信用情報詳細Source> reviewKscCreditDetails =
-                reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報詳細Source reviewKscCreditDetail : reviewKscCreditDetails) {
             審査ＫＳＣ信用情報詳細Target reviewKscCreditDetailTarget = new 審査ＫＳＣ信用情報詳細Target();
             reviewKscCreditDetailTarget.set申込番号(targetApplicationNumber);
@@ -466,10 +602,669 @@ public class JutakuLoanService {
             reviewKscCreditDetailTargetMapper.insert(reviewKscCreditDetailTarget);
         }
 
+        // ③-d6 審査ＪＩＣＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
+        List<審査ＪＩＣＣ照会Source> reviewJiccs =
+                emptyIfNull(reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＪＩＣＣ照会Source reviewJicc : reviewJiccs) {
+            審査ＪＩＣＣ照会Target reviewJiccTarget = new 審査ＪＩＣＣ照会Target();
+            reviewJiccTarget.set申込番号(targetApplicationNumber);
+            reviewJiccTarget.set申込目的(convertedPurpose);
+            reviewJiccTarget.setイベント(reviewJicc.getイベント());
+            reviewJiccTarget.setイベント日時(reviewJicc.getイベント日時());
+            reviewJiccTarget.set連番(reviewJicc.get連番());
+            reviewJiccTarget.set別名連番(reviewJicc.get別名連番());
+            reviewJiccTarget.set受付日時(reviewJicc.get受付日時());
+            reviewJiccTarget.set受付番号(reviewJicc.get受付番号());
+            reviewJiccTarget.setコメント(reviewJicc.getコメント());
+            reviewJiccTargetMapper.insert(reviewJiccTarget);
+        }
+
+        // ③-d7 審査ＣＩＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
+        List<審査ＣＩＣ照会Source> reviewCics =
+                emptyIfNull(reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＣＩＣ照会Source reviewCic : reviewCics) {
+            審査ＣＩＣ照会Target reviewCicTarget = new 審査ＣＩＣ照会Target();
+            reviewCicTarget.set申込番号(targetApplicationNumber);
+            reviewCicTarget.set申込目的(convertedPurpose);
+            reviewCicTarget.setイベント(reviewCic.getイベント());
+            reviewCicTarget.setイベント日時(reviewCic.getイベント日時());
+            reviewCicTarget.set連番(reviewCic.get連番());
+            reviewCicTarget.set別名連番(reviewCic.get別名連番());
+            reviewCicTarget.set受付日時(reviewCic.get受付日時());
+            reviewCicTarget.set受付番号(reviewCic.get受付番号());
+            reviewCicTarget.setコメント(reviewCic.getコメント());
+            reviewCicTargetMapper.insert(reviewCicTarget);
+        }
+
+        // ③-d8a 個信類似照会管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似照会管理Source> kosinSimilarInquiryMgmts =
+                emptyIfNull(kosinSimilarInquiryMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (個信類似照会管理Source kosinSimilarInquiryMgmt : kosinSimilarInquiryMgmts) {
+            個信類似照会管理Target kosinSimilarInquiryMgmtTarget = new 個信類似照会管理Target();
+            kosinSimilarInquiryMgmtTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarInquiryMgmtTarget.set申込目的(convertedPurpose);
+            kosinSimilarInquiryMgmtTarget.setイベント(kosinSimilarInquiryMgmt.getイベント());
+            kosinSimilarInquiryMgmtTarget.setイベント日時(kosinSimilarInquiryMgmt.getイベント日時());
+            kosinSimilarInquiryMgmtTarget.set状態(kosinSimilarInquiryMgmt.get状態());
+            kosinSimilarInquiryMgmtTarget.set状態説明(kosinSimilarInquiryMgmt.get状態説明());
+            kosinSimilarInquiryMgmtTarget.set優先度(kosinSimilarInquiryMgmt.get優先度());
+            kosinSimilarInquiryMgmtTargetMapper.insert(kosinSimilarInquiryMgmtTarget);
+        }
+
+        // ③-d8 個信類似照会明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似照会明細Source> kosinSimilarInquiryDetails =
+                emptyIfNull(kosinSimilarInquiryDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (個信類似照会明細Source kosinSimilarInquiryDetail : kosinSimilarInquiryDetails) {
+            個信類似照会明細Target kosinSimilarInquiryDetailTarget = new 個信類似照会明細Target();
+            kosinSimilarInquiryDetailTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarInquiryDetailTarget.set申込目的(convertedPurpose);
+            kosinSimilarInquiryDetailTarget.setイベント(kosinSimilarInquiryDetail.getイベント());
+            kosinSimilarInquiryDetailTarget.setイベント日時(kosinSimilarInquiryDetail.getイベント日時());
+            kosinSimilarInquiryDetailTarget.set受付番号(kosinSimilarInquiryDetail.get受付番号());
+            kosinSimilarInquiryDetailTarget.set受付日時(kosinSimilarInquiryDetail.get受付日時());
+            kosinSimilarInquiryDetailTarget.set情報区分(kosinSimilarInquiryDetail.get情報区分());
+            kosinSimilarInquiryDetailTarget.set氏名カナ(kosinSimilarInquiryDetail.get氏名カナ());
+            kosinSimilarInquiryDetailTarget.set氏名漢字(kosinSimilarInquiryDetail.get氏名漢字());
+            kosinSimilarInquiryDetailTarget.set性別(kosinSimilarInquiryDetail.get性別());
+            kosinSimilarInquiryDetailTarget.set生年月日(kosinSimilarInquiryDetail.get生年月日());
+            kosinSimilarInquiryDetailTarget.set電話番号1(kosinSimilarInquiryDetail.get電話番号1());
+            kosinSimilarInquiryDetailTarget.set電話番号2(kosinSimilarInquiryDetail.get電話番号2());
+            kosinSimilarInquiryDetailTarget.set郵便番号(kosinSimilarInquiryDetail.get郵便番号());
+            kosinSimilarInquiryDetailTarget.set住所カナ(kosinSimilarInquiryDetail.get住所カナ());
+            kosinSimilarInquiryDetailTarget.set住所漢字(kosinSimilarInquiryDetail.get住所漢字());
+            kosinSimilarInquiryDetailTarget.set勤務先名(kosinSimilarInquiryDetail.get勤務先名());
+            kosinSimilarInquiryDetailTarget.set勤務先電話番号(kosinSimilarInquiryDetail.get勤務先電話番号());
+            kosinSimilarInquiryDetailTarget.set本人識別コード(kosinSimilarInquiryDetail.get本人識別コード());
+            kosinSimilarInquiryDetailTarget.set情報特定コード(kosinSimilarInquiryDetail.get情報特定コード());
+            kosinSimilarInquiryDetailTarget.set再照会＿情報区分(kosinSimilarInquiryDetail.get再照会＿情報区分());
+            kosinSimilarInquiryDetailTarget.set再照会＿受付番号(kosinSimilarInquiryDetail.get再照会＿受付番号());
+            kosinSimilarInquiryDetailTarget.set再照会＿受付日時(kosinSimilarInquiryDetail.get再照会＿受付日時());
+            kosinSimilarInquiryDetailTarget.set再照会＿会員名(kosinSimilarInquiryDetail.get再照会＿会員名());
+            kosinSimilarInquiryDetailTarget.set再照会＿回答通番(kosinSimilarInquiryDetail.get再照会＿回答通番());
+            kosinSimilarInquiryDetailTarget.set再照会＿電文種別(kosinSimilarInquiryDetail.get再照会＿電文種別());
+            kosinSimilarInquiryDetailTarget.set顧客コード(kosinSimilarInquiryDetail.get顧客コード());
+            kosinSimilarInquiryDetailTargetMapper.insert(kosinSimilarInquiryDetailTarget);
+        }
+
+        // ③-d9 個信類似明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信類似明細Source> kosinSimilarDetails =
+                emptyIfNull(kosinSimilarDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (個信類似明細Source kosinSimilarDetail : kosinSimilarDetails) {
+            個信類似明細Target kosinSimilarDetailTarget = new 個信類似明細Target();
+            kosinSimilarDetailTarget.set申込番号(targetApplicationNumber);
+            kosinSimilarDetailTarget.set申込目的(convertedPurpose);
+            kosinSimilarDetailTarget.setイベント(kosinSimilarDetail.getイベント());
+            kosinSimilarDetailTarget.setイベント日時(kosinSimilarDetail.getイベント日時());
+            kosinSimilarDetailTarget.set連番(kosinSimilarDetail.get連番());
+            kosinSimilarDetailTarget.set情報区分(kosinSimilarDetail.get情報区分());
+            kosinSimilarDetailTarget.set受付番号(kosinSimilarDetail.get受付番号());
+            kosinSimilarDetailTarget.set受付日時(kosinSimilarDetail.get受付日時());
+            kosinSimilarDetailTarget.set会員名(kosinSimilarDetail.get会員名());
+            kosinSimilarDetailTarget.set回答通番(kosinSimilarDetail.get回答通番());
+            kosinSimilarDetailTarget.set電文種別(kosinSimilarDetail.get電文種別());
+            kosinSimilarDetailTarget.set親回答通番(kosinSimilarDetail.get親回答通番());
+            kosinSimilarDetailTarget.set結付通番(kosinSimilarDetail.get結付通番());
+            kosinSimilarDetailTarget.set照会回答区分(kosinSimilarDetail.get照会回答区分());
+            kosinSimilarDetailTarget.set照会データ種別(kosinSimilarDetail.get照会データ種別());
+            kosinSimilarDetailTarget.set債権分類(kosinSimilarDetail.get債権分類());
+            kosinSimilarDetailTarget.set状態(kosinSimilarDetail.get状態());
+            kosinSimilarDetailTarget.set一致タイプ(kosinSimilarDetail.get一致タイプ());
+            kosinSimilarDetailTarget.set氏名カナ(kosinSimilarDetail.get氏名カナ());
+            kosinSimilarDetailTarget.set氏名漢字(kosinSimilarDetail.get氏名漢字());
+            kosinSimilarDetailTarget.set性別(kosinSimilarDetail.get性別());
+            kosinSimilarDetailTarget.set生年月日(kosinSimilarDetail.get生年月日());
+            kosinSimilarDetailTarget.set電話番号1(kosinSimilarDetail.get電話番号1());
+            kosinSimilarDetailTarget.set電話番号2(kosinSimilarDetail.get電話番号2());
+            kosinSimilarDetailTarget.set郵便番号(kosinSimilarDetail.get郵便番号());
+            kosinSimilarDetailTarget.set住所カナ(kosinSimilarDetail.get住所カナ());
+            kosinSimilarDetailTarget.set住所漢字(kosinSimilarDetail.get住所漢字());
+            kosinSimilarDetailTarget.set勤務先名(kosinSimilarDetail.get勤務先名());
+            kosinSimilarDetailTarget.set勤務先電話番号(kosinSimilarDetail.get勤務先電話番号());
+            kosinSimilarDetailTarget.set公的資料1区分(kosinSimilarDetail.get公的資料1区分());
+            kosinSimilarDetailTarget.set公的資料1番号(kosinSimilarDetail.get公的資料1番号());
+            kosinSimilarDetailTarget.set公的資料2区分(kosinSimilarDetail.get公的資料2区分());
+            kosinSimilarDetailTarget.set公的資料2番号(kosinSimilarDetail.get公的資料2番号());
+            kosinSimilarDetailTarget.set情報識別区分(kosinSimilarDetail.get情報識別区分());
+            kosinSimilarDetailTarget.set本人識別コード(kosinSimilarDetail.get本人識別コード());
+            kosinSimilarDetailTarget.set情報特定コード(kosinSimilarDetail.get情報特定コード());
+            kosinSimilarDetailTarget.set顧客コード(kosinSimilarDetail.get顧客コード());
+            kosinSimilarDetailTargetMapper.insert(kosinSimilarDetailTarget);
+        }
+
+        // ③-d10 審査ＪＩＣＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＪＩＣＣ信用情報詳細Source> reviewJiccCreditDetails =
+                emptyIfNull(reviewJiccCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＪＩＣＣ信用情報詳細Source reviewJiccCreditDetail : reviewJiccCreditDetails) {
+            if (reviewJiccCreditDetail == null) {
+                continue;
+            }
+            審査ＪＩＣＣ信用情報詳細Target reviewJiccCreditDetailTarget = new 審査ＪＩＣＣ信用情報詳細Target();
+            reviewJiccCreditDetailTarget.set申込番号(targetApplicationNumber);
+            reviewJiccCreditDetailTarget.set申込目的(convertedPurpose);
+            reviewJiccCreditDetailTarget.setイベント(reviewJiccCreditDetail.getイベント());
+            reviewJiccCreditDetailTarget.setイベント日時(reviewJiccCreditDetail.getイベント日時());
+            reviewJiccCreditDetailTarget.set連番(reviewJiccCreditDetail.get連番());
+            reviewJiccCreditDetailTarget.set別名連番(reviewJiccCreditDetail.get別名連番());
+            reviewJiccCreditDetailTarget.set詳細連番(reviewJiccCreditDetail.get詳細連番());
+            reviewJiccCreditDetailTarget.set受付日時(reviewJiccCreditDetail.get受付日時());
+            reviewJiccCreditDetailTarget.set受付番号(reviewJiccCreditDetail.get受付番号());
+            reviewJiccCreditDetailTarget.set会員名(reviewJiccCreditDetail.get会員名());
+            reviewJiccCreditDetailTarget.set親回答通番(reviewJiccCreditDetail.get親回答通番());
+            reviewJiccCreditDetailTarget.set回答通番(reviewJiccCreditDetail.get回答通番());
+            reviewJiccCreditDetailTarget.set照会回答区分(reviewJiccCreditDetail.get照会回答区分());
+            reviewJiccCreditDetailTarget.set債権分類(reviewJiccCreditDetail.get債権分類());
+            reviewJiccCreditDetailTarget.set照会データ種別(reviewJiccCreditDetail.get照会データ種別());
+            reviewJiccCreditDetailTarget.setテーブル名(reviewJiccCreditDetail.getテーブル名());
+            reviewJiccCreditDetailTarget.set項目名(reviewJiccCreditDetail.get項目名());
+            reviewJiccCreditDetailTarget.setコード番号(reviewJiccCreditDetail.getコード番号());
+            reviewJiccCreditDetailTarget.setコード(reviewJiccCreditDetail.getコード());
+            reviewJiccCreditDetailTarget.setコード名称(reviewJiccCreditDetail.getコード名称());
+            reviewJiccCreditDetailTarget.set氏名(reviewJiccCreditDetail.get氏名());
+            reviewJiccCreditDetailTarget.set氏名カナ(reviewJiccCreditDetail.get氏名カナ());
+            reviewJiccCreditDetailTarget.set種類(reviewJiccCreditDetail.get種類());
+            reviewJiccCreditDetailTarget.set信用情報判断(reviewJiccCreditDetail.get信用情報判断());
+            reviewJiccCreditDetailTarget.set信用情報(reviewJiccCreditDetail.get信用情報());
+            reviewJiccCreditDetailTarget.set判断項目名1(reviewJiccCreditDetail.get判断項目名1());
+            reviewJiccCreditDetailTarget.set判断項目1(reviewJiccCreditDetail.get判断項目1());
+            reviewJiccCreditDetailTarget.set判断項目名2(reviewJiccCreditDetail.get判断項目名2());
+            reviewJiccCreditDetailTarget.set判断項目2(reviewJiccCreditDetail.get判断項目2());
+            reviewJiccCreditDetailTarget.set判断項目名3(reviewJiccCreditDetail.get判断項目名3());
+            reviewJiccCreditDetailTarget.set判断項目3(reviewJiccCreditDetail.get判断項目3());
+            reviewJiccCreditDetailTarget.set判断項目名4(reviewJiccCreditDetail.get判断項目名4());
+            reviewJiccCreditDetailTarget.set判断項目4(reviewJiccCreditDetail.get判断項目4());
+            reviewJiccCreditDetailTarget.set判断項目名5(reviewJiccCreditDetail.get判断項目名5());
+            reviewJiccCreditDetailTarget.set判断項目5(reviewJiccCreditDetail.get判断項目5());
+            reviewJiccCreditDetailTarget.setブラック判断(reviewJiccCreditDetail.getブラック判断());
+            reviewJiccCreditDetailTarget.set発生日(reviewJiccCreditDetail.get発生日());
+            reviewJiccCreditDetailTarget.set契約日(reviewJiccCreditDetail.get契約日());
+            reviewJiccCreditDetailTargetMapper.insert(reviewJiccCreditDetailTarget);
+        }
+
+        // ③-d11 審査ＣＩＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＣＩＣ信用情報詳細Source> reviewCicCreditDetails =
+                emptyIfNull(reviewCicCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＣＩＣ信用情報詳細Source reviewCicCreditDetail : reviewCicCreditDetails) {
+            if (reviewCicCreditDetail == null) {
+                continue;
+            }
+            審査ＣＩＣ信用情報詳細Target reviewCicCreditDetailTarget = new 審査ＣＩＣ信用情報詳細Target();
+            reviewCicCreditDetailTarget.set申込番号(targetApplicationNumber);
+            reviewCicCreditDetailTarget.set申込目的(convertedPurpose);
+            reviewCicCreditDetailTarget.setイベント(reviewCicCreditDetail.getイベント());
+            reviewCicCreditDetailTarget.setイベント日時(reviewCicCreditDetail.getイベント日時());
+            reviewCicCreditDetailTarget.set連番(reviewCicCreditDetail.get連番());
+            reviewCicCreditDetailTarget.set別名連番(reviewCicCreditDetail.get別名連番());
+            reviewCicCreditDetailTarget.set詳細連番(reviewCicCreditDetail.get詳細連番());
+            reviewCicCreditDetailTarget.set受付日時(reviewCicCreditDetail.get受付日時());
+            reviewCicCreditDetailTarget.set受付番号(reviewCicCreditDetail.get受付番号());
+            reviewCicCreditDetailTarget.set会員名(reviewCicCreditDetail.get会員名());
+            reviewCicCreditDetailTarget.set回答通番(reviewCicCreditDetail.get回答通番());
+            reviewCicCreditDetailTarget.set電文種別(reviewCicCreditDetail.get電文種別());
+            reviewCicCreditDetailTarget.setテーブル名(reviewCicCreditDetail.getテーブル名());
+            reviewCicCreditDetailTarget.set項目名(reviewCicCreditDetail.get項目名());
+            reviewCicCreditDetailTarget.setコード番号(reviewCicCreditDetail.getコード番号());
+            reviewCicCreditDetailTarget.setコード(reviewCicCreditDetail.getコード());
+            reviewCicCreditDetailTarget.setコード名称(reviewCicCreditDetail.getコード名称());
+            reviewCicCreditDetailTarget.set氏名(reviewCicCreditDetail.get氏名());
+            reviewCicCreditDetailTarget.set氏名カナ(reviewCicCreditDetail.get氏名カナ());
+            reviewCicCreditDetailTarget.set種類(reviewCicCreditDetail.get種類());
+            reviewCicCreditDetailTarget.set信用情報判断(reviewCicCreditDetail.get信用情報判断());
+            reviewCicCreditDetailTarget.set信用情報(reviewCicCreditDetail.get信用情報());
+            reviewCicCreditDetailTarget.set判断項目名1(reviewCicCreditDetail.get判断項目名1());
+            reviewCicCreditDetailTarget.set判断項目1(reviewCicCreditDetail.get判断項目1());
+            reviewCicCreditDetailTarget.set判断項目名2(reviewCicCreditDetail.get判断項目名2());
+            reviewCicCreditDetailTarget.set判断項目2(reviewCicCreditDetail.get判断項目2());
+            reviewCicCreditDetailTarget.set判断項目名3(reviewCicCreditDetail.get判断項目名3());
+            reviewCicCreditDetailTarget.set判断項目3(reviewCicCreditDetail.get判断項目3());
+            reviewCicCreditDetailTarget.set判断項目名4(reviewCicCreditDetail.get判断項目名4());
+            reviewCicCreditDetailTarget.set判断項目4(reviewCicCreditDetail.get判断項目4());
+            reviewCicCreditDetailTarget.set判断項目名5(reviewCicCreditDetail.get判断項目名5());
+            reviewCicCreditDetailTarget.set判断項目5(reviewCicCreditDetail.get判断項目5());
+            reviewCicCreditDetailTarget.setブラック判断(reviewCicCreditDetail.getブラック判断());
+            reviewCicCreditDetailTarget.set発生日(reviewCicCreditDetail.get発生日());
+            reviewCicCreditDetailTarget.set契約日(reviewCicCreditDetail.get契約日());
+            reviewCicCreditDetailTargetMapper.insert(reviewCicCreditDetailTarget);
+        }
+
+        // ③-d12 個信データ編集管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<個信データ編集管理Source> kosinDataEditMgmts =
+                emptyIfNull(kosinDataEditMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (個信データ編集管理Source kosinDataEditMgmt : kosinDataEditMgmts) {
+            if (kosinDataEditMgmt == null) {
+                continue;
+            }
+            個信データ編集管理Target kosinDataEditMgmtTarget = new 個信データ編集管理Target();
+            kosinDataEditMgmtTarget.set申込番号(targetApplicationNumber);
+            kosinDataEditMgmtTarget.set申込目的(convertedPurpose);
+            kosinDataEditMgmtTarget.setイベント(kosinDataEditMgmt.getイベント());
+            kosinDataEditMgmtTarget.setイベント日時(kosinDataEditMgmt.getイベント日時());
+            kosinDataEditMgmtTarget.set状態(kosinDataEditMgmt.get状態());
+            kosinDataEditMgmtTarget.set状態説明(kosinDataEditMgmt.get状態説明());
+            kosinDataEditMgmtTarget.set優先度(kosinDataEditMgmt.get優先度());
+            kosinDataEditMgmtTargetMapper.insert(kosinDataEditMgmtTarget);
+        }
+
+        // ③-d13 返済比率計算 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<返済比率計算Source> repaymentRatioCalcs =
+                emptyIfNull(repaymentRatioCalcSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算Source repaymentRatioCalc : repaymentRatioCalcs) {
+            if (repaymentRatioCalc == null) {
+                continue;
+            }
+            返済比率計算Target repaymentRatioCalcTarget = new 返済比率計算Target();
+            repaymentRatioCalcTarget.set申込番号(targetApplicationNumber);
+            repaymentRatioCalcTarget.set申込目的(convertedPurpose);
+            repaymentRatioCalcTarget.setイベント(repaymentRatioCalc.getイベント());
+            repaymentRatioCalcTarget.setイベント日時(repaymentRatioCalc.getイベント日時());
+            repaymentRatioCalcTarget.set状態(repaymentRatioCalc.get状態());
+            repaymentRatioCalcTarget.set状態説明(repaymentRatioCalc.get状態説明());
+            repaymentRatioCalcTarget.set優先度(repaymentRatioCalc.get優先度());
+            repaymentRatioCalcTargetMapper.insert(repaymentRatioCalcTarget);
+        }
+
+        // ③-d14 返済比率計算結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<返済比率計算結果Source> repaymentRatioResults =
+                emptyIfNull(repaymentRatioResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算結果Source src : repaymentRatioResults) {
+            if (src == null) {
+                continue;
+            }
+            返済比率計算結果Target t = new 返済比率計算結果Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set計算年収(src.get計算年収());
+            t.set借入総額(src.get借入総額());
+            t.set無担保借入額(src.get無担保借入額());
+            t.set年間返済額(src.get年間返済額());
+            t.set総額借入比率(src.get総額借入比率());
+            t.set無担保借入比率(src.get無担保借入比率());
+            t.set総額返済比率(src.get総額返済比率());
+            t.set無担保年間返済額(src.get無担保年間返済額());
+            t.set申告借入総額(src.get申告借入総額());
+            t.set申告無担保借入額(src.get申告無担保借入額());
+            t.set申告年間返済額(src.get申告年間返済額());
+            t.set申告総額借入比率(src.get申告総額借入比率());
+            t.set申告無担保借入比率(src.get申告無担保借入比率());
+            t.set申告総額返済比率(src.get申告総額返済比率());
+            t.set申告無担保年間返済額(src.get申告無担保年間返済額());
+            t.set今回借入総額(src.get今回借入総額());
+            t.set今回無担保借入額(src.get今回無担保借入額());
+            t.set今回年間返済額(src.get今回年間返済額());
+            t.set今回総額借入比率(src.get今回総額借入比率());
+            t.set今回無担保借入比率(src.get今回無担保借入比率());
+            t.set今回総額返済比率(src.get今回総額返済比率());
+            t.set今回無担保年間返済額(src.get今回無担保年間返済額());
+            t.set自行借入総額(src.get自行借入総額());
+            t.set自行無担保借入額(src.get自行無担保借入額());
+            t.set自行年間返済額(src.get自行年間返済額());
+            t.set自行総額借入比率(src.get自行総額借入比率());
+            t.set自行無担保借入比率(src.get自行無担保借入比率());
+            t.set自行総額返済比率(src.get自行総額返済比率());
+            t.set自行無担保年間返済額(src.get自行無担保年間返済額());
+            t.setＫＳＣ借入総額(src.getＫＳＣ借入総額());
+            t.setＫＳＣ無担保借入額(src.getＫＳＣ無担保借入額());
+            t.setＫＳＣ年間返済額(src.getＫＳＣ年間返済額());
+            t.setＫＳＣ総額借入比率(src.getＫＳＣ総額借入比率());
+            t.setＫＳＣ無担保借入比率(src.getＫＳＣ無担保借入比率());
+            t.setＫＳＣ総額返済比率(src.getＫＳＣ総額返済比率());
+            t.setＫＳＣ無担保年間返済額(src.getＫＳＣ無担保年間返済額());
+            t.setＣＩＣ借入総額(src.getＣＩＣ借入総額());
+            t.setＣＩＣ無担保借入額(src.getＣＩＣ無担保借入額());
+            t.setＣＩＣ年間返済額(src.getＣＩＣ年間返済額());
+            t.setＣＩＣ総額借入比率(src.getＣＩＣ総額借入比率());
+            t.setＣＩＣ無担保借入比率(src.getＣＩＣ無担保借入比率());
+            t.setＣＩＣ総額返済比率(src.getＣＩＣ総額返済比率());
+            t.setＣＩＣ無担保年間返済額(src.getＣＩＣ無担保年間返済額());
+            t.setＣＣＢ借入総額(src.getＣＣＢ借入総額());
+            t.setＣＣＢ無担保借入額(src.getＣＣＢ無担保借入額());
+            t.setＣＣＢ年間返済額(src.getＣＣＢ年間返済額());
+            t.setＣＣＢ総額借入比率(src.getＣＣＢ総額借入比率());
+            t.setＣＣＢ無担保借入比率(src.getＣＣＢ無担保借入比率());
+            t.setＣＣＢ総額返済比率(src.getＣＣＢ総額返済比率());
+            t.setＣＣＢ無担保年間返済額(src.getＣＣＢ無担保年間返済額());
+            t.setＪＩＣＣ借入総額(src.getＪＩＣＣ借入総額());
+            t.setＪＩＣＣ無担保借入額(src.getＪＩＣＣ無担保借入額());
+            t.setＪＩＣＣ年間返済額(src.getＪＩＣＣ年間返済額());
+            t.setＪＩＣＣ総額借入比率(src.getＪＩＣＣ総額借入比率());
+            t.setＪＩＣＣ無担保借入比率(src.getＪＩＣＣ無担保借入比率());
+            t.setＪＩＣＣ総額返済比率(src.getＪＩＣＣ総額返済比率());
+            t.setＪＩＣＣ無担保年間返済額(src.getＪＩＣＣ無担保年間返済額());
+            repaymentRatioResultTargetMapper.insert(t);
+        }
+
+        // ③-d15 返済比率計算結果明細 (MAX only) — 1:N per (申込番号, 申込目的) keyed with 連番, pass-through.
+        List<返済比率計算結果明細Source> repaymentRatioResultDetails =
+                emptyIfNull(repaymentRatioResultDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (返済比率計算結果明細Source src : repaymentRatioResultDetails) {
+            if (src == null) {
+                continue;
+            }
+            返済比率計算結果明細Target t = new 返済比率計算結果明細Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set連番(src.get連番());
+            t.set計算年収(src.get計算年収());
+            t.set借入総額(src.get借入総額());
+            t.set無担保借入額(src.get無担保借入額());
+            t.set年間返済額(src.get年間返済額());
+            t.set総額借入比率(src.get総額借入比率());
+            t.set無担保借入比率(src.get無担保借入比率());
+            t.set総額返済比率(src.get総額返済比率());
+            t.set無担保年間返済額(src.get無担保年間返済額());
+            t.set申告借入総額(src.get申告借入総額());
+            t.set申告無担保借入額(src.get申告無担保借入額());
+            t.set申告年間返済額(src.get申告年間返済額());
+            t.set申告総額借入比率(src.get申告総額借入比率());
+            t.set申告無担保借入比率(src.get申告無担保借入比率());
+            t.set申告総額返済比率(src.get申告総額返済比率());
+            t.set申告無担保年間返済額(src.get申告無担保年間返済額());
+            t.set今回借入総額(src.get今回借入総額());
+            t.set今回無担保借入額(src.get今回無担保借入額());
+            t.set今回年間返済額(src.get今回年間返済額());
+            t.set今回総額借入比率(src.get今回総額借入比率());
+            t.set今回無担保借入比率(src.get今回無担保借入比率());
+            t.set今回総額返済比率(src.get今回総額返済比率());
+            t.set今回無担保年間返済額(src.get今回無担保年間返済額());
+            t.set自行借入総額(src.get自行借入総額());
+            t.set自行無担保借入額(src.get自行無担保借入額());
+            t.set自行年間返済額(src.get自行年間返済額());
+            t.set自行総額借入比率(src.get自行総額借入比率());
+            t.set自行無担保借入比率(src.get自行無担保借入比率());
+            t.set自行総額返済比率(src.get自行総額返済比率());
+            t.set自行無担保年間返済額(src.get自行無担保年間返済額());
+            t.setＫＳＣ借入総額(src.getＫＳＣ借入総額());
+            t.setＫＳＣ無担保借入額(src.getＫＳＣ無担保借入額());
+            t.setＫＳＣ年間返済額(src.getＫＳＣ年間返済額());
+            t.setＫＳＣ総額借入比率(src.getＫＳＣ総額借入比率());
+            t.setＫＳＣ無担保借入比率(src.getＫＳＣ無担保借入比率());
+            t.setＫＳＣ総額返済比率(src.getＫＳＣ総額返済比率());
+            t.setＫＳＣ無担保年間返済額(src.getＫＳＣ無担保年間返済額());
+            t.setＣＩＣ借入総額(src.getＣＩＣ借入総額());
+            t.setＣＩＣ無担保借入額(src.getＣＩＣ無担保借入額());
+            t.setＣＩＣ年間返済額(src.getＣＩＣ年間返済額());
+            t.setＣＩＣ総額借入比率(src.getＣＩＣ総額借入比率());
+            t.setＣＩＣ無担保借入比率(src.getＣＩＣ無担保借入比率());
+            t.setＣＩＣ総額返済比率(src.getＣＩＣ総額返済比率());
+            t.setＣＩＣ無担保年間返済額(src.getＣＩＣ無担保年間返済額());
+            t.setＣＣＢ借入総額(src.getＣＣＢ借入総額());
+            t.setＣＣＢ無担保借入額(src.getＣＣＢ無担保借入額());
+            t.setＣＣＢ年間返済額(src.getＣＣＢ年間返済額());
+            t.setＣＣＢ総額借入比率(src.getＣＣＢ総額借入比率());
+            t.setＣＣＢ無担保借入比率(src.getＣＣＢ無担保借入比率());
+            t.setＣＣＢ総額返済比率(src.getＣＣＢ総額返済比率());
+            t.setＣＣＢ無担保年間返済額(src.getＣＣＢ無担保年間返済額());
+            t.setＪＩＣＣ借入総額(src.getＪＩＣＣ借入総額());
+            t.setＪＩＣＣ無担保借入額(src.getＪＩＣＣ無担保借入額());
+            t.setＪＩＣＣ年間返済額(src.getＪＩＣＣ年間返済額());
+            t.setＪＩＣＣ総額借入比率(src.getＪＩＣＣ総額借入比率());
+            t.setＪＩＣＣ無担保借入比率(src.getＪＩＣＣ無担保借入比率());
+            t.setＪＩＣＣ総額返済比率(src.getＪＩＣＣ総額返済比率());
+            t.setＪＩＣＣ無担保年間返済額(src.getＪＩＣＣ無担保年間返済額());
+            repaymentRatioResultDetailTargetMapper.insert(t);
+        }
+
+        // ③-d16 審査モデル回答 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答Source> scoringAnswers =
+                emptyIfNull(scoringAnswerSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答Source src : scoringAnswers) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答Target t = new 審査モデル回答Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setセグメント(src.getセグメント());
+            t.setスコア(src.getスコア());
+            scoringAnswerTargetMapper.insert(t);
+        }
+
+        // ③-d17 審査モデル回答Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答ＳSource> scoringAnswerS =
+                emptyIfNull(scoringAnswerSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答ＳSource src : scoringAnswerS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答ＳTarget t = new 審査モデル回答ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setセグメント(src.getセグメント());
+            t.setスコア(src.getスコア());
+            scoringAnswerSTargetMapper.insert(t);
+        }
+
+        // ③-d18 審査モデル回答判定 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答判定Source> scoringJudges =
+                emptyIfNull(scoringJudgeSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答判定Source src : scoringJudges) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答判定Target t = new 審査モデル回答判定Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set融資倍率(src.get融資倍率());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保掛目(src.get担保掛目());
+            t.set上限融資金額(src.get上限融資金額());
+            t.set判定(src.get判定());
+            scoringJudgeTargetMapper.insert(t);
+        }
+
+        // ③-d19 審査モデル回答判定Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答判定ＳSource> scoringJudgeS =
+                emptyIfNull(scoringJudgeSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答判定ＳSource src : scoringJudgeS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答判定ＳTarget t = new 審査モデル回答判定ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set融資倍率(src.get融資倍率());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保掛目(src.get担保掛目());
+            t.set上限融資金額(src.get上限融資金額());
+            t.set判定(src.get判定());
+            scoringJudgeSTargetMapper.insert(t);
+        }
+
+        // ③-d20 審査モデル回答明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答明細Source> scoringDetails =
+                emptyIfNull(scoringDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答明細Source src : scoringDetails) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答明細Target t = new 審査モデル回答明細Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set勤続年数評点(src.get勤続年数評点());
+            t.set勤続年数係数(src.get勤続年数係数());
+            t.set勤続年数スコア(src.get勤続年数スコア());
+            t.set借入年数評点(src.get借入年数評点());
+            t.set借入年数係数(src.get借入年数係数());
+            t.set借入年数スコア(src.get借入年数スコア());
+            t.set資本金評点(src.get資本金評点());
+            t.set資本金係数(src.get資本金係数());
+            t.set資本金スコア(src.get資本金スコア());
+            t.set合算返済比率評点(src.get合算返済比率評点());
+            t.set合算返済比率係数(src.get合算返済比率係数());
+            t.set合算返済比率スコア(src.get合算返済比率スコア());
+            t.set合算返済比率(src.get合算返済比率());
+            t.set自己資金比率評点(src.get自己資金比率評点());
+            t.set自己資金比率係数(src.get自己資金比率係数());
+            t.set自己資金比率スコア(src.get自己資金比率スコア());
+            t.set自己資金比率(src.get自己資金比率());
+            t.set調整定数(src.get調整定数());
+            t.set若年単身者評点(src.get若年単身者評点());
+            t.set若年単身者係数(src.get若年単身者係数());
+            t.set若年単身者スコア(src.get若年単身者スコア());
+            scoringDetailTargetMapper.insert(t);
+        }
+
+        // ③-d21 審査モデル回答明細Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル回答明細ＳSource> scoringDetailS =
+                emptyIfNull(scoringDetailSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル回答明細ＳSource src : scoringDetailS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル回答明細ＳTarget t = new 審査モデル回答明細ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set勤続年数評点(src.get勤続年数評点());
+            t.set勤続年数係数(src.get勤続年数係数());
+            t.set勤続年数スコア(src.get勤続年数スコア());
+            t.set借入年数評点(src.get借入年数評点());
+            t.set借入年数係数(src.get借入年数係数());
+            t.set借入年数スコア(src.get借入年数スコア());
+            t.set資本金評点(src.get資本金評点());
+            t.set資本金係数(src.get資本金係数());
+            t.set資本金スコア(src.get資本金スコア());
+            t.set合算返済比率評点(src.get合算返済比率評点());
+            t.set合算返済比率係数(src.get合算返済比率係数());
+            t.set合算返済比率スコア(src.get合算返済比率スコア());
+            t.set合算返済比率(src.get合算返済比率());
+            t.set自己資金比率評点(src.get自己資金比率評点());
+            t.set自己資金比率係数(src.get自己資金比率係数());
+            t.set自己資金比率スコア(src.get自己資金比率スコア());
+            t.set自己資金比率(src.get自己資金比率());
+            t.set調整定数(src.get調整定数());
+            t.set若年単身者評点(src.get若年単身者評点());
+            t.set若年単身者係数(src.get若年単身者係数());
+            t.set若年単身者スコア(src.get若年単身者スコア());
+            scoringDetailSTargetMapper.insert(t);
+        }
+
+        // ③-d22 審査モデル照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会Source> scoringInquiries =
+                emptyIfNull(scoringInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会Source src : scoringInquiries) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会Target t = new 審査モデル照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            scoringInquiryTargetMapper.insert(t);
+        }
+
+        // ③-d23 審査モデル照会Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会ＳSource> scoringInquiryS =
+                emptyIfNull(scoringInquirySSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会ＳSource src : scoringInquiryS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会ＳTarget t = new 審査モデル照会ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            scoringInquirySTargetMapper.insert(t);
+        }
+
+        // ③-d24 審査モデル照会基本 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会基本Source> scoringInquiryBasics =
+                emptyIfNull(scoringInquiryBasicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会基本Source src : scoringInquiryBasics) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会基本Target t = new 審査モデル照会基本Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set申込時年齢(src.get申込時年齢());
+            t.set実行時年齢(src.get実行時年齢());
+            t.set本人年収(src.get本人年収());
+            t.set合算者年収(src.get合算者年収());
+            t.set合算方法(src.get合算方法());
+            t.set申込金額(src.get申込金額());
+            t.set借入期間(src.get借入期間());
+            t.set資金使途(src.get資金使途());
+            t.set勤続年数(src.get勤続年数());
+            t.set資本金区分(src.get資本金区分());
+            t.set年間返済額(src.get年間返済額());
+            t.set総借入額(src.get総借入額());
+            t.set自己資金(src.get自己資金());
+            t.set所要資金(src.get所要資金());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保評価額(src.get担保評価額());
+            t.set保証料区分(src.get保証料区分());
+            t.set先順位控除額(src.get先順位控除額());
+            t.set控除前担保評価額(src.get控除前担保評価額());
+            t.set同居家族数(src.get同居家族数());
+            scoringInquiryBasicTargetMapper.insert(t);
+        }
+
+        // ③-d25 審査モデル照会基本Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会基本ＳSource> scoringInquiryBasicS =
+                emptyIfNull(scoringInquiryBasicSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会基本ＳSource src : scoringInquiryBasicS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会基本ＳTarget t = new 審査モデル照会基本ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set申込時年齢(src.get申込時年齢());
+            t.set実行時年齢(src.get実行時年齢());
+            t.set本人年収(src.get本人年収());
+            t.set合算者年収(src.get合算者年収());
+            t.set合算方法(src.get合算方法());
+            t.set申込金額(src.get申込金額());
+            t.set借入期間(src.get借入期間());
+            t.set資金使途(src.get資金使途());
+            t.set勤続年数(src.get勤続年数());
+            t.set資本金区分(src.get資本金区分());
+            t.set年間返済額(src.get年間返済額());
+            t.set総借入額(src.get総借入額());
+            t.set自己資金(src.get自己資金());
+            t.set所要資金(src.get所要資金());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保評価額(src.get担保評価額());
+            t.set保証料区分(src.get保証料区分());
+            t.set先順位控除額(src.get先順位控除額());
+            t.set控除前担保評価額(src.get控除前担保評価額());
+            t.set同居家族数(src.get同居家族数());
+            scoringInquiryBasicSTargetMapper.insert(t);
+        }
+
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
         // 一連番号 fixed '99999'; valuation columns pass through.
         List<担保評価回答Source> collateralValuations =
-                collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (担保評価回答Source collateralValuation : collateralValuations) {
             ＩＦ＿担保評価連携結果Target valuationTarget = new ＩＦ＿担保評価連携結果Target();
             valuationTarget.set申込番号(targetApplicationNumber);
@@ -489,7 +1284,7 @@ public class JutakuLoanService {
         // ③-f ＩＦ＿担保評価連携結果＿ファイル (MAX only) — 担保評価回答 joined with 申込担保回答ＰＤＦ.
         // 一連番号 fixed '99999'; ファイル種別 <- ファイル種類.
         List<担保評価連携結果ファイルSource> valuationFiles =
-                collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
+                emptyIfNull(collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (担保評価連携結果ファイルSource valuationFile : valuationFiles) {
             ＩＦ＿担保評価連携結果＿ファイルTarget valuationFileTarget = new ＩＦ＿担保評価連携結果＿ファイルTarget();
             valuationFileTarget.set申込番号(targetApplicationNumber);
@@ -543,7 +1338,7 @@ public class JutakuLoanService {
 
             // ⑦ 履歴保証人 — FK to 履歴申込.
             List<保証人Source> historyGuarantors =
-                    guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose);
+                    emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose));
             for (保証人Source guarantor : historyGuarantors) {
                 履歴保証人Target historyGuarantorTarget = new 履歴保証人Target();
                 historyGuarantorTarget.set申込番号(targetApplicationNumber);
@@ -579,6 +1374,12 @@ public class JutakuLoanService {
             return sourceApplicationNumber;
         }
         return "3" + sourceApplicationNumber.substring(1);
+    }
+
+    // Returns an empty list when the given list is null, so 検索結果 (search results)
+    // can be iterated safely without a NullPointerException.
+    private static <T> List<T> emptyIfNull(List<T> list) {
+        return list == null ? java.util.Collections.emptyList() : list;
     }
 
     // Truncates a value so it fits within maxBytes bytes in MS932 (Shift-JIS) encoding.
@@ -817,6 +1618,9 @@ public class JutakuLoanService {
      * Source 資金使途 values 7:増改築 and above are undecided (TODO).
      */
     private void mapFundUsageDerivedColumns(申込Source source, 申込Target target) {
+        if (source == null || target == null) {
+            return;
+        }
         String productMajorCategory = source.get商品大分類();
         if (!"1".equals(productMajorCategory) && !"2".equals(productMajorCategory)) {
             return;
@@ -840,6 +1644,9 @@ public class JutakuLoanService {
     // 編集仕様詳細 code conversions are applied via the convert* helpers, and over-length
     // text columns are trimmed with truncateToByteLimit.
     private void mapApplicationColumns(申込Source source, 申込Target target) {
+        if (source == null || target == null) {
+            return;
+        }
         target.set商品大分類(convertProductMajorCategory(source.get商品大分類()));
         target.set商品コード(source.get商品コード());   // TODO(編集仕様詳細): 商品コードマッピングは大半が未定
         target.set保証番号(source.get保証番号());

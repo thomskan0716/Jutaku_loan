@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.個信類似照会明細TargetMapper">
+
+    <!-- 1:N per (申込番号, 申込目的). 申込番号 2→3 and 申込目的 converted by service.
+         DB uses full-width digits (電話番号１/電話番号２); 再照会＿* columns contain a
+         full-width underscore (U+FF3F) and are double-quoted. -->
+    <insert id="insert" parameterType="migration.domain.target.個信類似照会明細Target">
+        INSERT INTO 個信類似照会明細 (
+            申込番号,
+            申込目的,
+            イベント,
+            イベント日時,
+            受付番号,
+            受付日時,
+            情報区分,
+            氏名カナ,
+            氏名漢字,
+            性別,
+            生年月日,
+            電話番号１,
+            電話番号２,
+            郵便番号,
+            住所カナ,
+            住所漢字,
+            勤務先名,
+            勤務先電話番号,
+            本人識別コード,
+            情報特定コード,
+            "再照会＿情報区分",
+            "再照会＿受付番号",
+            "再照会＿受付日時",
+            "再照会＿会員名",
+            "再照会＿回答通番",
+            "再照会＿電文種別",
+            顧客コード
+        ) VALUES (
+            #{申込番号},
+            #{申込目的},
+            #{イベント},
+            #{イベント日時},
+            #{受付番号},
+            #{受付日時},
+            #{情報区分},
+            #{氏名カナ},
+            #{氏名漢字},
+            #{性別},
+            #{生年月日},
+            #{電話番号1},
+            #{電話番号2},
+            #{郵便番号},
+            #{住所カナ},
+            #{住所漢字},
+            #{勤務先名},
+            #{勤務先電話番号},
+            #{本人識別コード},
+            #{情報特定コード},
+            #{再照会＿情報区分},
+            #{再照会＿受付番号},
+            #{再照会＿受付日時},
+            #{再照会＿会員名},
+            #{再照会＿回答通番},
+            #{再照会＿電文種別},
+            #{顧客コード}
+        )
+    </insert>
+
+</mapper>
