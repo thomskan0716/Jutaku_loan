@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.審査モデル照会基本TargetMapper">
+
+    <!-- 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.審査モデル照会基本Target">
+        INSERT INTO 審査モデル照会基本 (
+            申込番号, 申込目的, イベント, イベント日時,
+            申込時年齢, 実行時年齢, 本人年収, 合算者年収, 合算方法, 申込金額,
+            借入期間, 資金使途, 勤続年数, 資本金区分, 年間返済額, 総借入額,
+            自己資金, 所要資金, 規定外項目, 担保評価額, 保証料区分, 先順位控除額,
+            控除前担保評価額, 同居家族数
+        ) VALUES (
+            #{申込番号}, #{申込目的}, #{イベント}, #{イベント日時},
+            #{申込時年齢}, #{実行時年齢}, #{本人年収}, #{合算者年収}, #{合算方法}, #{申込金額},
+            #{借入期間}, #{資金使途}, #{勤続年数}, #{資本金区分}, #{年間返済額}, #{総借入額},
+            #{自己資金}, #{所要資金}, #{規定外項目}, #{担保評価額}, #{保証料区分}, #{先順位控除額},
+            #{控除前担保評価額}, #{同居家族数}
+        )
+    </insert>
+
+</mapper>

@@ -63,6 +63,10 @@ import migration.domain.source.審査モデル回答判定Source;
 import migration.domain.source.審査モデル回答判定ＳSource;
 import migration.domain.source.審査モデル回答明細Source;
 import migration.domain.source.審査モデル回答明細ＳSource;
+import migration.domain.source.審査モデル照会Source;
+import migration.domain.source.審査モデル照会ＳSource;
+import migration.domain.source.審査モデル照会基本Source;
+import migration.domain.source.審査モデル照会基本ＳSource;
 import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
 import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
@@ -87,6 +91,10 @@ import migration.domain.target.審査モデル回答判定Target;
 import migration.domain.target.審査モデル回答判定ＳTarget;
 import migration.domain.target.審査モデル回答明細Target;
 import migration.domain.target.審査モデル回答明細ＳTarget;
+import migration.domain.target.審査モデル照会Target;
+import migration.domain.target.審査モデル照会ＳTarget;
+import migration.domain.target.審査モデル照会基本Target;
+import migration.domain.target.審査モデル照会基本ＳTarget;
 import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
 import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
@@ -111,6 +119,10 @@ import migration.mapper.source.審査モデル回答判定SourceMapper;
 import migration.mapper.source.審査モデル回答判定ＳSourceMapper;
 import migration.mapper.source.審査モデル回答明細SourceMapper;
 import migration.mapper.source.審査モデル回答明細ＳSourceMapper;
+import migration.mapper.source.審査モデル照会SourceMapper;
+import migration.mapper.source.審査モデル照会ＳSourceMapper;
+import migration.mapper.source.審査モデル照会基本SourceMapper;
+import migration.mapper.source.審査モデル照会基本ＳSourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
@@ -135,6 +147,10 @@ import migration.mapper.target.審査モデル回答判定TargetMapper;
 import migration.mapper.target.審査モデル回答判定ＳTargetMapper;
 import migration.mapper.target.審査モデル回答明細TargetMapper;
 import migration.mapper.target.審査モデル回答明細ＳTargetMapper;
+import migration.mapper.target.審査モデル照会TargetMapper;
+import migration.mapper.target.審査モデル照会ＳTargetMapper;
+import migration.mapper.target.審査モデル照会基本TargetMapper;
+import migration.mapper.target.審査モデル照会基本ＳTargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
@@ -185,6 +201,10 @@ public class JutakuLoanService {
     @Autowired private 審査モデル回答判定ＳSourceMapper scoringJudgeSSourceMapper;
     @Autowired private 審査モデル回答明細SourceMapper scoringDetailSourceMapper;
     @Autowired private 審査モデル回答明細ＳSourceMapper scoringDetailSSourceMapper;
+    @Autowired private 審査モデル照会SourceMapper scoringInquirySourceMapper;
+    @Autowired private 審査モデル照会ＳSourceMapper scoringInquirySSourceMapper;
+    @Autowired private 審査モデル照会基本SourceMapper scoringInquiryBasicSourceMapper;
+    @Autowired private 審査モデル照会基本ＳSourceMapper scoringInquiryBasicSSourceMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
@@ -226,6 +246,10 @@ public class JutakuLoanService {
     @Autowired private 審査モデル回答判定ＳTargetMapper scoringJudgeSTargetMapper;
     @Autowired private 審査モデル回答明細TargetMapper scoringDetailTargetMapper;
     @Autowired private 審査モデル回答明細ＳTargetMapper scoringDetailSTargetMapper;
+    @Autowired private 審査モデル照会TargetMapper scoringInquiryTargetMapper;
+    @Autowired private 審査モデル照会ＳTargetMapper scoringInquirySTargetMapper;
+    @Autowired private 審査モデル照会基本TargetMapper scoringInquiryBasicTargetMapper;
+    @Autowired private 審査モデル照会基本ＳTargetMapper scoringInquiryBasicSTargetMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
@@ -1129,6 +1153,112 @@ public class JutakuLoanService {
             t.set若年単身者係数(src.get若年単身者係数());
             t.set若年単身者スコア(src.get若年単身者スコア());
             scoringDetailSTargetMapper.insert(t);
+        }
+
+        // ③-d22 審査モデル照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会Source> scoringInquiries =
+                emptyIfNull(scoringInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会Source src : scoringInquiries) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会Target t = new 審査モデル照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            scoringInquiryTargetMapper.insert(t);
+        }
+
+        // ③-d23 審査モデル照会Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会ＳSource> scoringInquiryS =
+                emptyIfNull(scoringInquirySSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会ＳSource src : scoringInquiryS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会ＳTarget t = new 審査モデル照会ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            scoringInquirySTargetMapper.insert(t);
+        }
+
+        // ③-d24 審査モデル照会基本 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会基本Source> scoringInquiryBasics =
+                emptyIfNull(scoringInquiryBasicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会基本Source src : scoringInquiryBasics) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会基本Target t = new 審査モデル照会基本Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set申込時年齢(src.get申込時年齢());
+            t.set実行時年齢(src.get実行時年齢());
+            t.set本人年収(src.get本人年収());
+            t.set合算者年収(src.get合算者年収());
+            t.set合算方法(src.get合算方法());
+            t.set申込金額(src.get申込金額());
+            t.set借入期間(src.get借入期間());
+            t.set資金使途(src.get資金使途());
+            t.set勤続年数(src.get勤続年数());
+            t.set資本金区分(src.get資本金区分());
+            t.set年間返済額(src.get年間返済額());
+            t.set総借入額(src.get総借入額());
+            t.set自己資金(src.get自己資金());
+            t.set所要資金(src.get所要資金());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保評価額(src.get担保評価額());
+            t.set保証料区分(src.get保証料区分());
+            t.set先順位控除額(src.get先順位控除額());
+            t.set控除前担保評価額(src.get控除前担保評価額());
+            t.set同居家族数(src.get同居家族数());
+            scoringInquiryBasicTargetMapper.insert(t);
+        }
+
+        // ③-d25 審査モデル照会基本Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査モデル照会基本ＳSource> scoringInquiryBasicS =
+                emptyIfNull(scoringInquiryBasicSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査モデル照会基本ＳSource src : scoringInquiryBasicS) {
+            if (src == null) {
+                continue;
+            }
+            審査モデル照会基本ＳTarget t = new 審査モデル照会基本ＳTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set申込時年齢(src.get申込時年齢());
+            t.set実行時年齢(src.get実行時年齢());
+            t.set本人年収(src.get本人年収());
+            t.set合算者年収(src.get合算者年収());
+            t.set合算方法(src.get合算方法());
+            t.set申込金額(src.get申込金額());
+            t.set借入期間(src.get借入期間());
+            t.set資金使途(src.get資金使途());
+            t.set勤続年数(src.get勤続年数());
+            t.set資本金区分(src.get資本金区分());
+            t.set年間返済額(src.get年間返済額());
+            t.set総借入額(src.get総借入額());
+            t.set自己資金(src.get自己資金());
+            t.set所要資金(src.get所要資金());
+            t.set規定外項目(src.get規定外項目());
+            t.set担保評価額(src.get担保評価額());
+            t.set保証料区分(src.get保証料区分());
+            t.set先順位控除額(src.get先順位控除額());
+            t.set控除前担保評価額(src.get控除前担保評価額());
+            t.set同居家族数(src.get同居家族数());
+            scoringInquiryBasicSTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

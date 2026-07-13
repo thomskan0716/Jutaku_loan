@@ -57,6 +57,10 @@ DELETE FROM ITF_SMS.審査モデル回答判定     WHERE 申込番号 LIKE '3%'
 DELETE FROM ITF_SMS.審査モデル回答判定Ｓ   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査モデル回答明細     WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査モデル回答明細Ｓ   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル照会         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル照会Ｓ       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル照会基本     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査モデル照会基本Ｓ   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 
