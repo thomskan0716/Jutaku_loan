@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.審査データ送信TargetMapper">
+
+    <!-- 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.審査データ送信Target">
+        INSERT INTO 審査データ送信 (
+            申込番号, 申込目的, イベント, イベント日時, 状態, 状態説明, 優先度, 次進捗コード, 次状態
+        ) VALUES (
+            #{申込番号}, #{申込目的}, #{イベント}, #{イベント日時}, #{状態}, #{状態説明}, #{優先度}, #{次進捗コード}, #{次状態}
+        )
+    </insert>
+
+</mapper>

@@ -67,6 +67,14 @@ import migration.domain.source.審査モデル照会Source;
 import migration.domain.source.審査モデル照会ＳSource;
 import migration.domain.source.審査モデル照会基本Source;
 import migration.domain.source.審査モデル照会基本ＳSource;
+import migration.domain.source.システム判定結果Source;
+import migration.domain.source.システム判定結果明細Source;
+import migration.domain.source.システム判定照会Source;
+import migration.domain.source.住宅ローン不正検知結果Source;
+import migration.domain.source.住宅ローン不正検知照会Source;
+import migration.domain.source.審査結果照会Source;
+import migration.domain.source.審査コメントSource;
+import migration.domain.source.審査データ送信Source;
 import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
 import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
@@ -95,6 +103,14 @@ import migration.domain.target.審査モデル照会Target;
 import migration.domain.target.審査モデル照会ＳTarget;
 import migration.domain.target.審査モデル照会基本Target;
 import migration.domain.target.審査モデル照会基本ＳTarget;
+import migration.domain.target.システム判定結果Target;
+import migration.domain.target.システム判定結果明細Target;
+import migration.domain.target.システム判定照会Target;
+import migration.domain.target.住宅ローン不正検知結果Target;
+import migration.domain.target.住宅ローン不正検知照会Target;
+import migration.domain.target.審査結果照会Target;
+import migration.domain.target.審査コメントTarget;
+import migration.domain.target.審査データ送信Target;
 import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
 import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
@@ -123,6 +139,14 @@ import migration.mapper.source.審査モデル照会SourceMapper;
 import migration.mapper.source.審査モデル照会ＳSourceMapper;
 import migration.mapper.source.審査モデル照会基本SourceMapper;
 import migration.mapper.source.審査モデル照会基本ＳSourceMapper;
+import migration.mapper.source.システム判定結果SourceMapper;
+import migration.mapper.source.システム判定結果明細SourceMapper;
+import migration.mapper.source.システム判定照会SourceMapper;
+import migration.mapper.source.住宅ローン不正検知結果SourceMapper;
+import migration.mapper.source.住宅ローン不正検知照会SourceMapper;
+import migration.mapper.source.審査結果照会SourceMapper;
+import migration.mapper.source.審査コメントSourceMapper;
+import migration.mapper.source.審査データ送信SourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
@@ -151,6 +175,14 @@ import migration.mapper.target.審査モデル照会TargetMapper;
 import migration.mapper.target.審査モデル照会ＳTargetMapper;
 import migration.mapper.target.審査モデル照会基本TargetMapper;
 import migration.mapper.target.審査モデル照会基本ＳTargetMapper;
+import migration.mapper.target.システム判定結果TargetMapper;
+import migration.mapper.target.システム判定結果明細TargetMapper;
+import migration.mapper.target.システム判定照会TargetMapper;
+import migration.mapper.target.住宅ローン不正検知結果TargetMapper;
+import migration.mapper.target.住宅ローン不正検知照会TargetMapper;
+import migration.mapper.target.審査結果照会TargetMapper;
+import migration.mapper.target.審査コメントTargetMapper;
+import migration.mapper.target.審査データ送信TargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
@@ -205,6 +237,14 @@ public class JutakuLoanService {
     @Autowired private 審査モデル照会ＳSourceMapper scoringInquirySSourceMapper;
     @Autowired private 審査モデル照会基本SourceMapper scoringInquiryBasicSourceMapper;
     @Autowired private 審査モデル照会基本ＳSourceMapper scoringInquiryBasicSSourceMapper;
+    @Autowired private システム判定結果SourceMapper systemJudgeResultSourceMapper;
+    @Autowired private システム判定結果明細SourceMapper systemJudgeResultDetailSourceMapper;
+    @Autowired private システム判定照会SourceMapper systemJudgeInquirySourceMapper;
+    @Autowired private 住宅ローン不正検知結果SourceMapper fraudDetectionResultSourceMapper;
+    @Autowired private 住宅ローン不正検知照会SourceMapper fraudDetectionInquirySourceMapper;
+    @Autowired private 審査結果照会SourceMapper reviewResultInquirySourceMapper;
+    @Autowired private 審査コメントSourceMapper reviewCommentSourceMapper;
+    @Autowired private 審査データ送信SourceMapper reviewDataSendSourceMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
@@ -250,6 +290,14 @@ public class JutakuLoanService {
     @Autowired private 審査モデル照会ＳTargetMapper scoringInquirySTargetMapper;
     @Autowired private 審査モデル照会基本TargetMapper scoringInquiryBasicTargetMapper;
     @Autowired private 審査モデル照会基本ＳTargetMapper scoringInquiryBasicSTargetMapper;
+    @Autowired private システム判定結果TargetMapper systemJudgeResultTargetMapper;
+    @Autowired private システム判定結果明細TargetMapper systemJudgeResultDetailTargetMapper;
+    @Autowired private システム判定照会TargetMapper systemJudgeInquiryTargetMapper;
+    @Autowired private 住宅ローン不正検知結果TargetMapper fraudDetectionResultTargetMapper;
+    @Autowired private 住宅ローン不正検知照会TargetMapper fraudDetectionInquiryTargetMapper;
+    @Autowired private 審査結果照会TargetMapper reviewResultInquiryTargetMapper;
+    @Autowired private 審査コメントTargetMapper reviewCommentTargetMapper;
+    @Autowired private 審査データ送信TargetMapper reviewDataSendTargetMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
@@ -1259,6 +1307,183 @@ public class JutakuLoanService {
             t.set控除前担保評価額(src.get控除前担保評価額());
             t.set同居家族数(src.get同居家族数());
             scoringInquiryBasicSTargetMapper.insert(t);
+        }
+
+        // ③-d26 システム判定結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<システム判定結果Source> systemJudgeResults =
+                emptyIfNull(systemJudgeResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (システム判定結果Source src : systemJudgeResults) {
+            if (src == null) {
+                continue;
+            }
+            システム判定結果Target t = new システム判定結果Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setシステム判定結果(src.getシステム判定結果());
+            systemJudgeResultTargetMapper.insert(t);
+        }
+
+        // ③-d27 システム判定結果明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<システム判定結果明細Source> systemJudgeResultDetails =
+                emptyIfNull(systemJudgeResultDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (システム判定結果明細Source src : systemJudgeResultDetails) {
+            if (src == null) {
+                continue;
+            }
+            システム判定結果明細Target t = new システム判定結果明細Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set判定コード(src.get判定コード());
+            t.set値(src.get値());
+            t.set備考(src.get備考());
+            systemJudgeResultDetailTargetMapper.insert(t);
+        }
+
+        // ③-d28 システム判定照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<システム判定照会Source> systemJudgeInquiries =
+                emptyIfNull(systemJudgeInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (システム判定照会Source src : systemJudgeInquiries) {
+            if (src == null) {
+                continue;
+            }
+            システム判定照会Target t = new システム判定照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            systemJudgeInquiryTargetMapper.insert(t);
+        }
+
+        // ③-d29 住宅ローン不正検知結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<住宅ローン不正検知結果Source> fraudDetectionResults =
+                emptyIfNull(fraudDetectionResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (住宅ローン不正検知結果Source src : fraudDetectionResults) {
+            if (src == null) {
+                continue;
+            }
+            住宅ローン不正検知結果Target t = new 住宅ローン不正検知結果Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setリクエストＩＤ(src.getリクエストＩＤ());
+            t.set得点(src.get得点());
+            t.setエラーコード(src.getエラーコード());
+            t.setメッセージ(src.getメッセージ());
+            fraudDetectionResultTargetMapper.insert(t);
+        }
+
+        // ③-d30 住宅ローン不正検知照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<住宅ローン不正検知照会Source> fraudDetectionInquiries =
+                emptyIfNull(fraudDetectionInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (住宅ローン不正検知照会Source src : fraudDetectionInquiries) {
+            if (src == null) {
+                continue;
+            }
+            住宅ローン不正検知照会Target t = new 住宅ローン不正検知照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            t.setリクエストＩＤ(src.getリクエストＩＤ());
+            t.set事前＿申込金額(src.get事前＿申込金額());
+            t.set事前＿借入期間(src.get事前＿借入期間());
+            t.set年齢(src.get年齢());
+            t.set勤務先従業員数(src.get勤務先従業員数());
+            t.set勤続年数(src.get勤続年数());
+            t.set歩合給区分(src.get歩合給区分());
+            t.set年収(src.get年収());
+            t.set自己資金(src.get自己資金());
+            t.set家賃(src.get家賃());
+            t.set居住年数(src.get居住年数());
+            t.set同居予定合計(src.get同居予定合計());
+            t.set同居予定配偶者(src.get同居予定配偶者());
+            t.set土地担保時価額(src.get土地担保時価額());
+            t.set建物担保時価額(src.get建物担保時価額());
+            t.set借入総額(src.get借入総額());
+            t.set年収倍率(src.get年収倍率());
+            t.set返済比率(src.get返済比率());
+            t.set合算年収(src.get合算年収());
+            t.set年間返済額(src.get年間返済額());
+            t.set融資倍率(src.get融資倍率());
+            t.set総借入額＿総借入額(src.get総借入額＿総借入額());
+            t.set職業区分コード(src.get職業区分コード());
+            t.set職種役職コード(src.get職種役職コード());
+            t.set勤務先資本金区分(src.get勤務先資本金区分());
+            t.set資金使途(src.get資金使途());
+            t.set住居区分名称コード(src.get住居区分名称コード());
+            t.setセグメント(src.getセグメント());
+            t.set住所郵便番号(src.get住所郵便番号());
+            t.set勤務先郵便番号(src.get勤務先郵便番号());
+            t.set物件郵便番号(src.get物件郵便番号());
+            fraudDetectionInquiryTargetMapper.insert(t);
+        }
+
+        // ③-d31 審査結果照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査結果照会Source> reviewResultInquiries =
+                emptyIfNull(reviewResultInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査結果照会Source src : reviewResultInquiries) {
+            if (src == null) {
+                continue;
+            }
+            審査結果照会Target t = new 審査結果照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            t.set自動判定基準(src.get自動判定基準());
+            reviewResultInquiryTargetMapper.insert(t);
+        }
+
+        // ③-d32 審査コメント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査コメントSource> reviewComments =
+                emptyIfNull(reviewCommentSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査コメントSource src : reviewComments) {
+            if (src == null) {
+                continue;
+            }
+            審査コメントTarget t = new 審査コメントTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setコメント区分(src.getコメント区分());
+            t.set結果種類(src.get結果種類());
+            t.setコメント(src.getコメント());
+            reviewCommentTargetMapper.insert(t);
+        }
+
+        // ③-d33 審査データ送信 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査データ送信Source> reviewDataSends =
+                emptyIfNull(reviewDataSendSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査データ送信Source src : reviewDataSends) {
+            if (src == null) {
+                continue;
+            }
+            審査データ送信Target t = new 審査データ送信Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            t.set次進捗コード(src.get次進捗コード());
+            t.set次状態(src.get次状態());
+            reviewDataSendTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

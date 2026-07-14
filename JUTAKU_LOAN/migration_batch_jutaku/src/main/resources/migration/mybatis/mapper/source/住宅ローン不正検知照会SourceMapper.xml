@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.住宅ローン不正検知照会SourceMapper">
+
+    <resultMap id="fraudDetectionInquiryMap" type="migration.domain.source.住宅ローン不正検知照会Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="状態"             column="状態"/>
+        <result property="状態説明"         column="状態説明"/>
+        <result property="優先度"           column="優先度"/>
+        <result property="リクエストＩＤ"   column="リクエストＩＤ"/>
+        <result property="事前＿申込金額"   column="事前＿申込金額"/>
+        <result property="事前＿借入期間"   column="事前＿借入期間"/>
+        <result property="年齢"             column="年齢"/>
+        <result property="勤務先従業員数"   column="勤務先従業員数"/>
+        <result property="勤続年数"         column="勤続年数"/>
+        <result property="歩合給区分"       column="歩合給区分"/>
+        <result property="年収"             column="年収"/>
+        <result property="自己資金"         column="自己資金"/>
+        <result property="家賃"             column="家賃"/>
+        <result property="居住年数"         column="居住年数"/>
+        <result property="同居予定合計"     column="同居予定合計"/>
+        <result property="同居予定配偶者"   column="同居予定配偶者"/>
+        <result property="土地担保時価額"   column="土地担保時価額"/>
+        <result property="建物担保時価額"   column="建物担保時価額"/>
+        <result property="借入総額"         column="借入総額"/>
+        <result property="年収倍率"         column="年収倍率"/>
+        <result property="返済比率"         column="返済比率"/>
+        <result property="合算年収"         column="合算年収"/>
+        <result property="年間返済額"       column="年間返済額"/>
+        <result property="融資倍率"         column="融資倍率"/>
+        <result property="総借入額＿総借入額" column="総借入額＿総借入額"/>
+        <result property="職業区分コード"   column="職業区分コード"/>
+        <result property="職種役職コード"   column="職種役職コード"/>
+        <result property="勤務先資本金区分" column="勤務先資本金区分"/>
+        <result property="資金使途"         column="資金使途"/>
+        <result property="住居区分名称コード" column="住居区分名称コード"/>
+        <result property="セグメント"       column="セグメント"/>
+        <result property="住所郵便番号"     column="住所郵便番号"/>
+        <result property="勤務先郵便番号"   column="勤務先郵便番号"/>
+        <result property="物件郵便番号"     column="物件郵便番号"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="fraudDetectionInquiryMap">
+        SELECT 申込番号, 申込目的, イベント, イベント日時,
+               状態, 状態説明, 優先度, リクエストＩＤ,
+               事前＿申込金額, 事前＿借入期間, 年齢, 勤務先従業員数, 勤続年数, 歩合給区分,
+               年収, 自己資金, 家賃, 居住年数, 同居予定合計, 同居予定配偶者,
+               土地担保時価額, 建物担保時価額, 借入総額, 年収倍率, 返済比率, 合算年収,
+               年間返済額, 融資倍率, 総借入額＿総借入額,
+               職業区分コード, 職種役職コード, 勤務先資本金区分, 資金使途,
+               住居区分名称コード, セグメント, 住所郵便番号, 勤務先郵便番号, 物件郵便番号
+        FROM 住宅ローン不正検知照会
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時
+    </select>
+
+</mapper>
