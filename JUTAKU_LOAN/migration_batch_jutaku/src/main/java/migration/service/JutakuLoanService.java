@@ -75,6 +75,8 @@ import migration.domain.source.住宅ローン不正検知照会Source;
 import migration.domain.source.審査結果照会Source;
 import migration.domain.source.審査コメントSource;
 import migration.domain.source.審査データ送信Source;
+import migration.domain.source.審査ＳＮＡＶＩ連携イベントSource;
+import migration.domain.source.審査ＳＮＡＶＩ連携内容Source;
 import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
 import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
@@ -111,6 +113,8 @@ import migration.domain.target.住宅ローン不正検知照会Target;
 import migration.domain.target.審査結果照会Target;
 import migration.domain.target.審査コメントTarget;
 import migration.domain.target.審査データ送信Target;
+import migration.domain.target.審査ＳＮＡＶＩ連携イベントTarget;
+import migration.domain.target.審査ＳＮＡＶＩ連携内容Target;
 import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
 import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
@@ -147,6 +151,8 @@ import migration.mapper.source.住宅ローン不正検知照会SourceMapper;
 import migration.mapper.source.審査結果照会SourceMapper;
 import migration.mapper.source.審査コメントSourceMapper;
 import migration.mapper.source.審査データ送信SourceMapper;
+import migration.mapper.source.審査ＳＮＡＶＩ連携イベントSourceMapper;
+import migration.mapper.source.審査ＳＮＡＶＩ連携内容SourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
@@ -183,6 +189,8 @@ import migration.mapper.target.住宅ローン不正検知照会TargetMapper;
 import migration.mapper.target.審査結果照会TargetMapper;
 import migration.mapper.target.審査コメントTargetMapper;
 import migration.mapper.target.審査データ送信TargetMapper;
+import migration.mapper.target.審査ＳＮＡＶＩ連携イベントTargetMapper;
+import migration.mapper.target.審査ＳＮＡＶＩ連携内容TargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
@@ -245,6 +253,8 @@ public class JutakuLoanService {
     @Autowired private 審査結果照会SourceMapper reviewResultInquirySourceMapper;
     @Autowired private 審査コメントSourceMapper reviewCommentSourceMapper;
     @Autowired private 審査データ送信SourceMapper reviewDataSendSourceMapper;
+    @Autowired private 審査ＳＮＡＶＩ連携イベントSourceMapper reviewSnaviLinkEventSourceMapper;
+    @Autowired private 審査ＳＮＡＶＩ連携内容SourceMapper reviewSnaviLinkContentSourceMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
@@ -298,6 +308,8 @@ public class JutakuLoanService {
     @Autowired private 審査結果照会TargetMapper reviewResultInquiryTargetMapper;
     @Autowired private 審査コメントTargetMapper reviewCommentTargetMapper;
     @Autowired private 審査データ送信TargetMapper reviewDataSendTargetMapper;
+    @Autowired private 審査ＳＮＡＶＩ連携イベントTargetMapper reviewSnaviLinkEventTargetMapper;
+    @Autowired private 審査ＳＮＡＶＩ連携内容TargetMapper reviewSnaviLinkContentTargetMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
@@ -1484,6 +1496,141 @@ public class JutakuLoanService {
             t.set次進捗コード(src.get次進捗コード());
             t.set次状態(src.get次状態());
             reviewDataSendTargetMapper.insert(t);
+        }
+
+        // ③-d34 審査ＳＮＡＶＩ連携 -> 審査ＳＮＡＶＩ連携イベント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査ＳＮＡＶＩ連携イベントSource> reviewSnaviLinkEvents =
+                emptyIfNull(reviewSnaviLinkEventSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＳＮＡＶＩ連携イベントSource src : reviewSnaviLinkEvents) {
+            if (src == null) {
+                continue;
+            }
+            審査ＳＮＡＶＩ連携イベントTarget t = new 審査ＳＮＡＶＩ連携イベントTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            reviewSnaviLinkEventTargetMapper.insert(t);
+        }
+
+        // ③-d35 審査ＳＮＡＶＩ連携内容 (MAX only) — 105 cols, 1:N per (申込番号, 申込目的).
+        // 上乗せ保証料 (source) -> 段階保証料率コード (target) aliased in the source SQL.
+        List<審査ＳＮＡＶＩ連携内容Source> reviewSnaviLinkContents =
+                emptyIfNull(reviewSnaviLinkContentSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査ＳＮＡＶＩ連携内容Source src : reviewSnaviLinkContents) {
+            if (src == null) {
+                continue;
+            }
+            審査ＳＮＡＶＩ連携内容Target t = new 審査ＳＮＡＶＩ連携内容Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set保証番号(src.get保証番号());
+            t.set静銀信用保証番号(src.get静銀信用保証番号());
+            t.set審査結果通知年月日(src.get審査結果通知年月日());
+            t.set店番(src.get店番());
+            t.set取扱店番(src.get取扱店番());
+            t.setＣＩＦ番号(src.getＣＩＦ番号());
+            t.set漢字氏名姓(src.get漢字氏名姓());
+            t.set漢字氏名名(src.get漢字氏名名());
+            t.set借入希望額＿極度額(src.get借入希望額＿極度額());
+            t.set返済期間年(src.get返済期間年());
+            t.set返済期間月(src.get返済期間月());
+            t.set集中審査＿返済方法コード(src.get集中審査＿返済方法コード());
+            t.set団信付保コード＿ローン(src.get団信付保コード＿ローン());
+            t.set勤続年月数＿年数(src.get勤続年月数＿年数());
+            t.set勤務先漢字名称(src.get勤務先漢字名称());
+            t.set一年前所得年収(src.get一年前所得年収());
+            t.set資産土地建物(src.get資産土地建物());
+            t.set資産預貯金(src.get資産預貯金());
+            t.set資産有価証券(src.get資産有価証券());
+            t.set資産その他(src.get資産その他());
+            t.set負債銀行借入(src.get負債銀行借入());
+            t.set負債クレジット信販(src.get負債クレジット信販());
+            t.set負債その他(src.get負債その他());
+            t.set負債その他借入(src.get負債その他借入());
+            t.set内訳＿毎月返済総額(src.get内訳＿毎月返済総額());
+            t.set一回の元利支払＿毎月(src.get一回の元利支払＿毎月());
+            t.setボーナス返済月1(src.getボーナス返済月1());
+            t.setボーナス返済月2(src.getボーナス返済月2());
+            t.set内訳＿ボーナス総額(src.get内訳＿ボーナス総額());
+            t.set一回の元利支払＿ボーナス(src.get一回の元利支払＿ボーナス());
+            t.set当初借入額＿住宅金融公庫(src.get当初借入額＿住宅金融公庫());
+            t.set当初借入額＿年金併せ(src.get当初借入額＿年金併せ());
+            t.set当初借入額＿年金その他(src.get当初借入額＿年金その他());
+            t.set当初借入額＿県市町村(src.get当初借入額＿県市町村());
+            t.set当初借入額＿勤務先制度(src.get当初借入額＿勤務先制度());
+            t.set当初借入額＿その他(src.get当初借入額＿その他());
+            t.set借入金残高合計(src.get借入金残高合計());
+            t.set年間元利返済額＿住宅金融公庫(src.get年間元利返済額＿住宅金融公庫());
+            t.set年間元利返済額＿年金併せ(src.get年間元利返済額＿年金併せ());
+            t.set年間元利返済額＿年金その他(src.get年間元利返済額＿年金その他());
+            t.set年間元利返済額＿県市町村(src.get年間元利返済額＿県市町村());
+            t.set年間元利返済額＿勤務先制度(src.get年間元利返済額＿勤務先制度());
+            t.set年間元利返済額＿その他(src.get年間元利返済額＿その他());
+            t.set借入金年間返済額合計(src.get借入金年間返済額合計());
+            t.set一年前加算者年収(src.get一年前加算者年収());
+            t.set購入物件区分(src.get購入物件区分());
+            t.set購入物件所在地＿漢字(src.get購入物件所在地＿漢字());
+            t.set購入物件土地地目(src.get購入物件土地地目());
+            t.set購入物件土地面積(src.get購入物件土地面積());
+            t.set所要資金＿土地(src.get所要資金＿土地());
+            t.set所要資金＿建物(src.get所要資金＿建物());
+            t.set所要資金＿経費(src.get所要資金＿経費());
+            t.set所要資金＿合計(src.get所要資金＿合計());
+            t.set購入物件建物構造(src.get購入物件建物構造());
+            t.set購入物件建物屋根(src.get購入物件建物屋根());
+            t.set購入物件建物延面積(src.get購入物件建物延面積());
+            t.set購入物件土地資金支払先(src.get購入物件土地資金支払先());
+            t.set購入物件土地資金支払先その他(src.get購入物件土地資金支払先その他());
+            t.set購入物件建物資金支払先(src.get購入物件建物資金支払先());
+            t.set購入物件建物資金支払先その他(src.get購入物件建物資金支払先その他());
+            t.set当初借入額＿自己資金(src.get当初借入額＿自己資金());
+            t.set保証会社条件1(src.get保証会社条件1());
+            t.set保証会社条件2(src.get保証会社条件2());
+            t.set保証会社条件3(src.get保証会社条件3());
+            t.set保証会社条件4(src.get保証会社条件4());
+            t.set保証会社条件5(src.get保証会社条件5());
+            t.set保証会社条件6(src.get保証会社条件6());
+            t.set保証会社条件7(src.get保証会社条件7());
+            t.set保証会社条件8(src.get保証会社条件8());
+            t.set保証会社条件9(src.get保証会社条件9());
+            t.set保証会社条件10(src.get保証会社条件10());
+            t.setスコアリングセグメントコード(src.getスコアリングセグメントコード());
+            t.setスコアリング一次判定コード(src.getスコアリング一次判定コード());
+            t.set年間返済比率(src.get年間返済比率());
+            t.set連帯債務者店番(src.get連帯債務者店番());
+            t.set連帯債務者ＣＩＦ番号(src.get連帯債務者ＣＩＦ番号());
+            t.set連帯債務者漢字氏名姓(src.get連帯債務者漢字氏名姓());
+            t.set連帯債務者漢字氏名名(src.get連帯債務者漢字氏名名());
+            t.set本人団信付保割合(src.get本人団信付保割合());
+            t.set連帯債務者団信付保割合(src.get連帯債務者団信付保割合());
+            t.set段階保証料率コード(src.get段階保証料率コード());
+            t.set連帯債務者有無(src.get連帯債務者有無());
+            t.set保証料(src.get保証料());
+            t.set取扱手数料(src.get取扱手数料());
+            t.set実行前条件1(src.get実行前条件1());
+            t.set実行前条件2(src.get実行前条件2());
+            t.set実行前条件3(src.get実行前条件3());
+            t.set実行前条件4(src.get実行前条件4());
+            t.set実行前条件5(src.get実行前条件5());
+            t.set実行前条件6(src.get実行前条件6());
+            t.set実行前条件7(src.get実行前条件7());
+            t.set実行前条件8(src.get実行前条件8());
+            t.set実行前条件9(src.get実行前条件9());
+            t.set実行前条件10(src.get実行前条件10());
+            t.set実行予定日(src.get実行予定日());
+            t.set分割実行フラグ(src.get分割実行フラグ());
+            t.set分割実行予定日(src.get分割実行予定日());
+            t.setその他借入先1(src.getその他借入先1());
+            t.setその他借入金1金額(src.getその他借入金1金額());
+            t.setその他借入先2(src.getその他借入先2());
+            t.setその他借入金2金額(src.getその他借入金2金額());
+            reviewSnaviLinkContentTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

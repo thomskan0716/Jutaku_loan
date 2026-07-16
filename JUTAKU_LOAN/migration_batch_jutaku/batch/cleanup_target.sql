@@ -69,6 +69,8 @@ DELETE FROM ITF_SMS.住宅ローン不正検知照会 WHERE 申込番号 LIKE '3
 DELETE FROM ITF_SMS.審査結果照会           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査コメント           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査データ送信         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＳＮＡＶＩ連携イベント WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＳＮＡＶＩ連携内容   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 
