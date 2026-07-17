@@ -77,6 +77,9 @@ import migration.domain.source.審査コメントSource;
 import migration.domain.source.審査データ送信Source;
 import migration.domain.source.審査ＳＮＡＶＩ連携イベントSource;
 import migration.domain.source.審査ＳＮＡＶＩ連携内容Source;
+import migration.domain.source.審査契約書出力連携内容Source;
+import migration.domain.source.契約書連携イベントSource;
+import migration.domain.source.審査預保照会Source;
 import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
 import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
@@ -115,6 +118,9 @@ import migration.domain.target.審査コメントTarget;
 import migration.domain.target.審査データ送信Target;
 import migration.domain.target.審査ＳＮＡＶＩ連携イベントTarget;
 import migration.domain.target.審査ＳＮＡＶＩ連携内容Target;
+import migration.domain.target.ＩＦ＿契約書送信Target;
+import migration.domain.target.契約書連携イベントTarget;
+import migration.domain.target.審査預保照会Target;
 import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
 import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
@@ -153,6 +159,9 @@ import migration.mapper.source.審査コメントSourceMapper;
 import migration.mapper.source.審査データ送信SourceMapper;
 import migration.mapper.source.審査ＳＮＡＶＩ連携イベントSourceMapper;
 import migration.mapper.source.審査ＳＮＡＶＩ連携内容SourceMapper;
+import migration.mapper.source.審査契約書出力連携内容SourceMapper;
+import migration.mapper.source.契約書連携イベントSourceMapper;
+import migration.mapper.source.審査預保照会SourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
@@ -191,6 +200,9 @@ import migration.mapper.target.審査コメントTargetMapper;
 import migration.mapper.target.審査データ送信TargetMapper;
 import migration.mapper.target.審査ＳＮＡＶＩ連携イベントTargetMapper;
 import migration.mapper.target.審査ＳＮＡＶＩ連携内容TargetMapper;
+import migration.mapper.target.ＩＦ＿契約書送信TargetMapper;
+import migration.mapper.target.契約書連携イベントTargetMapper;
+import migration.mapper.target.審査預保照会TargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
@@ -255,6 +267,9 @@ public class JutakuLoanService {
     @Autowired private 審査データ送信SourceMapper reviewDataSendSourceMapper;
     @Autowired private 審査ＳＮＡＶＩ連携イベントSourceMapper reviewSnaviLinkEventSourceMapper;
     @Autowired private 審査ＳＮＡＶＩ連携内容SourceMapper reviewSnaviLinkContentSourceMapper;
+    @Autowired private 審査契約書出力連携内容SourceMapper contractDocOutputContentSourceMapper;
+    @Autowired private 契約書連携イベントSourceMapper contractLinkEventSourceMapper;
+    @Autowired private 審査預保照会SourceMapper reviewDepositGuaranteeInquirySourceMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
@@ -310,6 +325,9 @@ public class JutakuLoanService {
     @Autowired private 審査データ送信TargetMapper reviewDataSendTargetMapper;
     @Autowired private 審査ＳＮＡＶＩ連携イベントTargetMapper reviewSnaviLinkEventTargetMapper;
     @Autowired private 審査ＳＮＡＶＩ連携内容TargetMapper reviewSnaviLinkContentTargetMapper;
+    @Autowired private ＩＦ＿契約書送信TargetMapper contractDocSendTargetMapper;
+    @Autowired private 契約書連携イベントTargetMapper contractLinkEventTargetMapper;
+    @Autowired private 審査預保照会TargetMapper reviewDepositGuaranteeInquiryTargetMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
@@ -1631,6 +1649,197 @@ public class JutakuLoanService {
             t.setその他借入先2(src.getその他借入先2());
             t.setその他借入金2金額(src.getその他借入金2金額());
             reviewSnaviLinkContentTargetMapper.insert(t);
+        }
+
+        // ③-d36 審査契約書出力連携内容 -> ＩＦ＿契約書送信 (MAX only) — 143 cols, 1:N per (申込番号, 申込目的).
+        // Renames handled via SQL aliases: ＣＩＦ->ＣＩＦ番号, 債務者甲名->債務者甲＿名,
+        // 債務者甲名カナ->債務者甲＿名カナ, 標準金利パーセント->標準金利,
+        // 全期間乖離幅＿数値->全期間乖離幅, 毎月返済２回目以降元金返済年月->毎月返済＿２回目以降元金返済年月日.
+        List<審査契約書出力連携内容Source> contractDocOutputContents =
+                emptyIfNull(contractDocOutputContentSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査契約書出力連携内容Source src : contractDocOutputContents) {
+            if (src == null) {
+                continue;
+            }
+            ＩＦ＿契約書送信Target t = new ＩＦ＿契約書送信Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.setレコード区分(src.getレコード区分());
+            t.set作成基準日時(src.get作成基準日時());
+            t.set取上店番(src.get取上店番());
+            t.set勘定店番(src.get勘定店番());
+            t.setＣＩＦ番号(src.getＣＩＦ番号());
+            t.set債務者甲＿名(src.get債務者甲＿名());
+            t.set債務者甲＿名カナ(src.get債務者甲＿名カナ());
+            t.set顧客住所(src.get顧客住所());
+            t.set法人区分(src.get法人区分());
+            t.set業種コード(src.get業種コード());
+            t.set職業(src.get職業());
+            t.setデータ区分(src.getデータ区分());
+            t.set処理区分コード(src.get処理区分コード());
+            t.set取扱番号(src.get取扱番号());
+            t.set枝番(src.get枝番());
+            t.set融資科目コード(src.get融資科目コード());
+            t.set融資分類コード(src.get融資分類コード());
+            t.set貸出種類コード(src.get貸出種類コード());
+            t.set貸出日(src.get貸出日());
+            t.set貸出金額(src.get貸出金額());
+            t.set貸出方法区分(src.get貸出方法区分());
+            t.set当初借入利率(src.get当初借入利率());
+            t.set資金使途コード(src.get資金使途コード());
+            t.set資金使途備考(src.get資金使途備考());
+            t.set現在残高(src.get現在残高());
+            t.set最終返済日(src.get最終返済日());
+            t.set発行日(src.get発行日());
+            t.set実行予定日(src.get実行予定日());
+            t.set徴求日(src.get徴求日());
+            t.set実行日(src.get実行日());
+            t.set否決日(src.get否決日());
+            t.set連携区分(src.get連携区分());
+            t.set承認ステータス(src.get承認ステータス());
+            t.set極度額(src.get極度額());
+            t.set抵当権設定日＿原契約日(src.get抵当権設定日＿原契約日());
+            t.set根抵当権契約設定日(src.get根抵当権契約設定日());
+            t.set債務承認開始日(src.get債務承認開始日());
+            t.set債務承認終了日(src.get債務承認終了日());
+            t.set保証委託契約日(src.get保証委託契約日());
+            t.set印紙税額(src.get印紙税額());
+            t.set稟議種別(src.get稟議種別());
+            t.set保証番号(src.get保証番号());
+            t.set金利種類区分(src.get金利種類区分());
+            t.set金利型名称備考(src.get金利型名称備考());
+            t.set返済方法(src.get返済方法());
+            t.set弁済方法名称備考(src.get弁済方法名称備考());
+            t.set基準金利区分(src.get基準金利区分());
+            t.set標準金利(src.get標準金利());
+            t.set固定金利再選択時の利幅＿符号(src.get固定金利再選択時の利幅＿符号());
+            t.set固定金利再選択時の利幅＿数値(src.get固定金利再選択時の利幅＿数値());
+            t.set貸付期間＿年(src.get貸付期間＿年());
+            t.set貸付期間＿月(src.get貸付期間＿月());
+            t.set債務者＿甲＿団信(src.get債務者＿甲＿団信());
+            t.set利息支払日(src.get利息支払日());
+            t.set利息払込済日(src.get利息払込済日());
+            t.set利息約定日(src.get利息約定日());
+            t.set利率方式(src.get利率方式());
+            t.setその他期日(src.getその他期日());
+            t.set休日補正区分(src.get休日補正区分());
+            t.set返済用預金口座店番(src.get返済用預金口座店番());
+            t.set返済用預金口座種目(src.get返済用預金口座種目());
+            t.set返済用預金口座番号(src.get返済用預金口座番号());
+            t.set返済用口座名義(src.get返済用口座名義());
+            t.set据置ＣＤ(src.get据置ＣＤ());
+            t.set据置備考(src.get据置備考());
+            t.set元金据置期限(src.get元金据置期限());
+            t.set毎月返済＿内訳＿貸出金額(src.get毎月返済＿内訳＿貸出金額());
+            t.set毎月返済＿初回返済日(src.get毎月返済＿初回返済日());
+            t.set毎月返済＿返済日(src.get毎月返済＿返済日());
+            t.set毎回返済＿返済間隔(src.get毎回返済＿返済間隔());
+            t.set毎回返済＿返済回数(src.get毎回返済＿返済回数());
+            t.set毎月返済＿初回返済金(src.get毎月返済＿初回返済金());
+            t.set毎月返済＿返済金(src.get毎月返済＿返済金());
+            t.set毎月返済＿最終返済金(src.get毎月返済＿最終返済金());
+            t.set半年毎返済＿内訳＿貸出金額(src.get半年毎返済＿内訳＿貸出金額());
+            t.set半年毎返済＿初回返済日(src.get半年毎返済＿初回返済日());
+            t.set半年毎返済＿返済月1(src.get半年毎返済＿返済月1());
+            t.set半年毎返済＿返済月2(src.get半年毎返済＿返済月2());
+            t.set半年毎返済＿返済日(src.get半年毎返済＿返済日());
+            t.set半年毎増額＿返済回数(src.get半年毎増額＿返済回数());
+            t.set半年毎＿初回返済金(src.get半年毎＿初回返済金());
+            t.set半年毎＿返済金(src.get半年毎＿返済金());
+            t.set半年毎増額＿返済金額2(src.get半年毎増額＿返済金額2());
+            t.set半年毎＿最終返済金(src.get半年毎＿最終返済金());
+            t.set担保コード(src.get担保コード());
+            t.set担保明細コード(src.get担保明細コード());
+            t.set保証先(src.get保証先());
+            t.set順位(src.get順位());
+            t.set手形サイト(src.get手形サイト());
+            t.set全期間乖離幅(src.get全期間乖離幅());
+            t.set利率サイクル(src.get利率サイクル());
+            t.set毎月返済＿2回目以降元金返済年月日(src.get毎月返済＿2回目以降元金返済年月日());
+            t.set債務者＿甲＿電話番号(src.get債務者＿甲＿電話番号());
+            t.set初回利払日(src.get初回利払日());
+            t.set当初固定金利期間(src.get当初固定金利期間());
+            t.set返済回数(src.get返済回数());
+            t.set据置回数(src.get据置回数());
+            t.set連帯債務者勘定店番(src.get連帯債務者勘定店番());
+            t.set連帯債務者ＣＩＦ(src.get連帯債務者ＣＩＦ());
+            t.set連帯債務者＿乙＿名(src.get連帯債務者＿乙＿名());
+            t.set連帯債務者＿乙＿住所(src.get連帯債務者＿乙＿住所());
+            t.set債務者甲負担割合＿分母(src.get債務者甲負担割合＿分母());
+            t.set債務者甲負担割合＿分子(src.get債務者甲負担割合＿分子());
+            t.set連帯債務者乙＿分母(src.get連帯債務者乙＿分母());
+            t.set連帯債務者乙＿分子(src.get連帯債務者乙＿分子());
+            t.set連帯債務者＿乙＿団信(src.get連帯債務者＿乙＿団信());
+            t.set連帯保証人1＿対象区分(src.get連帯保証人1＿対象区分());
+            t.set連帯保証人1＿氏名(src.get連帯保証人1＿氏名());
+            t.set連帯保証人1＿氏名2(src.get連帯保証人1＿氏名2());
+            t.set連帯保証人1＿氏名3(src.get連帯保証人1＿氏名3());
+            t.set連帯保証人1＿保証期日(src.get連帯保証人1＿保証期日());
+            t.set連帯保証人1＿限度額(src.get連帯保証人1＿限度額());
+            t.set連帯保証人1＿科目(src.get連帯保証人1＿科目());
+            t.set連帯保証人1＿住所(src.get連帯保証人1＿住所());
+            t.set連帯保証人1＿生年月日(src.get連帯保証人1＿生年月日());
+            t.set連帯保証人1＿勤務先(src.get連帯保証人1＿勤務先());
+            t.set連帯保証人1＿法人(src.get連帯保証人1＿法人());
+            t.set連帯保証人2＿対象区分(src.get連帯保証人2＿対象区分());
+            t.set連帯保証人2＿氏名(src.get連帯保証人2＿氏名());
+            t.set連帯保証人2＿氏名2(src.get連帯保証人2＿氏名2());
+            t.set連帯保証人2＿氏名3(src.get連帯保証人2＿氏名3());
+            t.set連帯保証人2＿保証期日(src.get連帯保証人2＿保証期日());
+            t.set連帯保証人2＿限度額(src.get連帯保証人2＿限度額());
+            t.set連帯保証人2＿科目(src.get連帯保証人2＿科目());
+            t.set連帯保証人2＿住所(src.get連帯保証人2＿住所());
+            t.set連帯保証人2＿生年月日(src.get連帯保証人2＿生年月日());
+            t.set連帯保証人2＿勤務先(src.get連帯保証人2＿勤務先());
+            t.set連帯保証人2＿法人(src.get連帯保証人2＿法人());
+            t.set連帯保証人3＿対象区分(src.get連帯保証人3＿対象区分());
+            t.set連帯保証人3＿氏名(src.get連帯保証人3＿氏名());
+            t.set連帯保証人3＿氏名2(src.get連帯保証人3＿氏名2());
+            t.set連帯保証人3＿氏名3(src.get連帯保証人3＿氏名3());
+            t.set連帯保証人3＿保証期日(src.get連帯保証人3＿保証期日());
+            t.set連帯保証人3＿限度額(src.get連帯保証人3＿限度額());
+            t.set連帯保証人3＿科目(src.get連帯保証人3＿科目());
+            t.set連帯保証人3＿住所(src.get連帯保証人3＿住所());
+            t.set連帯保証人3＿生年月日(src.get連帯保証人3＿生年月日());
+            t.set連帯保証人3＿勤務先(src.get連帯保証人3＿勤務先());
+            t.set連帯保証人3＿法人(src.get連帯保証人3＿法人());
+            contractDocSendTargetMapper.insert(t);
+        }
+
+        // ③-d37 審査契約書出力連携 -> 契約書連携イベント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<契約書連携イベントSource> contractLinkEvents =
+                emptyIfNull(contractLinkEventSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (契約書連携イベントSource src : contractLinkEvents) {
+            if (src == null) {
+                continue;
+            }
+            契約書連携イベントTarget t = new 契約書連携イベントTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set状態(src.get状態());
+            t.set状態説明(src.get状態説明());
+            t.set優先度(src.get優先度());
+            contractLinkEventTargetMapper.insert(t);
+        }
+
+        // ③-d38 審査預保照会 -> 審査預保照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        List<審査預保照会Source> reviewDepositGuaranteeInquiries =
+                emptyIfNull(reviewDepositGuaranteeInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (審査預保照会Source src : reviewDepositGuaranteeInquiries) {
+            if (src == null) {
+                continue;
+            }
+            審査預保照会Target t = new 審査預保照会Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set照会依頼番号(src.get照会依頼番号());
+            reviewDepositGuaranteeInquiryTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
