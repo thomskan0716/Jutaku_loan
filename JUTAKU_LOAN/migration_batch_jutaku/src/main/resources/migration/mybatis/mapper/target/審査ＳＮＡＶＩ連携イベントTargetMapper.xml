@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.審査ＳＮＡＶＩ連携イベントTargetMapper">
+
+    <!-- Source 審査ＳＮＡＶＩ連携. 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.審査ＳＮＡＶＩ連携イベントTarget">
+        INSERT INTO 審査ＳＮＡＶＩ連携イベント (
+            申込番号, 申込目的, イベント, イベント日時, 状態, 状態説明, 優先度
+        ) VALUES (
+            #{申込番号}, #{申込目的}, #{イベント}, #{イベント日時}, #{状態}, #{状態説明}, #{優先度}
+        )
+    </insert>
+
+</mapper>

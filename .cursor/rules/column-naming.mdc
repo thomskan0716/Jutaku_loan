@@ -1,0 +1,37 @@
+---
+description: Full-width digits and underscores in migration table/column names
+alwaysApply: true
+---
+
+# Migration Column Naming: Full-Width Digits & Underscore
+
+When implementing migration tables (domain classes, MyBatis resultMaps, SELECT/INSERT
+column lists), **DB column names use full-width digits and full-width underscore**:
+
+- Digits: use **全角 `０１２３４５６７８９`** (U+FF10–U+FF19), NOT half-width `0-9`.
+- Underscore/連結記号: use **全角 `＿`** (U+FF3F), NOT half-width `_`.
+
+This matches the source/target Oracle schema (charset JA16SJISTILDE), where these
+characters are stored full-width. Half-width digits/underscore cause `ORA-00904:
+invalid identifier` at query parse time.
+
+## Examples
+
+```
+✅ 保証会社条件１０   実行前条件１   ボーナス返済月１   その他借入金２金額
+✅ 借入希望額＿極度額   所要資金＿経費   集中審査＿返済方法コード
+
+❌ 保証会社条件10    実行前条件1    ボーナス返済月1    その他借入金2金額
+❌ 借入希望額_極度額   所要資金_経費   集中審査_返済方法コード
+```
+
+## Notes
+
+- Applies to the actual **DB column names** (MyBatis `column="..."`, SELECT/INSERT
+  tokens) and to full-width table names (double-quote table names containing `＿`).
+- Java field/property names may keep half-width digits to stay valid identifiers; if
+  so, map them explicitly in the resultMap (`property` half-width ← `column` full-width)
+  and in INSERT (`#{halfWidthProp}` with full-width column name).
+- When a column's width is ambiguous from spec images, verify against the DB with
+  `DUMP(column_name, 1016)` before implementing (`,31` = half-width `1`;
+  `,82,50` = full-width `１`; `81,51` = full-width `＿`).

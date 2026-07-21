@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.審査契約書出力連携内容SourceMapper">
+
+    <!-- Source SZB_SMS.審査契約書出力連携内容 -> target ITF_SMS.ＩＦ＿契約書送信 (143 cols).
+         resultMap "column" attributes use the TARGET column names (full-width digits ＿);
+         Java "property" names keep half-width digits. The 6 renamed source columns are
+         aliased to the target names in the SELECT below. -->
+    <resultMap id="contractDocOutputContentMap" type="migration.domain.source.審査契約書出力連携内容Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="レコード区分"                     column="レコード区分"/>
+        <result property="作成基準日時"                     column="作成基準日時"/>
+        <result property="取上店番"                         column="取上店番"/>
+        <result property="勘定店番"                         column="勘定店番"/>
+        <result property="ＣＩＦ番号"                       column="ＣＩＦ番号"/>
+        <result property="債務者甲＿名"                     column="債務者甲＿名"/>
+        <result property="債務者甲＿名カナ"                 column="債務者甲＿名カナ"/>
+        <result property="顧客住所"                         column="顧客住所"/>
+        <result property="法人区分"                         column="法人区分"/>
+        <result property="業種コード"                       column="業種コード"/>
+        <result property="職業"                             column="職業"/>
+        <result property="データ区分"                       column="データ区分"/>
+        <result property="処理区分コード"                   column="処理区分コード"/>
+        <result property="取扱番号"                         column="取扱番号"/>
+        <result property="枝番"                             column="枝番"/>
+        <result property="融資科目コード"                   column="融資科目コード"/>
+        <result property="融資分類コード"                   column="融資分類コード"/>
+        <result property="貸出種類コード"                   column="貸出種類コード"/>
+        <result property="貸出日"                           column="貸出日"/>
+        <result property="貸出金額"                         column="貸出金額"/>
+        <result property="貸出方法区分"                     column="貸出方法区分"/>
+        <result property="当初借入利率"                     column="当初借入利率"/>
+        <result property="資金使途コード"                   column="資金使途コード"/>
+        <result property="資金使途備考"                     column="資金使途備考"/>
+        <result property="現在残高"                         column="現在残高"/>
+        <result property="最終返済日"                       column="最終返済日"/>
+        <result property="発行日"                           column="発行日"/>
+        <result property="実行予定日"                       column="実行予定日"/>
+        <result property="徴求日"                           column="徴求日"/>
+        <result property="実行日"                           column="実行日"/>
+        <result property="否決日"                           column="否決日"/>
+        <result property="連携区分"                         column="連携区分"/>
+        <result property="承認ステータス"                   column="承認ステータス"/>
+        <result property="極度額"                           column="極度額"/>
+        <result property="抵当権設定日＿原契約日"           column="抵当権設定日＿原契約日"/>
+        <result property="根抵当権契約設定日"               column="根抵当権契約設定日"/>
+        <result property="債務承認開始日"                   column="債務承認開始日"/>
+        <result property="債務承認終了日"                   column="債務承認終了日"/>
+        <result property="保証委託契約日"                   column="保証委託契約日"/>
+        <result property="印紙税額"                         column="印紙税額"/>
+        <result property="稟議種別"                         column="稟議種別"/>
+        <result property="保証番号"                         column="保証番号"/>
+        <result property="金利種類区分"                     column="金利種類区分"/>
+        <result property="金利型名称備考"                   column="金利型名称備考"/>
+        <result property="返済方法"                         column="返済方法"/>
+        <result property="弁済方法名称備考"                 column="弁済方法名称備考"/>
+        <result property="基準金利区分"                     column="基準金利区分"/>
+        <result property="標準金利"                         column="標準金利"/>
+        <result property="固定金利再選択時の利幅＿符号"     column="固定金利再選択時の利幅＿符号"/>
+        <result property="固定金利再選択時の利幅＿数値"     column="固定金利再選択時の利幅＿数値"/>
+        <result property="貸付期間＿年"                     column="貸付期間＿年"/>
+        <result property="貸付期間＿月"                     column="貸付期間＿月"/>
+        <result property="債務者＿甲＿団信"                 column="債務者＿甲＿団信"/>
+        <result property="利息支払日"                       column="利息支払日"/>
+        <result property="利息払込済日"                     column="利息払込済日"/>
+        <result property="利息約定日"                       column="利息約定日"/>
+        <result property="利率方式"                         column="利率方式"/>
+        <result property="その他期日"                       column="その他期日"/>
+        <result property="休日補正区分"                     column="休日補正区分"/>
+        <result property="返済用預金口座店番"               column="返済用預金口座店番"/>
+        <result property="返済用預金口座種目"               column="返済用預金口座種目"/>
+        <result property="返済用預金口座番号"               column="返済用預金口座番号"/>
+        <result property="返済用口座名義"                   column="返済用口座名義"/>
+        <result property="据置ＣＤ"                         column="据置ＣＤ"/>
+        <result property="据置備考"                         column="据置備考"/>
+        <result property="元金据置期限"                     column="元金据置期限"/>
+        <result property="毎月返済＿内訳＿貸出金額"         column="毎月返済＿内訳＿貸出金額"/>
+        <result property="毎月返済＿初回返済日"             column="毎月返済＿初回返済日"/>
+        <result property="毎月返済＿返済日"                 column="毎月返済＿返済日"/>
+        <result property="毎回返済＿返済間隔"               column="毎回返済＿返済間隔"/>
+        <result property="毎回返済＿返済回数"               column="毎回返済＿返済回数"/>
+        <result property="毎月返済＿初回返済金"             column="毎月返済＿初回返済金"/>
+        <result property="毎月返済＿返済金"                 column="毎月返済＿返済金"/>
+        <result property="毎月返済＿最終返済金"             column="毎月返済＿最終返済金"/>
+        <result property="半年毎返済＿内訳＿貸出金額"       column="半年毎返済＿内訳＿貸出金額"/>
+        <result property="半年毎返済＿初回返済日"           column="半年毎返済＿初回返済日"/>
+        <result property="半年毎返済＿返済月1"              column="半年毎返済＿返済月１"/>
+        <result property="半年毎返済＿返済月2"              column="半年毎返済＿返済月２"/>
+        <result property="半年毎返済＿返済日"               column="半年毎返済＿返済日"/>
+        <result property="半年毎増額＿返済回数"             column="半年毎増額＿返済回数"/>
+        <result property="半年毎＿初回返済金"               column="半年毎＿初回返済金"/>
+        <result property="半年毎＿返済金"                   column="半年毎＿返済金"/>
+        <result property="半年毎増額＿返済金額2"            column="半年毎増額＿返済金額２"/>
+        <result property="半年毎＿最終返済金"               column="半年毎＿最終返済金"/>
+        <result property="担保コード"                       column="担保コード"/>
+        <result property="担保明細コード"                   column="担保明細コード"/>
+        <result property="保証先"                           column="保証先"/>
+        <result property="順位"                             column="順位"/>
+        <result property="手形サイト"                       column="手形サイト"/>
+        <result property="全期間乖離幅"                     column="全期間乖離幅"/>
+        <result property="利率サイクル"                     column="利率サイクル"/>
+        <result property="毎月返済＿2回目以降元金返済年月日" column="毎月返済＿２回目以降元金返済年月日"/>
+        <result property="債務者＿甲＿電話番号"             column="債務者＿甲＿電話番号"/>
+        <result property="初回利払日"                       column="初回利払日"/>
+        <result property="当初固定金利期間"                 column="当初固定金利期間"/>
+        <result property="返済回数"                         column="返済回数"/>
+        <result property="据置回数"                         column="据置回数"/>
+        <result property="連帯債務者勘定店番"               column="連帯債務者勘定店番"/>
+        <result property="連帯債務者ＣＩＦ"                 column="連帯債務者ＣＩＦ"/>
+        <result property="連帯債務者＿乙＿名"               column="連帯債務者＿乙＿名"/>
+        <result property="連帯債務者＿乙＿住所"             column="連帯債務者＿乙＿住所"/>
+        <result property="債務者甲負担割合＿分母"           column="債務者甲負担割合＿分母"/>
+        <result property="債務者甲負担割合＿分子"           column="債務者甲負担割合＿分子"/>
+        <result property="連帯債務者乙＿分母"               column="連帯債務者乙＿分母"/>
+        <result property="連帯債務者乙＿分子"               column="連帯債務者乙＿分子"/>
+        <result property="連帯債務者＿乙＿団信"             column="連帯債務者＿乙＿団信"/>
+        <result property="連帯保証人1＿対象区分"            column="連帯保証人１＿対象区分"/>
+        <result property="連帯保証人1＿氏名"                column="連帯保証人１＿氏名"/>
+        <result property="連帯保証人1＿氏名2"               column="連帯保証人１＿氏名２"/>
+        <result property="連帯保証人1＿氏名3"               column="連帯保証人１＿氏名３"/>
+        <result property="連帯保証人1＿保証期日"            column="連帯保証人１＿保証期日"/>
+        <result property="連帯保証人1＿限度額"              column="連帯保証人１＿限度額"/>
+        <result property="連帯保証人1＿科目"                column="連帯保証人１＿科目"/>
+        <result property="連帯保証人1＿住所"                column="連帯保証人１＿住所"/>
+        <result property="連帯保証人1＿生年月日"            column="連帯保証人１＿生年月日"/>
+        <result property="連帯保証人1＿勤務先"              column="連帯保証人１＿勤務先"/>
+        <result property="連帯保証人1＿法人"                column="連帯保証人１＿法人"/>
+        <result property="連帯保証人2＿対象区分"            column="連帯保証人２＿対象区分"/>
+        <result property="連帯保証人2＿氏名"                column="連帯保証人２＿氏名"/>
+        <result property="連帯保証人2＿氏名2"               column="連帯保証人２＿氏名２"/>
+        <result property="連帯保証人2＿氏名3"               column="連帯保証人２＿氏名３"/>
+        <result property="連帯保証人2＿保証期日"            column="連帯保証人２＿保証期日"/>
+        <result property="連帯保証人2＿限度額"              column="連帯保証人２＿限度額"/>
+        <result property="連帯保証人2＿科目"                column="連帯保証人２＿科目"/>
+        <result property="連帯保証人2＿住所"                column="連帯保証人２＿住所"/>
+        <result property="連帯保証人2＿生年月日"            column="連帯保証人２＿生年月日"/>
+        <result property="連帯保証人2＿勤務先"              column="連帯保証人２＿勤務先"/>
+        <result property="連帯保証人2＿法人"                column="連帯保証人２＿法人"/>
+        <result property="連帯保証人3＿対象区分"            column="連帯保証人３＿対象区分"/>
+        <result property="連帯保証人3＿氏名"                column="連帯保証人３＿氏名"/>
+        <result property="連帯保証人3＿氏名2"               column="連帯保証人３＿氏名２"/>
+        <result property="連帯保証人3＿氏名3"               column="連帯保証人３＿氏名３"/>
+        <result property="連帯保証人3＿保証期日"            column="連帯保証人３＿保証期日"/>
+        <result property="連帯保証人3＿限度額"              column="連帯保証人３＿限度額"/>
+        <result property="連帯保証人3＿科目"                column="連帯保証人３＿科目"/>
+        <result property="連帯保証人3＿住所"                column="連帯保証人３＿住所"/>
+        <result property="連帯保証人3＿生年月日"            column="連帯保証人３＿生年月日"/>
+        <result property="連帯保証人3＿勤務先"              column="連帯保証人３＿勤務先"/>
+        <result property="連帯保証人3＿法人"                column="連帯保証人３＿法人"/>
+    </resultMap>
+
+    <!-- 6 renamed source columns aliased to the target column names:
+           ＣＩＦ / 債務者甲名 / 債務者甲名カナ / 標準金利パーセント / 全期間乖離幅＿数値 /
+           毎月返済２回目以降元金返済年月.
+         Numbered columns use full-width digits (１ ２ ３) as stored in the DB. -->
+    <select id="selectByApplicationIdAndPurpose" resultMap="contractDocOutputContentMap">
+        SELECT
+            申込番号, 申込目的, イベント, イベント日時,
+            レコード区分, 作成基準日時, 取上店番, 勘定店番,
+            ＣＩＦ AS ＣＩＦ番号,
+            債務者甲名 AS 債務者甲＿名,
+            債務者甲名カナ AS 債務者甲＿名カナ,
+            顧客住所, 法人区分, 業種コード, 職業, データ区分, 処理区分コード,
+            取扱番号, 枝番, 融資科目コード, 融資分類コード, 貸出種類コード,
+            貸出日, 貸出金額, 貸出方法区分, 当初借入利率, 資金使途コード, 資金使途備考,
+            現在残高, 最終返済日, 発行日, 実行予定日, 徴求日, 実行日, 否決日,
+            連携区分, 承認ステータス, 極度額,
+            抵当権設定日＿原契約日, 根抵当権契約設定日, 債務承認開始日, 債務承認終了日,
+            保証委託契約日, 印紙税額, 稟議種別, 保証番号,
+            金利種類区分, 金利型名称備考, 返済方法, 弁済方法名称備考, 基準金利区分,
+            標準金利パーセント AS 標準金利,
+            固定金利再選択時の利幅＿符号, 固定金利再選択時の利幅＿数値,
+            貸付期間＿年, 貸付期間＿月, 債務者＿甲＿団信,
+            利息支払日, 利息払込済日, 利息約定日, 利徴方式 AS 利率方式, その他期日, 休日補正区分,
+            返済用預金口座店番, 返済用預金口座種目, 返済用預金口座番号, 返済用口座名義,
+            据置ＣＤ, 据置備考, 元金据置期限,
+            毎月返済_内訳＿貸出金額 AS 毎月返済＿内訳＿貸出金額,
+            毎月返済_初回返済日 AS 毎月返済＿初回返済日,
+            毎月返済_返済日 AS 毎月返済＿返済日,
+            毎回返済_返済間隔 AS 毎回返済＿返済間隔,
+            毎回返済_返済回数 AS 毎回返済＿返済回数,
+            毎月返済_初回返済金 AS 毎月返済＿初回返済金,
+            毎月返済_返済金 AS 毎月返済＿返済金,
+            毎月返済_最終返済金 AS 毎月返済＿最終返済金,
+            半年毎返済_内訳＿貸出金額 AS 半年毎返済＿内訳＿貸出金額,
+            半年毎返済_初回返済日 AS 半年毎返済＿初回返済日,
+            半年毎返済_返済月１ AS 半年毎返済＿返済月１,
+            半年毎返済_返済月２ AS 半年毎返済＿返済月２,
+            半年毎返済_返済日 AS 半年毎返済＿返済日,
+            半年毎増額_返済回数 AS 半年毎増額＿返済回数,
+            半年毎_初回返済金 AS 半年毎＿初回返済金,
+            半年毎_返済金 AS 半年毎＿返済金,
+            半年毎増額_返済金額２ AS 半年毎増額＿返済金額２,
+            半年毎_最終返済金 AS 半年毎＿最終返済金,
+            担保コード, 担保明細コード, 保証先, 順位, 手形サイト,
+            全期間乖離幅＿数値 AS 全期間乖離幅,
+            利徴サイクル AS 利率サイクル,
+            毎月返済２回目以降元金返済年月 AS 毎月返済＿２回目以降元金返済年月日,
+            債務者＿甲＿電話番号, 初回利払日, 当初固定金利期間, 返済回数, 据置回数,
+            連帯債務者勘定店番, 連帯債務者ＣＩＦ, 連帯債務者＿乙＿名, 連帯債務者＿乙＿住所,
+            債務者甲負担割合＿分母, 債務者甲負担割合＿分子,
+            連帯債務者乙＿分母, 連帯債務者乙＿分子, 連帯債務者＿乙＿団信,
+            連帯保証人１＿対象区分, 連帯保証人１＿氏名, 連帯保証人１＿氏名２, 連帯保証人１＿氏名３,
+            連帯保証人１＿保証期日, 連帯保証人１＿限度額, 連帯保証人１＿科目, 連帯保証人１＿住所,
+            連帯保証人１＿生年月日, 連帯保証人１＿勤務先, 連帯保証人１＿法人,
+            連帯保証人２＿対象区分, 連帯保証人２＿氏名, 連帯保証人２＿氏名２, 連帯保証人２＿氏名３,
+            連帯保証人２＿保証期日, 連帯保証人２＿限度額, 連帯保証人２＿科目, 連帯保証人２＿住所,
+            連帯保証人２＿生年月日, 連帯保証人２＿勤務先, 連帯保証人２＿法人,
+            連帯保証人３＿対象区分, 連帯保証人３＿氏名, 連帯保証人３＿氏名２, 連帯保証人３＿氏名３,
+            連帯保証人３＿保証期日, 連帯保証人３＿限度額, 連帯保証人３＿科目, 連帯保証人３＿住所,
+            連帯保証人３＿生年月日, 連帯保証人３＿勤務先, 連帯保証人３＿法人
+        FROM 審査契約書出力連携内容
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時
+    </select>
+
+</mapper>

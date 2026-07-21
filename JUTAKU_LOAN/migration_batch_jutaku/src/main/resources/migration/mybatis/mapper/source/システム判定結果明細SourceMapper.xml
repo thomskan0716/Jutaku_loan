@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.システム判定結果明細SourceMapper">
+
+    <resultMap id="systemJudgeResultDetailMap" type="migration.domain.source.システム判定結果明細Source">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="判定コード"   column="判定コード"/>
+        <result property="値"       column="値"/>
+        <result property="備考"     column="備考"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="systemJudgeResultDetailMap">
+        SELECT 申込番号, 申込目的, イベント, イベント日時, 判定コード, 値, 備考
+        FROM システム判定結果明細
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 判定コード
+    </select>
+
+</mapper>
