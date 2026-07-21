@@ -277,6 +277,10 @@ public class JutakuLoanService {
     // so this value fills the new-system key (編集仕様詳細).
     private static final String FIXED_SEQUENCE_NUMBER = "99999";
 
+    // Fixed 無担保集中＿申込書番号 for every 申込 row (設計書No.656): excludes migrated data
+    // from 口座開設ディテッカー連携 processing. No source column exists for this value.
+    private static final String FIXED_MUTAN_SHUCHU_APPLICATION_NUMBER = "99999999999";
+
     // Entry point called by 移行管理Tasklet for each claimed row range.
     // The driving table is 申込進捗 (one row per 申込番号); fromRowNumber/toRowNumber are the
     // inclusive ROW_NUMBER bounds of the range.
@@ -477,7 +481,7 @@ public class JutakuLoanService {
             reviewHistoryTarget.setイベント(reviewHistory.getイベント());
             reviewHistoryTarget.setイベント日時(reviewHistory.getイベント日時());
             reviewHistoryTarget.set進捗コード(convertProgressCode(reviewHistory.get進捗コード()));
-            reviewHistoryTarget.setユーザID(reviewHistory.getユーザID());
+            reviewHistoryTarget.setユーザＩＤ(reviewHistory.getユーザＩＤ());
             reviewHistoryTarget.setユーザ名(reviewHistory.getユーザ名());
             reviewHistoryTarget.set回数(reviewHistory.get回数());
             reviewHistoryTargetMapper.insert(reviewHistoryTarget);
@@ -1554,6 +1558,11 @@ public class JutakuLoanService {
         }
     }
 
+    /** 借入有無 (コード設定「1960」): vendor name blank → 2:なし, otherwise 1:あり. */
+    private static String convertHasBorrowing(String vendorName) {
+        return (vendorName == null || vendorName.isEmpty()) ? "2" : "1";
+    }
+
     /** 国家資格 (national qualification) remap (99:その他→15). */
     private static String convertNationalQualification(String value) {
         if (value == null) {
@@ -1704,6 +1713,7 @@ public class JutakuLoanService {
         target.set金融機関1借入時完済解約予定(convertPayoffPlanAtBorrowing(source.get借入＿解約予定1()));
         target.set金融機関1利用限度額(source.get借入＿利用限度額1());
         target.set金融機関1借入年間返済額(source.get借入＿年間支払額1());
+        target.set金融機関1借入有無(convertHasBorrowing(source.get借入＿利用先名1())); // コード設定「1960:借入有無」
         // 金融機関 2
         target.set金融機関2名称(truncateToByteLimit(source.get借入＿利用先名2(), 30));
         target.set金融機関2借入種類(convertBorrowingType(source.get借入＿利用種類2()));
@@ -1712,6 +1722,7 @@ public class JutakuLoanService {
         target.set金融機関2借入時完済解約予定(convertPayoffPlanAtBorrowing(source.get借入＿解約予定2()));
         target.set金融機関2利用限度額(source.get借入＿利用限度額2());
         target.set金融機関2借入年間返済額(source.get借入＿年間支払額2());
+        target.set金融機関2借入有無(convertHasBorrowing(source.get借入＿利用先名2())); // コード設定「1960:借入有無」
         // 金融機関 3
         target.set金融機関3名称(truncateToByteLimit(source.get借入＿利用先名3(), 30));
         target.set金融機関3借入種類(convertBorrowingType(source.get借入＿利用種類3()));
@@ -1720,6 +1731,7 @@ public class JutakuLoanService {
         target.set金融機関3借入時完済解約予定(convertPayoffPlanAtBorrowing(source.get借入＿解約予定3()));
         target.set金融機関3利用限度額(source.get借入＿利用限度額3());
         target.set金融機関3借入年間返済額(source.get借入＿年間支払額3());
+        target.set金融機関3借入有無(convertHasBorrowing(source.get借入＿利用先名3())); // コード設定「1960:借入有無」
 
         target.set資金使途(source.get資金使途());
         target.set借入金額(source.get借入金額());
@@ -1747,11 +1759,20 @@ public class JutakuLoanService {
         target.set同居予定家族＿子供年齢＿4人目(source.get同居＿子供年齢4());
         target.set同居予定家族＿本人("1");  // fixed: applicant always lives in
 
-        // 同居予定家族＿合計人数 = 1 (本人) + 配偶者 + 父 + 母 + その他人数
+        // 同居予定家族＿子供人数 = count of non-null 子供年齢1〜4 (source has no single child-count column)
+        int childCount = 0;
+        if (source.get同居＿子供年齢1() != null) childCount++;
+        if (source.get同居＿子供年齢2() != null) childCount++;
+        if (source.get同居＿子供年齢3() != null) childCount++;
+        if (source.get同居＿子供年齢4() != null) childCount++;
+        target.set同居予定家族＿子供人数(new BigDecimal(childCount));
+
+        // 同居予定家族＿合計人数 = 1 (本人) + 配偶者 + 父 + 母 + 子供人数 + その他人数
         int cohabitantTotal = 1;
         if ("1".equals(source.get同居＿配偶者())) cohabitantTotal++;
         if ("1".equals(source.get同居＿父()))    cohabitantTotal++;
         if ("1".equals(source.get同居＿母()))    cohabitantTotal++;
+        cohabitantTotal += childCount;
         if (otherCohabitantCount != null) cohabitantTotal += otherCohabitantCount.intValue();
         target.set同居予定家族＿合計人数(new BigDecimal(cohabitantTotal));
 
@@ -1777,6 +1798,11 @@ public class JutakuLoanService {
         target.set国家資格(convertNationalQualification(source.get国家資格()));
         target.set国家資格＿その他(truncateToByteLimit(source.get国家資格子の他(), 30));
         target.set配偶者年収(source.get配偶者年収());
+        // 収入がある同居の配偶者: コード設定「0112」. [申込ワイド.配偶者年収] > 0 → 1:あり, else 2:なし.
+        BigDecimal spouseIncome = source.get配偶者年収();
+        target.set収入がある同居の配偶者(spouseIncome != null && spouseIncome.compareTo(BigDecimal.ZERO) > 0 ? "1" : "2");
+
+        target.set無担保集中＿申込書番号(FIXED_MUTAN_SHUCHU_APPLICATION_NUMBER); // 設計書No.656: 固定値、口座開設ディテッカー連携除外用
 
         // 資金使途 derived columns (2332/2333/2334): Housing/Wide only. Plain 資金使途 already set identity above.
         mapFundUsageDerivedColumns(source, target);

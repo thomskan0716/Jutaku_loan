@@ -13,7 +13,7 @@ public class 申込審査履歴Source {
     private String イベント;   // VARCHAR2(50)
     private Date イベント日時; // DATE
     private String 進捗コード; // VARCHAR2(6)
-    private String ユーザID;   // VARCHAR2(10)
+    private String ユーザＩＤ;   // VARCHAR2(10)
     private String ユーザ名;   // VARCHAR2(50)
     private Integer 回数;      // NUMBER(3,0)
 
@@ -32,8 +32,8 @@ public class 申込審査履歴Source {
     public String get進捗コード() { return 進捗コード; }
     public void set進捗コード(String v) { this.進捗コード = v; }
 
-    public String getユーザID() { return ユーザID; }
-    public void setユーザID(String v) { this.ユーザID = v; }
+    public String getユーザＩＤ() { return ユーザＩＤ; }
+    public void setユーザＩＤ(String v) { this.ユーザＩＤ = v; }
 
     public String getユーザ名() { return ユーザ名; }
     public void setユーザ名(String v) { this.ユーザ名 = v; }

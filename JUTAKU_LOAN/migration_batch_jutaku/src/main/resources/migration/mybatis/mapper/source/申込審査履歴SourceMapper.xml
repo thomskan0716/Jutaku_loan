@@ -11,7 +11,7 @@
         <result property="イベント"   column="イベント"/>
         <result property="イベント日時" column="イベント日時"/>
         <result property="進捗コード"   column="進捗コード"/>
-        <result property="ユーザID"     column="ユーザＩＤ"/>
+        <result property="ユーザＩＤ"   column="ユーザＩＤ"/>
         <result property="ユーザ名"     column="ユーザ名"/>
     </resultMap>
 
