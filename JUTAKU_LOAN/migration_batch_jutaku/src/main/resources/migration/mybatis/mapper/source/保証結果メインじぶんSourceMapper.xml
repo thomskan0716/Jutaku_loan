@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.保証結果メインじぶんSourceMapper">
+
+    <!-- Numbered DB columns use FULL-WIDTH digits; Java properties use half-width. -->
+    <resultMap id="guaranteeResultMainJibunMap" type="migration.domain.source.保証結果メインじぶんSource">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <result property="状態"                 column="状態"/>
+        <result property="出力日時"             column="出力日時"/>
+        <result property="保証会社案件番号"     column="保証会社案件番号"/>
+        <result property="外部案件番号"         column="外部案件番号"/>
+        <result property="申込人姓名カナ"       column="申込人姓名カナ"/>
+        <result property="申込人姓名"           column="申込人姓名"/>
+        <result property="申込人性別"           column="申込人性別"/>
+        <result property="申込人生年月日"       column="申込人生年月日"/>
+        <result property="申込人郵便番号"       column="申込人郵便番号"/>
+        <result property="申込人住所"           column="申込人住所"/>
+        <result property="申込人現住所電話番号" column="申込人現住所電話番号"/>
+        <result property="申込人携帯電話番号"   column="申込人携帯電話番号"/>
+        <result property="申込人勤務先名称"     column="申込人勤務先名称"/>
+        <result property="申込人勤務先郵便番号" column="申込人勤務先郵便番号"/>
+        <result property="申込人勤務先住所"     column="申込人勤務先住所"/>
+        <result property="申込人勤務先電話番号" column="申込人勤務先電話番号"/>
+        <result property="申込人勤続年数"       column="申込人勤続年数"/>
+        <result property="申込人雇用形態"       column="申込人雇用形態"/>
+        <result property="申込人業種"           column="申込人業種"/>
+        <result property="申込人勤務先資本金"   column="申込人勤務先資本金"/>
+        <result property="申込人勤務先従業員数" column="申込人勤務先従業員数"/>
+        <result property="申込人勤務先職種役職" column="申込人勤務先職種役職"/>
+        <result property="申込人勤務先所属部署" column="申込人勤務先所属部署"/>
+        <result property="国家資格"             column="国家資格"/>
+        <result property="申込本人前年年収"     column="申込本人前年年収"/>
+        <result property="保有資産"             column="保有資産"/>
+        <result property="ペアローン有無"       column="ペアローン有無"/>
+        <result property="ペアローン案件番号"   column="ペアローン案件番号"/>
+
+        <result property="保証人1債務区分"       column="保証人１債務区分"/>
+        <result property="保証人1収入合算有無"   column="保証人１収入合算有無"/>
+        <result property="保証人1郵便番号"       column="保証人１郵便番号"/>
+        <result property="保証人1住所"           column="保証人１住所"/>
+        <result property="保証人1姓名カナ"       column="保証人１姓名カナ"/>
+        <result property="保証人1姓名"           column="保証人１姓名"/>
+        <result property="保証人1生年月日"       column="保証人１生年月日"/>
+        <result property="保証人1性別"           column="保証人１性別"/>
+        <result property="保証人1現住所電話番号" column="保証人１現住所電話番号"/>
+        <result property="保証人1携帯電話番号"   column="保証人１携帯電話番号"/>
+        <result property="保証人1続柄"           column="保証人１続柄"/>
+        <result property="保証人1勤務先名称"     column="保証人１勤務先名称"/>
+        <result property="保証人1前年年収"       column="保証人１前年年収"/>
+
+        <result property="保証人2債務区分"       column="保証人２債務区分"/>
+        <result property="保証人2収入合算有無"   column="保証人２収入合算有無"/>
+        <result property="保証人2郵便番号"       column="保証人２郵便番号"/>
+        <result property="保証人2住所"           column="保証人２住所"/>
+        <result property="保証人2姓名カナ"       column="保証人２姓名カナ"/>
+        <result property="保証人2姓名"           column="保証人２姓名"/>
+        <result property="保証人2生年月日"       column="保証人２生年月日"/>
+        <result property="保証人2性別"           column="保証人２性別"/>
+        <result property="保証人2現住所電話番号" column="保証人２現住所電話番号"/>
+        <result property="保証人2携帯電話番号"   column="保証人２携帯電話番号"/>
+        <result property="保証人2続柄"           column="保証人２続柄"/>
+        <result property="保証人2勤務先名称"     column="保証人２勤務先名称"/>
+        <result property="保証人2前年年収"       column="保証人２前年年収"/>
+
+        <result property="保証人3債務区分"       column="保証人３債務区分"/>
+        <result property="保証人3収入合算有無"   column="保証人３収入合算有無"/>
+        <result property="保証人3郵便番号"       column="保証人３郵便番号"/>
+        <result property="保証人3住所"           column="保証人３住所"/>
+        <result property="保証人3姓名カナ"       column="保証人３姓名カナ"/>
+        <result property="保証人3姓名"           column="保証人３姓名"/>
+        <result property="保証人3生年月日"       column="保証人３生年月日"/>
+        <result property="保証人3性別"           column="保証人３性別"/>
+        <result property="保証人3現住所電話番号" column="保証人３現住所電話番号"/>
+        <result property="保証人3携帯電話番号"   column="保証人３携帯電話番号"/>
+        <result property="保証人3続柄"           column="保証人３続柄"/>
+        <result property="保証人3勤務先名称"     column="保証人３勤務先名称"/>
+        <result property="保証人3前年年収"       column="保証人３前年年収"/>
+
+        <result property="保証人4債務区分"       column="保証人４債務区分"/>
+        <result property="保証人4収入合算有無"   column="保証人４収入合算有無"/>
+        <result property="保証人4郵便番号"       column="保証人４郵便番号"/>
+        <result property="保証人4住所"           column="保証人４住所"/>
+        <result property="保証人4姓名カナ"       column="保証人４姓名カナ"/>
+        <result property="保証人4姓名"           column="保証人４姓名"/>
+        <result property="保証人4生年月日"       column="保証人４生年月日"/>
+        <result property="保証人4性別"           column="保証人４性別"/>
+        <result property="保証人4現住所電話番号" column="保証人４現住所電話番号"/>
+        <result property="保証人4携帯電話番号"   column="保証人４携帯電話番号"/>
+        <result property="保証人4続柄"           column="保証人４続柄"/>
+        <result property="保証人4勤務先名称"     column="保証人４勤務先名称"/>
+        <result property="保証人4前年年収"       column="保証人４前年年収"/>
+
+        <result property="保証人5債務区分"       column="保証人５債務区分"/>
+        <result property="保証人5収入合算有無"   column="保証人５収入合算有無"/>
+        <result property="保証人5郵便番号"       column="保証人５郵便番号"/>
+        <result property="保証人5住所"           column="保証人５住所"/>
+        <result property="保証人5姓名カナ"       column="保証人５姓名カナ"/>
+        <result property="保証人5姓名"           column="保証人５姓名"/>
+        <result property="保証人5生年月日"       column="保証人５生年月日"/>
+        <result property="保証人5性別"           column="保証人５性別"/>
+        <result property="保証人5現住所電話番号" column="保証人５現住所電話番号"/>
+        <result property="保証人5携帯電話番号"   column="保証人５携帯電話番号"/>
+        <result property="保証人5続柄"           column="保証人５続柄"/>
+        <result property="保証人5勤務先名称"     column="保証人５勤務先名称"/>
+        <result property="保証人5前年年収"       column="保証人５前年年収"/>
+
+        <result property="資金使途"             column="資金使途"/>
+        <result property="建設地郵便番号"       column="建設地郵便番号"/>
+        <result property="建設地住所"           column="建設地住所"/>
+        <result property="売買契約予定年月日"   column="売買契約予定年月日"/>
+        <result property="建物新築年月日"       column="建物新築年月日"/>
+        <result property="婚姻区分"             column="婚姻区分"/>
+        <result property="同居家族配偶者"       column="同居家族配偶者"/>
+        <result property="同居家族子供人数"     column="同居家族子供人数"/>
+        <result property="同居家族その他人数"   column="同居家族その他人数"/>
+        <result property="住居区分"             column="住居区分"/>
+        <result property="必要資金土地"         column="必要資金土地"/>
+        <result property="必要資金建物"         column="必要資金建物"/>
+        <result property="必要資金借替"         column="必要資金借替"/>
+        <result property="必要資金諸費用"       column="必要資金諸費用"/>
+        <result property="必要資金その他"       column="必要資金その他"/>
+        <result property="融資額"               column="融資額"/>
+        <result property="返済方法"             column="返済方法"/>
+        <result property="希望返済期間"         column="希望返済期間"/>
+        <result property="希望額ボーナス分"     column="希望額ボーナス分"/>
+        <result property="希望額毎月分"         column="希望額毎月分"/>
+        <result property="融資実行希望年月日"   column="融資実行希望年月日"/>
+
+        <result property="その他借入1借入金額" column="その他借入１借入金額"/>
+        <result property="その他借入1借入先"   column="その他借入１借入先"/>
+        <result property="その他借入1返済期間" column="その他借入１返済期間"/>
+        <result property="その他借入1金利"     column="その他借入１金利"/>
+        <result property="その他借入2借入金額" column="その他借入２借入金額"/>
+        <result property="その他借入2借入先"   column="その他借入２借入先"/>
+        <result property="その他借入2返済期間" column="その他借入２返済期間"/>
+        <result property="その他借入2金利"     column="その他借入２金利"/>
+
+        <result property="資産売却"             column="資産売却"/>
+        <result property="自己資金"             column="自己資金"/>
+        <result property="自己資金うち贈与資金" column="自己資金うち贈与資金"/>
+
+        <result property="借入利用先1"         column="借入利用先１"/>
+        <result property="借入利用種類1"       column="借入利用種類１"/>
+        <result property="借入利用残高1"       column="借入利用残高１"/>
+        <result property="借入年間返済額1"     column="借入年間返済額１"/>
+        <result property="借入利用限度額1"     column="借入利用限度額１"/>
+        <result property="借入解約予定1"       column="借入解約予定１"/>
+        <result property="借入利用先2"         column="借入利用先２"/>
+        <result property="借入利用種類2"       column="借入利用種類２"/>
+        <result property="借入利用残高2"       column="借入利用残高２"/>
+        <result property="借入年間返済額2"     column="借入年間返済額２"/>
+        <result property="借入利用限度額2"     column="借入利用限度額２"/>
+        <result property="借入解約予定2"       column="借入解約予定２"/>
+        <result property="借入利用先3"         column="借入利用先３"/>
+        <result property="借入利用種類3"       column="借入利用種類３"/>
+        <result property="借入利用残高3"       column="借入利用残高３"/>
+        <result property="借入年間返済額3"     column="借入年間返済額３"/>
+        <result property="借入利用限度額3"     column="借入利用限度額３"/>
+        <result property="借入解約予定3"       column="借入解約予定３"/>
+
+        <result property="業者会社名"         column="業者会社名"/>
+        <result property="業者所在地"         column="業者所在地"/>
+        <result property="物件種類"           column="物件種類"/>
+        <result property="戸建地積延床面積"   column="戸建地積延床面積"/>
+        <result property="戸建構造"           column="戸建構造"/>
+        <result property="マンション名称"     column="マンション名称"/>
+        <result property="マンション建物構造" column="マンション建物構造"/>
+        <result property="マンション完成年月" column="マンション完成年月"/>
+        <result property="マンション専有面積" column="マンション専有面積"/>
+        <result property="事前審査申請日"     column="事前審査申請日"/>
+        <result property="本審査申請日"       column="本審査申請日"/>
+        <result property="返済負担率"         column="返済負担率"/>
+        <result property="担保評価額"         column="担保評価額"/>
+        <result property="ＬＴＶ"             column="ＬＴＶ"/>
+        <result property="セグメント"         column="セグメント"/>
+        <result property="保証承認番号"       column="保証承認番号"/>
+        <result property="保証承認日"         column="保証承認日"/>
+        <result property="保証料率"           column="保証料率"/>
+        <result property="事前審査回答日"     column="事前審査回答日"/>
+        <result property="事前審査結果"       column="事前審査結果"/>
+        <result property="事前審査担当者"     column="事前審査担当者"/>
+        <result property="本審査回答日当初"   column="本審査回答日当初"/>
+        <result property="本審査結果当初"     column="本審査結果当初"/>
+        <result property="本審査担当者"       column="本審査担当者"/>
+        <result property="本審査回答日最新"   column="本審査回答日最新"/>
+        <result property="本審査結果最新"     column="本審査結果最新"/>
+        <result property="申込目的＿出力用"   column="申込目的＿出力用"/>
+        <result property="保証会社意見欄"     column="保証会社意見欄"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="guaranteeResultMainJibunMap">
+        SELECT
+            申込番号, 申込目的, イベント, イベント日時, 状態, 出力日時,
+            保証会社案件番号, 外部案件番号,
+            申込人姓名カナ, 申込人姓名, 申込人性別, 申込人生年月日, 申込人郵便番号, 申込人住所,
+            申込人現住所電話番号, 申込人携帯電話番号,
+            申込人勤務先名称, 申込人勤務先郵便番号, 申込人勤務先住所, 申込人勤務先電話番号,
+            申込人勤続年数, 申込人雇用形態, 申込人業種, 申込人勤務先資本金, 申込人勤務先従業員数,
+            申込人勤務先職種役職, 申込人勤務先所属部署,
+            国家資格, 申込本人前年年収, 保有資産, ペアローン有無, ペアローン案件番号,
+            保証人１債務区分, 保証人１収入合算有無, 保証人１郵便番号, 保証人１住所, 保証人１姓名カナ,
+            保証人１姓名, 保証人１生年月日, 保証人１性別, 保証人１現住所電話番号, 保証人１携帯電話番号,
+            保証人１続柄, 保証人１勤務先名称, 保証人１前年年収,
+            保証人２債務区分, 保証人２収入合算有無, 保証人２郵便番号, 保証人２住所, 保証人２姓名カナ,
+            保証人２姓名, 保証人２生年月日, 保証人２性別, 保証人２現住所電話番号, 保証人２携帯電話番号,
+            保証人２続柄, 保証人２勤務先名称, 保証人２前年年収,
+            保証人３債務区分, 保証人３収入合算有無, 保証人３郵便番号, 保証人３住所, 保証人３姓名カナ,
+            保証人３姓名, 保証人３生年月日, 保証人３性別, 保証人３現住所電話番号, 保証人３携帯電話番号,
+            保証人３続柄, 保証人３勤務先名称, 保証人３前年年収,
+            保証人４債務区分, 保証人４収入合算有無, 保証人４郵便番号, 保証人４住所, 保証人４姓名カナ,
+            保証人４姓名, 保証人４生年月日, 保証人４性別, 保証人４現住所電話番号, 保証人４携帯電話番号,
+            保証人４続柄, 保証人４勤務先名称, 保証人４前年年収,
+            保証人５債務区分, 保証人５収入合算有無, 保証人５郵便番号, 保証人５住所, 保証人５姓名カナ,
+            保証人５姓名, 保証人５生年月日, 保証人５性別, 保証人５現住所電話番号, 保証人５携帯電話番号,
+            保証人５続柄, 保証人５勤務先名称, 保証人５前年年収,
+            資金使途, 建設地郵便番号, 建設地住所, 売買契約予定年月日, 建物新築年月日,
+            婚姻区分, 同居家族配偶者, 同居家族子供人数, 同居家族その他人数, 住居区分,
+            必要資金土地, 必要資金建物, 必要資金借替, 必要資金諸費用, 必要資金その他,
+            融資額, 返済方法, 希望返済期間, 希望額ボーナス分, 希望額毎月分, 融資実行希望年月日,
+            その他借入１借入金額, その他借入１借入先, その他借入１返済期間, その他借入１金利,
+            その他借入２借入金額, その他借入２借入先, その他借入２返済期間, その他借入２金利,
+            資産売却, 自己資金, 自己資金うち贈与資金,
+            借入利用先１, 借入利用種類１, 借入利用残高１, 借入年間返済額１,
+            借入利用限度額１, 借入解約予定１,
+            借入利用先２, 借入利用種類２, 借入利用残高２, 借入年間返済額２, 借入利用限度額２, 借入解約予定２,
+            借入利用先３, 借入利用種類３, 借入利用残高３, 借入年間返済額３, 借入利用限度額３, 借入解約予定３,
+            業者会社名, 業者所在地, 物件種類,
+            戸建地積延床面積, 戸建構造,
+            マンション名称, マンション建物構造, マンション完成年月, マンション専有面積,
+            事前審査申請日, 本審査申請日, 返済負担率, 担保評価額, ＬＴＶ, セグメント,
+            保証承認番号, 保証承認日, 保証料率, 事前審査回答日, 事前審査結果,
+            事前審査担当者, 本審査回答日当初, 本審査結果当初, 本審査担当者, 本審査回答日最新, 本審査結果最新,
+            申込目的＿出力用, 保証会社意見欄
+        FROM 保証結果メインじぶん
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時
+    </select>
+
+</mapper>

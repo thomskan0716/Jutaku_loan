@@ -74,6 +74,8 @@ DELETE FROM ITF_SMS.審査ＳＮＡＶＩ連携内容   WHERE 申込番号 LIKE 
 DELETE FROM ITF_SMS."ＩＦ＿契約書送信"              WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.契約書連携イベント     WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査預保照会           WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.保証結果メインじぶん   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.保証結果メインアルヒ   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
 
