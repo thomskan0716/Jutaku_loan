@@ -148,6 +148,11 @@ public class 申込Target {
     private BigDecimal 調達＿自己資金合計;
     private BigDecimal 自己資金＿預貯金うち当行;
     private String 勤務先職種その他;
+    private String 金融機関1借入有無;      // VARCHAR2(1) - derived: 借入＿利用先名1 empty→2:なし, else 1:あり
+    private String 金融機関2借入有無;      // VARCHAR2(1) - derived: 借入＿利用先名2 empty→2:なし, else 1:あり
+    private String 金融機関3借入有無;      // VARCHAR2(1) - derived: 借入＿利用先名3 empty→2:なし, else 1:あり
+    private String 収入がある同居の配偶者; // VARCHAR2(1) - derived: 申込ワイド.配偶者年収 > 0 →1:あり, else 2:なし
+    private String 無担保集中＿申込書番号; // VARCHAR2(11) - fixed "99999999999" (設計書No.656, 除外用)
 
     public String get申込番号() { return 申込番号; }
     public void set申込番号(String v) { this.申込番号 = v; }
@@ -437,4 +442,14 @@ public class 申込Target {
     public void set自己資金＿預貯金うち当行(BigDecimal v) { this.自己資金＿預貯金うち当行 = v; }
     public String get勤務先職種その他() { return 勤務先職種その他; }
     public void set勤務先職種その他(String v) { this.勤務先職種その他 = v; }
+    public String get金融機関1借入有無() { return 金融機関1借入有無; }
+    public void set金融機関1借入有無(String v) { this.金融機関1借入有無 = v; }
+    public String get金融機関2借入有無() { return 金融機関2借入有無; }
+    public void set金融機関2借入有無(String v) { this.金融機関2借入有無 = v; }
+    public String get金融機関3借入有無() { return 金融機関3借入有無; }
+    public void set金融機関3借入有無(String v) { this.金融機関3借入有無 = v; }
+    public String get収入がある同居の配偶者() { return 収入がある同居の配偶者; }
+    public void set収入がある同居の配偶者(String v) { this.収入がある同居の配偶者 = v; }
+    public String get無担保集中＿申込書番号() { return 無担保集中＿申込書番号; }
+    public void set無担保集中＿申込書番号(String v) { this.無担保集中＿申込書番号 = v; }
 }
