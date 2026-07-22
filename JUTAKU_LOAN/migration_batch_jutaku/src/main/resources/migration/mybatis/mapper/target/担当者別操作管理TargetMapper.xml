@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.担当者別操作管理TargetMapper">
+
+    <!-- Source 担当者別操作管理 (ログ). 1:N per (申込番号, 申込目的).
+         申込番号 2->3, 申込目的 and 進捗コード converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.担当者別操作管理Target">
+        INSERT INTO 担当者別操作管理 (
+            申込番号, 申込目的, ユーザＩＤ, 進捗コード, 開始日時, 終了日時
+        ) VALUES (
+            #{申込番号}, #{申込目的}, #{ユーザＩＤ}, #{進捗コード}, #{開始日時}, #{終了日時}
+        )
+    </insert>
+
+</mapper>

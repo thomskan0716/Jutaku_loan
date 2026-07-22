@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.target.保証結果融資条件アルヒTargetMapper">
+
+    <!-- Source 保証結果融資条件アルヒ. 1:N per (申込番号, 申込目的). 申込番号 2->3 and 申込目的 converted by service. -->
+    <insert id="insert" parameterType="migration.domain.target.保証結果融資条件アルヒTarget">
+        INSERT INTO 保証結果融資条件アルヒ (
+            申込番号, 申込目的, イベント, イベント日時, 連番, 状態, 出力日時,
+            ＡＲＵＨＩ証書番号, 融資条件コード, 融資条件内容
+        ) VALUES (
+            #{申込番号}, #{申込目的}, #{イベント}, #{イベント日時}, #{連番}, #{状態}, #{出力日時},
+            #{ＡＲＵＨＩ証書番号}, #{融資条件コード}, #{融資条件内容}
+        )
+    </insert>
+
+</mapper>

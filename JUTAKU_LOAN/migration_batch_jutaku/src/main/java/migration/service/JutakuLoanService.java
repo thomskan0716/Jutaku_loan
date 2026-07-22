@@ -82,6 +82,9 @@ import migration.domain.source.契約書連携イベントSource;
 import migration.domain.source.審査預保照会Source;
 import migration.domain.source.保証結果メインじぶんSource;
 import migration.domain.source.保証結果メインアルヒSource;
+import migration.domain.source.保証結果融資条件じぶんSource;
+import migration.domain.source.保証結果融資条件アルヒSource;
+import migration.domain.source.担当者別操作管理Source;
 import migration.domain.source.審査ＪＩＣＣ信用情報詳細Source;
 import migration.domain.source.審査ＣＩＣ信用情報詳細Source;
 import migration.domain.source.審査ＫＳＣ信用情報Source;
@@ -125,6 +128,9 @@ import migration.domain.target.契約書連携イベントTarget;
 import migration.domain.target.審査預保照会Target;
 import migration.domain.target.保証結果メインじぶんTarget;
 import migration.domain.target.保証結果メインアルヒTarget;
+import migration.domain.target.保証結果融資条件じぶんTarget;
+import migration.domain.target.保証結果融資条件アルヒTarget;
+import migration.domain.target.担当者別操作管理Target;
 import migration.domain.target.審査ＪＩＣＣ信用情報詳細Target;
 import migration.domain.target.審査ＣＩＣ信用情報詳細Target;
 import migration.domain.target.審査ＫＳＣ信用情報Target;
@@ -168,6 +174,9 @@ import migration.mapper.source.契約書連携イベントSourceMapper;
 import migration.mapper.source.審査預保照会SourceMapper;
 import migration.mapper.source.保証結果メインじぶんSourceMapper;
 import migration.mapper.source.保証結果メインアルヒSourceMapper;
+import migration.mapper.source.保証結果融資条件じぶんSourceMapper;
+import migration.mapper.source.保証結果融資条件アルヒSourceMapper;
+import migration.mapper.source.担当者別操作管理SourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＣＩＣ信用情報詳細SourceMapper;
 import migration.mapper.source.審査ＫＳＣ信用情報SourceMapper;
@@ -211,6 +220,9 @@ import migration.mapper.target.契約書連携イベントTargetMapper;
 import migration.mapper.target.審査預保照会TargetMapper;
 import migration.mapper.target.保証結果メインじぶんTargetMapper;
 import migration.mapper.target.保証結果メインアルヒTargetMapper;
+import migration.mapper.target.保証結果融資条件じぶんTargetMapper;
+import migration.mapper.target.保証結果融資条件アルヒTargetMapper;
+import migration.mapper.target.担当者別操作管理TargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＣＩＣ信用情報詳細TargetMapper;
 import migration.mapper.target.審査ＫＳＣ信用情報TargetMapper;
@@ -280,6 +292,9 @@ public class JutakuLoanService {
     @Autowired private 審査預保照会SourceMapper reviewDepositGuaranteeInquirySourceMapper;
     @Autowired private 保証結果メインじぶんSourceMapper guaranteeResultMainJibunSourceMapper;
     @Autowired private 保証結果メインアルヒSourceMapper guaranteeResultMainAruhiSourceMapper;
+    @Autowired private 保証結果融資条件じぶんSourceMapper guaranteeResultFinanceJibunSourceMapper;
+    @Autowired private 保証結果融資条件アルヒSourceMapper guaranteeResultFinanceAruhiSourceMapper;
+    @Autowired private 担当者別操作管理SourceMapper operationMgmtByPersonSourceMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
     @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
@@ -340,6 +355,9 @@ public class JutakuLoanService {
     @Autowired private 審査預保照会TargetMapper reviewDepositGuaranteeInquiryTargetMapper;
     @Autowired private 保証結果メインじぶんTargetMapper guaranteeResultMainJibunTargetMapper;
     @Autowired private 保証結果メインアルヒTargetMapper guaranteeResultMainAruhiTargetMapper;
+    @Autowired private 保証結果融資条件じぶんTargetMapper guaranteeResultFinanceJibunTargetMapper;
+    @Autowired private 保証結果融資条件アルヒTargetMapper guaranteeResultFinanceAruhiTargetMapper;
+    @Autowired private 担当者別操作管理TargetMapper operationMgmtByPersonTargetMapper;
     @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
     @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
     @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
@@ -2254,6 +2272,67 @@ public class JutakuLoanService {
             t.set申込目的＿出力用(src.get申込目的＿出力用());
             t.set保証会社意見欄(src.get保証会社意見欄());
             guaranteeResultMainAruhiTargetMapper.insert(t);
+        }
+
+        // ③-d41 保証結果融資条件じぶん -> 保証結果融資条件じぶん (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        List<保証結果融資条件じぶんSource> guaranteeResultFinanceJibuns =
+                emptyIfNull(guaranteeResultFinanceJibunSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (保証結果融資条件じぶんSource src : guaranteeResultFinanceJibuns) {
+            if (src == null) {
+                continue;
+            }
+            保証結果融資条件じぶんTarget t = new 保証結果融資条件じぶんTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set連番(src.get連番());
+            t.set状態(src.get状態());
+            t.set出力日時(src.get出力日時());
+            t.set外部案件番号(src.get外部案件番号());
+            t.set融資条件通番(src.get融資条件通番());
+            t.set融資条件コード(src.get融資条件コード());
+            t.set融資条件内容(src.get融資条件内容());
+            guaranteeResultFinanceJibunTargetMapper.insert(t);
+        }
+
+        // ③-d42 保証結果融資条件アルヒ -> 保証結果融資条件アルヒ (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        List<保証結果融資条件アルヒSource> guaranteeResultFinanceAruhis =
+                emptyIfNull(guaranteeResultFinanceAruhiSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (保証結果融資条件アルヒSource src : guaranteeResultFinanceAruhis) {
+            if (src == null) {
+                continue;
+            }
+            保証結果融資条件アルヒTarget t = new 保証結果融資条件アルヒTarget();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setイベント(src.getイベント());
+            t.setイベント日時(src.getイベント日時());
+            t.set連番(src.get連番());
+            t.set状態(src.get状態());
+            t.set出力日時(src.get出力日時());
+            t.setＡＲＵＨＩ証書番号(src.getＡＲＵＨＩ証書番号());
+            t.set融資条件コード(src.get融資条件コード());
+            t.set融資条件内容(src.get融資条件内容());
+            guaranteeResultFinanceAruhiTargetMapper.insert(t);
+        }
+
+        // ③-d43 担当者別操作管理 -> 担当者別操作管理 (MAX only) — ログ, 1:N per (申込番号, 申込目的).
+        // 進捗コード converted via the 編集仕様詳細 code table; other columns pass through.
+        List<担当者別操作管理Source> operationMgmtByPersons =
+                emptyIfNull(operationMgmtByPersonSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
+        for (担当者別操作管理Source src : operationMgmtByPersons) {
+            if (src == null) {
+                continue;
+            }
+            担当者別操作管理Target t = new 担当者別操作管理Target();
+            t.set申込番号(targetApplicationNumber);
+            t.set申込目的(convertedPurpose);
+            t.setユーザＩＤ(src.getユーザＩＤ());
+            t.set進捗コード(convertProgressCode(src.get進捗コード()));
+            t.set開始日時(src.get開始日時());
+            t.set終了日時(src.get終了日時());
+            operationMgmtByPersonTargetMapper.insert(t);
         }
 
         // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.

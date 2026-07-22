@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.保証結果融資条件じぶんSourceMapper">
+
+    <resultMap id="guaranteeResultFinanceJibunMap" type="migration.domain.source.保証結果融資条件じぶんSource">
+        <id property="申込番号"     column="申込番号"/>
+        <id property="申込目的"     column="申込目的"/>
+        <id property="イベント"     column="イベント"/>
+        <id property="イベント日時" column="イベント日時"/>
+        <id property="連番"         column="連番"/>
+        <result property="状態"         column="状態"/>
+        <result property="出力日時"     column="出力日時"/>
+        <result property="外部案件番号" column="外部案件番号"/>
+        <result property="融資条件通番" column="融資条件通番"/>
+        <result property="融資条件コード" column="融資条件コード"/>
+        <result property="融資条件内容" column="融資条件内容"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="guaranteeResultFinanceJibunMap">
+        SELECT
+            申込番号, 申込目的, イベント, イベント日時, 連番, 状態, 出力日時,
+            外部案件番号, 融資条件通番, 融資条件コード, 融資条件内容
+        FROM 保証結果融資条件じぶん
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY イベント日時, 連番
+    </select>
+
+</mapper>
