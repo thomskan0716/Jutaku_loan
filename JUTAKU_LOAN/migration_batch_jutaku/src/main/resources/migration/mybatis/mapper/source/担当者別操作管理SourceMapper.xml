@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="migration.mapper.source.担当者別操作管理SourceMapper">
+
+    <resultMap id="operationMgmtByPersonMap" type="migration.domain.source.担当者別操作管理Source">
+        <id property="申込番号"   column="申込番号"/>
+        <id property="申込目的"   column="申込目的"/>
+        <id property="ユーザＩＤ" column="ユーザＩＤ"/>
+        <id property="開始日時"   column="開始日時"/>
+        <result property="進捗コード" column="進捗コード"/>
+        <result property="終了日時"   column="終了日時"/>
+    </resultMap>
+
+    <select id="selectByApplicationIdAndPurpose" resultMap="operationMgmtByPersonMap">
+        SELECT
+            申込番号, 申込目的, ユーザＩＤ, 進捗コード, 開始日時, 終了日時
+        FROM 担当者別操作管理
+        WHERE 申込番号 = #{申込番号}
+          AND 申込目的 = #{申込目的}
+        ORDER BY 開始日時
+    </select>
+
+</mapper>
