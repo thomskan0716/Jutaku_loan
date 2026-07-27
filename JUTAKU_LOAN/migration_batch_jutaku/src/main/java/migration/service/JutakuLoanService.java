@@ -13,13 +13,20 @@ import migration.domain.target.申込審査状況Target;
 import migration.domain.target.申込審査段階Target;
 import migration.domain.target.申込進捗Target;
 import migration.domain.target.履歴申込Target;
-import migration.domain.target.履歴申込_業者_住宅Target;
 import migration.domain.target.履歴申込審査段階Target;
+import migration.mybatis.domain.itf_sms.SMS履歴申込＿業者＿住宅;
+import migration.mybatis.mapper.itf_sms.SMS履歴申込＿業者＿住宅Mapper;
 import migration.domain.target.履歴保証人Target;
 import migration.domain.target.履歴保証検討表補足Target;
 import migration.domain.target.保証人Target;
-import migration.domain.target.申込_業者_住宅Target;
 import migration.domain.target.保証検討表補足Target;
+import migration.mybatis.domain.itf_sms.SMS申込＿業者＿住宅;
+import migration.mybatis.domain.szb_sms.SZB申込;
+import migration.mybatis.domain.szb_sms.SZB申込Key;
+import migration.mybatis.domain.szb_sms.SZB販売業者マスター;
+import migration.mybatis.mapper.itf_sms.SMS申込＿業者＿住宅Mapper;
+import migration.mybatis.mapper.szb_sms.SZB申込Mapper;
+import migration.mybatis.mapper.szb_sms.SZB販売業者マスターMapper;
 import migration.domain.target.申込担保情報ＰＤＦTarget;
 import migration.domain.target.申込審査履歴Target;
 import migration.domain.source.保証検討表補足Source;
@@ -37,12 +44,10 @@ import migration.mapper.target.申込審査状況TargetMapper;
 import migration.mapper.target.申込審査段階TargetMapper;
 import migration.mapper.target.申込進捗TargetMapper;
 import migration.mapper.target.履歴申込TargetMapper;
-import migration.mapper.target.履歴申込_業者_住宅TargetMapper;
 import migration.mapper.target.履歴申込審査段階TargetMapper;
 import migration.mapper.target.履歴保証人TargetMapper;
 import migration.mapper.target.履歴保証検討表補足TargetMapper;
 import migration.mapper.target.保証人TargetMapper;
-import migration.mapper.target.申込_業者_住宅TargetMapper;
 import migration.mapper.target.保証検討表補足TargetMapper;
 import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
@@ -310,9 +315,11 @@ public class JutakuLoanService {
     @Autowired private 履歴申込審査段階TargetMapper historyReviewStageTargetMapper;
     @Autowired private 申込TargetMapper applicationTargetMapper;
     @Autowired private 履歴申込TargetMapper historyApplicationTargetMapper;
-    @Autowired private 履歴申込_業者_住宅TargetMapper historyApplicationVendorHousingTargetMapper;
+    @Autowired private SMS履歴申込＿業者＿住宅Mapper historyApplicationVendorHousingTargetMapper;
     @Autowired private 保証人TargetMapper guarantorTargetMapper;
-    @Autowired private 申込_業者_住宅TargetMapper applicationVendorHousingTargetMapper;
+    @Autowired private SMS申込＿業者＿住宅Mapper applicationVendorHousingTargetMapper;
+    @Autowired private SZB申込Mapper vendorApplicationSourceMapper;
+    @Autowired private SZB販売業者マスターMapper vendorMasterSourceMapper;
     @Autowired private 保証検討表補足TargetMapper guaranteeReviewSupplementTargetMapper;
     @Autowired private 履歴保証人TargetMapper historyGuarantorTargetMapper;
     @Autowired private 履歴保証検討表補足TargetMapper historyGuaranteeReviewSupplementTargetMapper;
@@ -529,10 +536,29 @@ public class JutakuLoanService {
             mapApplicationColumns(sourceApplication, applicationTarget);
             applicationTargetMapper.insert(applicationTarget);
 
-            // ①-a 申込_業者_住宅 main (MAX only) — FK to 申込.
-            申込_業者_住宅Target vendorHousingTarget = new 申込_業者_住宅Target();
+            // ①-a 申込_業者_住宅 main (MAX only) — FK to 申込. Implemented via auto-generated
+            // gen-folder entities (Nakamura's generator), not the old hand-written classes.
+            // 業者名カナ/業者名 come via JOIN: 販売業者マスター.販売業者コード = 申込.宅建業者コード.
+            // Most other target columns have no source ("-" in design doc) and stay null.
+            SZB申込Key szbApplicationKey = new SZB申込Key();
+            szbApplicationKey.set申込番号(sourceApplicationNumber);
+            szbApplicationKey.set申込目的(maxSourcePurpose);
+            SZB申込 szbApplication = vendorApplicationSourceMapper.selectByPrimaryKey(szbApplicationKey);
+            String vendorCode = szbApplication != null ? szbApplication.get宅建業者コード() : null;
+
+            SMS申込＿業者＿住宅 vendorHousingTarget = new SMS申込＿業者＿住宅();
             vendorHousingTarget.set申込番号(targetApplicationNumber);
             vendorHousingTarget.set申込目的(convertedPurpose);
+            vendorHousingTarget.set業者コード(vendorCode);
+            if (vendorCode != null) {
+                SZB販売業者マスター vendor = vendorMasterSourceMapper.selectByPrimaryKey(vendorCode);
+                if (vendor != null) {
+                    vendorHousingTarget.set業者名カナ(vendor.get販売業者名カナ());
+                    vendorHousingTarget.set業者名(vendor.get販売業者名());
+                }
+            }
+            // insert() (not insertSelective) — OGNL used by insertSelective's <if> checks cannot
+            // parse property names containing full-width underscore (＿), e.g. 業者担当者＿カナ姓.
             applicationVendorHousingTargetMapper.insert(vendorHousingTarget);
         }
 
@@ -2394,11 +2420,27 @@ public class JutakuLoanService {
                 historyApplicationTarget.set回数(occurrenceNumber);
                 historyApplicationTargetMapper.insert(historyApplicationTarget);
 
-                // ⑤-a 履歴申込_業者_住宅 — FK to 履歴申込.
-                履歴申込_業者_住宅Target historyVendorHousingTarget = new 履歴申込_業者_住宅Target();
+                // ⑤-a 履歴申込_業者_住宅 — FK to 履歴申込. Same gen-entity JOIN logic as 申込_業者_住宅,
+                // but keyed per completed stage (sourcePurpose) instead of maxSourcePurpose, with 回数 set.
+                SZB申込Key szbHistoryApplicationKey = new SZB申込Key();
+                szbHistoryApplicationKey.set申込番号(sourceApplicationNumber);
+                szbHistoryApplicationKey.set申込目的(sourcePurpose);
+                SZB申込 szbHistoryApplication = vendorApplicationSourceMapper.selectByPrimaryKey(szbHistoryApplicationKey);
+                String historyVendorCode = szbHistoryApplication != null ? szbHistoryApplication.get宅建業者コード() : null;
+
+                SMS履歴申込＿業者＿住宅 historyVendorHousingTarget = new SMS履歴申込＿業者＿住宅();
                 historyVendorHousingTarget.set申込番号(targetApplicationNumber);
                 historyVendorHousingTarget.set申込目的(convertedPurpose);
-                historyVendorHousingTarget.set回数(occurrenceNumber);
+                historyVendorHousingTarget.set回数((short) occurrenceNumber);
+                historyVendorHousingTarget.set業者コード(historyVendorCode);
+                if (historyVendorCode != null) {
+                    SZB販売業者マスター historyVendor = vendorMasterSourceMapper.selectByPrimaryKey(historyVendorCode);
+                    if (historyVendor != null) {
+                        historyVendorHousingTarget.set業者名カナ(historyVendor.get販売業者名カナ());
+                        historyVendorHousingTarget.set業者名(historyVendor.get販売業者名());
+                    }
+                }
+                // insert() (not insertSelective) — same OGNL/full-width-underscore issue as above.
                 historyApplicationVendorHousingTargetMapper.insert(historyVendorHousingTarget);
             }
 
