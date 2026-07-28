@@ -2606,7 +2606,7 @@ public class JutakuLoanService {
             SMS履歴申込審査段階 historyReviewStageTarget = new SMS履歴申込審査段階();
             historyReviewStageTarget.set申込番号(targetApplicationNumber);
             historyReviewStageTarget.set申込目的(convertedPurpose);
-            historyReviewStageTarget.set回数(occurrenceNumber);
+            historyReviewStageTarget.set回数((short) occurrenceNumber);
             SZB申込審査段階Key historyReviewStageKey = new SZB申込審査段階Key();
             historyReviewStageKey.set申込番号(sourceApplicationNumber);
             historyReviewStageKey.set申込目的(sourcePurpose);
@@ -2942,7 +2942,7 @@ public class JutakuLoanService {
         t.set銀行審査日付(s.get銀行審査日付());
         t.set銀行審査ユーザ名(s.get銀行審査ユーザ名());
         t.set銀行審査結果(conv審査結果(s.get銀行審査結果()));
-        t.set保証会社受付日付(s.get保証会社発行日付());
+        t.set保証会社受付日付(s.get保証会社受付日付());
         t.set保証審査日付(s.get保証審査日付());
         t.set保証審査ユーザ名(s.get保証審査ユーザ名());
         t.set保証審査結果(conv審査結果(s.get保証審査結果()));
@@ -2959,10 +2959,10 @@ public class JutakuLoanService {
         t.set審査完了日付(s.get審査完了日付());
         t.set審査完了区分(s.get審査完了区分());
         t.set追認要求日付(s.get追認要求日付());
-        t.set追認要求ユーザ名(s.get追認要求ユーザ名());
+        t.set追認要求ユーザ名(s.get追認要求ユーザ());
         t.set追認結果(s.get追認結果());
         t.set追認結果日付(s.get追認結果日付());
-        t.set追認結果ユーザ名(s.get追認結果ユーザ名());
+        t.set追認結果ユーザ名(s.get追認結果ユーザ());
     }
 
     // Same column set as map申込審査段階Main, targeting the 履歴 entity (回数 set by the caller).
@@ -2982,7 +2982,7 @@ public class JutakuLoanService {
         t.set銀行審査日付(s.get銀行審査日付());
         t.set銀行審査ユーザ名(s.get銀行審査ユーザ名());
         t.set銀行審査結果(conv審査結果(s.get銀行審査結果()));
-        t.set保証会社受付日付(s.get保証会社発行日付());
+        t.set保証会社受付日付(s.get保証会社受付日付());
         t.set保証審査日付(s.get保証審査日付());
         t.set保証審査ユーザ名(s.get保証審査ユーザ名());
         t.set保証審査結果(conv審査結果(s.get保証審査結果()));
@@ -2999,10 +2999,10 @@ public class JutakuLoanService {
         t.set審査完了日付(s.get審査完了日付());
         t.set審査完了区分(s.get審査完了区分());
         t.set追認要求日付(s.get追認要求日付());
-        t.set追認要求ユーザ名(s.get追認要求ユーザ名());
+        t.set追認要求ユーザ名(s.get追認要求ユーザ());
         t.set追認結果(s.get追認結果());
         t.set追認結果日付(s.get追認結果日付());
-        t.set追認結果ユーザ名(s.get追認結果ユーザ名());
+        t.set追認結果ユーザ名(s.get追認結果ユーザ());
     }
 
     /**
