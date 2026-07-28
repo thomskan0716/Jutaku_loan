@@ -29,6 +29,7 @@ DELETE FROM ITF_SMS.申込審査状況           WHERE 申込番号 LIKE '3%';
 
 -- 申込 children (FK -> 申込)
 DELETE FROM ITF_SMS."申込＿業者＿住宅"      WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.申込決裁進捗           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込審査段階           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証人                 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証検討表補足         WHERE 申込番号 LIKE '3%';

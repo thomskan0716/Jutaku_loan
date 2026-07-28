@@ -10,10 +10,8 @@ import migration.domain.target.申込関連申込Target;
 import migration.domain.source.保証人Source;
 import migration.domain.target.申込Target;
 import migration.domain.target.申込審査状況Target;
-import migration.domain.target.申込審査段階Target;
 import migration.domain.target.申込進捗Target;
 import migration.domain.target.履歴申込Target;
-import migration.domain.target.履歴申込審査段階Target;
 import migration.mybatis.domain.itf_sms.SMS履歴申込＿業者＿住宅;
 import migration.mybatis.mapper.itf_sms.SMS履歴申込＿業者＿住宅Mapper;
 import migration.domain.target.履歴保証人Target;
@@ -27,6 +25,18 @@ import migration.mybatis.domain.szb_sms.SZB販売業者マスター;
 import migration.mybatis.mapper.itf_sms.SMS申込＿業者＿住宅Mapper;
 import migration.mybatis.mapper.szb_sms.SZB申込Mapper;
 import migration.mybatis.mapper.szb_sms.SZB販売業者マスターMapper;
+import migration.mybatis.domain.szb_sms.SZB保証決裁進捗;
+import migration.mybatis.domain.szb_sms.SZB保証決裁進捗Key;
+import migration.mybatis.mapper.szb_sms.SZB保証決裁進捗Mapper;
+import migration.mybatis.domain.itf_sms.SMS申込決裁進捗;
+import migration.mybatis.mapper.itf_sms.SMS申込決裁進捗Mapper;
+import migration.mybatis.domain.szb_sms.SZB申込審査段階;
+import migration.mybatis.domain.szb_sms.SZB申込審査段階Key;
+import migration.mybatis.mapper.szb_sms.SZB申込審査段階Mapper;
+import migration.mybatis.domain.itf_sms.SMS申込審査段階;
+import migration.mybatis.mapper.itf_sms.SMS申込審査段階Mapper;
+import migration.mybatis.domain.itf_sms.SMS履歴申込審査段階;
+import migration.mybatis.mapper.itf_sms.SMS履歴申込審査段階Mapper;
 import migration.domain.target.申込担保情報ＰＤＦTarget;
 import migration.domain.target.申込審査履歴Target;
 import migration.domain.source.保証検討表補足Source;
@@ -41,10 +51,8 @@ import migration.mapper.source.申込関連申込SourceMapper;
 import migration.mapper.target.申込関連申込TargetMapper;
 import migration.mapper.target.申込TargetMapper;
 import migration.mapper.target.申込審査状況TargetMapper;
-import migration.mapper.target.申込審査段階TargetMapper;
 import migration.mapper.target.申込進捗TargetMapper;
 import migration.mapper.target.履歴申込TargetMapper;
-import migration.mapper.target.履歴申込審査段階TargetMapper;
 import migration.mapper.target.履歴保証人TargetMapper;
 import migration.mapper.target.履歴保証検討表補足TargetMapper;
 import migration.mapper.target.保証人TargetMapper;
@@ -253,125 +261,249 @@ import java.util.stream.Collectors;
 public class JutakuLoanService {
 
     // --- Source mappers (legacy schema reads) ---
-    @Autowired private 申込進捗SourceMapper applicationProgressSourceMapper;
-    @Autowired private 申込審査段階SourceMapper reviewStageSourceMapper;
-    @Autowired private 申込SourceMapper applicationSourceMapper;
-    @Autowired private 保証人SourceMapper guarantorSourceMapper;
-    @Autowired private 保証検討表補足SourceMapper guaranteeReviewSupplementSourceMapper;
-    @Autowired private 申込担保回答ＰＤＦSourceMapper collateralAnswerPdfSourceMapper;
-    @Autowired private 申込審査履歴SourceMapper reviewHistorySourceMapper;
-    @Autowired private 申込関連申込SourceMapper relatedApplicationSourceMapper;
-    @Autowired private 審査チェック照会SourceMapper reviewCheckSourceMapper;
-    @Autowired private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
-    @Autowired private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
-    @Autowired private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
-    @Autowired private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
-    @Autowired private 個信類似照会明細SourceMapper kosinSimilarInquiryDetailSourceMapper;
-    @Autowired private 個信類似明細SourceMapper kosinSimilarDetailSourceMapper;
-    @Autowired private 個信データ編集管理SourceMapper kosinDataEditMgmtSourceMapper;
-    @Autowired private 返済比率計算SourceMapper repaymentRatioCalcSourceMapper;
-    @Autowired private 返済比率計算結果SourceMapper repaymentRatioResultSourceMapper;
-    @Autowired private 返済比率計算結果明細SourceMapper repaymentRatioResultDetailSourceMapper;
-    @Autowired private 審査モデル回答SourceMapper scoringAnswerSourceMapper;
-    @Autowired private 審査モデル回答ＳSourceMapper scoringAnswerSSourceMapper;
-    @Autowired private 審査モデル回答判定SourceMapper scoringJudgeSourceMapper;
-    @Autowired private 審査モデル回答判定ＳSourceMapper scoringJudgeSSourceMapper;
-    @Autowired private 審査モデル回答明細SourceMapper scoringDetailSourceMapper;
-    @Autowired private 審査モデル回答明細ＳSourceMapper scoringDetailSSourceMapper;
-    @Autowired private 審査モデル照会SourceMapper scoringInquirySourceMapper;
-    @Autowired private 審査モデル照会ＳSourceMapper scoringInquirySSourceMapper;
-    @Autowired private 審査モデル照会基本SourceMapper scoringInquiryBasicSourceMapper;
-    @Autowired private 審査モデル照会基本ＳSourceMapper scoringInquiryBasicSSourceMapper;
-    @Autowired private システム判定結果SourceMapper systemJudgeResultSourceMapper;
-    @Autowired private システム判定結果明細SourceMapper systemJudgeResultDetailSourceMapper;
-    @Autowired private システム判定照会SourceMapper systemJudgeInquirySourceMapper;
-    @Autowired private 住宅ローン不正検知結果SourceMapper fraudDetectionResultSourceMapper;
-    @Autowired private 住宅ローン不正検知照会SourceMapper fraudDetectionInquirySourceMapper;
-    @Autowired private 審査結果照会SourceMapper reviewResultInquirySourceMapper;
-    @Autowired private 審査コメントSourceMapper reviewCommentSourceMapper;
-    @Autowired private 審査データ送信SourceMapper reviewDataSendSourceMapper;
-    @Autowired private 審査ＳＮＡＶＩ連携イベントSourceMapper reviewSnaviLinkEventSourceMapper;
-    @Autowired private 審査ＳＮＡＶＩ連携内容SourceMapper reviewSnaviLinkContentSourceMapper;
-    @Autowired private 審査契約書出力連携内容SourceMapper contractDocOutputContentSourceMapper;
-    @Autowired private 契約書連携イベントSourceMapper contractLinkEventSourceMapper;
-    @Autowired private 審査預保照会SourceMapper reviewDepositGuaranteeInquirySourceMapper;
-    @Autowired private 保証結果メインじぶんSourceMapper guaranteeResultMainJibunSourceMapper;
-    @Autowired private 保証結果メインアルヒSourceMapper guaranteeResultMainAruhiSourceMapper;
-    @Autowired private 保証結果融資条件じぶんSourceMapper guaranteeResultFinanceJibunSourceMapper;
-    @Autowired private 保証結果融資条件アルヒSourceMapper guaranteeResultFinanceAruhiSourceMapper;
-    @Autowired private 担当者別操作管理SourceMapper operationMgmtByPersonSourceMapper;
-    @Autowired private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
-    @Autowired private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
-    @Autowired private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
-    @Autowired private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
-    @Autowired private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
-    @Autowired private 担保評価回答SourceMapper collateralValuationSourceMapper;
-    @Autowired private 担保評価連携結果ファイルSourceMapper collateralValuationFileSourceMapper;
+    @Autowired
+    private 申込進捗SourceMapper applicationProgressSourceMapper;
+    @Autowired
+    private 申込審査段階SourceMapper reviewStageSourceMapper;
+    @Autowired
+    private 申込SourceMapper applicationSourceMapper;
+    @Autowired
+    private 保証人SourceMapper guarantorSourceMapper;
+    @Autowired
+    private 保証検討表補足SourceMapper guaranteeReviewSupplementSourceMapper;
+    @Autowired
+    private 申込担保回答ＰＤＦSourceMapper collateralAnswerPdfSourceMapper;
+    @Autowired
+    private 申込審査履歴SourceMapper reviewHistorySourceMapper;
+    @Autowired
+    private 申込関連申込SourceMapper relatedApplicationSourceMapper;
+    @Autowired
+    private 審査チェック照会SourceMapper reviewCheckSourceMapper;
+    @Autowired
+    private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
+    @Autowired
+    private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
+    @Autowired
+    private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
+    @Autowired
+    private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
+    @Autowired
+    private 個信類似照会明細SourceMapper kosinSimilarInquiryDetailSourceMapper;
+    @Autowired
+    private 個信類似明細SourceMapper kosinSimilarDetailSourceMapper;
+    @Autowired
+    private 個信データ編集管理SourceMapper kosinDataEditMgmtSourceMapper;
+    @Autowired
+    private 返済比率計算SourceMapper repaymentRatioCalcSourceMapper;
+    @Autowired
+    private 返済比率計算結果SourceMapper repaymentRatioResultSourceMapper;
+    @Autowired
+    private 返済比率計算結果明細SourceMapper repaymentRatioResultDetailSourceMapper;
+    @Autowired
+    private 審査モデル回答SourceMapper scoringAnswerSourceMapper;
+    @Autowired
+    private 審査モデル回答ＳSourceMapper scoringAnswerSSourceMapper;
+    @Autowired
+    private 審査モデル回答判定SourceMapper scoringJudgeSourceMapper;
+    @Autowired
+    private 審査モデル回答判定ＳSourceMapper scoringJudgeSSourceMapper;
+    @Autowired
+    private 審査モデル回答明細SourceMapper scoringDetailSourceMapper;
+    @Autowired
+    private 審査モデル回答明細ＳSourceMapper scoringDetailSSourceMapper;
+    @Autowired
+    private 審査モデル照会SourceMapper scoringInquirySourceMapper;
+    @Autowired
+    private 審査モデル照会ＳSourceMapper scoringInquirySSourceMapper;
+    @Autowired
+    private 審査モデル照会基本SourceMapper scoringInquiryBasicSourceMapper;
+    @Autowired
+    private 審査モデル照会基本ＳSourceMapper scoringInquiryBasicSSourceMapper;
+    @Autowired
+    private システム判定結果SourceMapper systemJudgeResultSourceMapper;
+    @Autowired
+    private システム判定結果明細SourceMapper systemJudgeResultDetailSourceMapper;
+    @Autowired
+    private システム判定照会SourceMapper systemJudgeInquirySourceMapper;
+    @Autowired
+    private 住宅ローン不正検知結果SourceMapper fraudDetectionResultSourceMapper;
+    @Autowired
+    private 住宅ローン不正検知照会SourceMapper fraudDetectionInquirySourceMapper;
+    @Autowired
+    private 審査結果照会SourceMapper reviewResultInquirySourceMapper;
+    @Autowired
+    private 審査コメントSourceMapper reviewCommentSourceMapper;
+    @Autowired
+    private 審査データ送信SourceMapper reviewDataSendSourceMapper;
+    @Autowired
+    private 審査ＳＮＡＶＩ連携イベントSourceMapper reviewSnaviLinkEventSourceMapper;
+    @Autowired
+    private 審査ＳＮＡＶＩ連携内容SourceMapper reviewSnaviLinkContentSourceMapper;
+    @Autowired
+    private 審査契約書出力連携内容SourceMapper contractDocOutputContentSourceMapper;
+    @Autowired
+    private 契約書連携イベントSourceMapper contractLinkEventSourceMapper;
+    @Autowired
+    private 審査預保照会SourceMapper reviewDepositGuaranteeInquirySourceMapper;
+    @Autowired
+    private 保証結果メインじぶんSourceMapper guaranteeResultMainJibunSourceMapper;
+    @Autowired
+    private 保証結果メインアルヒSourceMapper guaranteeResultMainAruhiSourceMapper;
+    @Autowired
+    private 保証結果融資条件じぶんSourceMapper guaranteeResultFinanceJibunSourceMapper;
+    @Autowired
+    private 保証結果融資条件アルヒSourceMapper guaranteeResultFinanceAruhiSourceMapper;
+    @Autowired
+    private 担当者別操作管理SourceMapper operationMgmtByPersonSourceMapper;
+    @Autowired
+    private 審査ＪＩＣＣ信用情報詳細SourceMapper reviewJiccCreditDetailSourceMapper;
+    @Autowired
+    private 審査ＣＩＣ信用情報詳細SourceMapper reviewCicCreditDetailSourceMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報SourceMapper reviewKscCreditSourceMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報明細SourceMapper reviewKscCreditLineSourceMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報詳細SourceMapper reviewKscCreditDetailSourceMapper;
+    @Autowired
+    private 担保評価回答SourceMapper collateralValuationSourceMapper;
+    @Autowired
+    private 担保評価連携結果ファイルSourceMapper collateralValuationFileSourceMapper;
 
     // --- Target mappers (new schema writes) ---
-    @Autowired private 申込進捗TargetMapper applicationProgressTargetMapper;
-    @Autowired private 申込審査段階TargetMapper reviewStageTargetMapper;
-    @Autowired private 申込審査状況TargetMapper reviewStatusTargetMapper;
-    @Autowired private 履歴申込審査段階TargetMapper historyReviewStageTargetMapper;
-    @Autowired private 申込TargetMapper applicationTargetMapper;
-    @Autowired private 履歴申込TargetMapper historyApplicationTargetMapper;
-    @Autowired private SMS履歴申込＿業者＿住宅Mapper historyApplicationVendorHousingTargetMapper;
-    @Autowired private 保証人TargetMapper guarantorTargetMapper;
-    @Autowired private SMS申込＿業者＿住宅Mapper applicationVendorHousingTargetMapper;
-    @Autowired private SZB申込Mapper vendorApplicationSourceMapper;
-    @Autowired private SZB販売業者マスターMapper vendorMasterSourceMapper;
-    @Autowired private 保証検討表補足TargetMapper guaranteeReviewSupplementTargetMapper;
-    @Autowired private 履歴保証人TargetMapper historyGuarantorTargetMapper;
-    @Autowired private 履歴保証検討表補足TargetMapper historyGuaranteeReviewSupplementTargetMapper;
-    @Autowired private 申込担保情報ＰＤＦTargetMapper collateralInfoPdfTargetMapper;
-    @Autowired private 申込審査履歴TargetMapper reviewHistoryTargetMapper;
-    @Autowired private 申込関連申込TargetMapper relatedApplicationTargetMapper;
-    @Autowired private 審査チェック照会TargetMapper reviewCheckTargetMapper;
-    @Autowired private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
-    @Autowired private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
-    @Autowired private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
-    @Autowired private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
-    @Autowired private 個信類似照会明細TargetMapper kosinSimilarInquiryDetailTargetMapper;
-    @Autowired private 個信類似明細TargetMapper kosinSimilarDetailTargetMapper;
-    @Autowired private 個信データ編集管理TargetMapper kosinDataEditMgmtTargetMapper;
-    @Autowired private 返済比率計算TargetMapper repaymentRatioCalcTargetMapper;
-    @Autowired private 返済比率計算結果TargetMapper repaymentRatioResultTargetMapper;
-    @Autowired private 返済比率計算結果明細TargetMapper repaymentRatioResultDetailTargetMapper;
-    @Autowired private 審査モデル回答TargetMapper scoringAnswerTargetMapper;
-    @Autowired private 審査モデル回答ＳTargetMapper scoringAnswerSTargetMapper;
-    @Autowired private 審査モデル回答判定TargetMapper scoringJudgeTargetMapper;
-    @Autowired private 審査モデル回答判定ＳTargetMapper scoringJudgeSTargetMapper;
-    @Autowired private 審査モデル回答明細TargetMapper scoringDetailTargetMapper;
-    @Autowired private 審査モデル回答明細ＳTargetMapper scoringDetailSTargetMapper;
-    @Autowired private 審査モデル照会TargetMapper scoringInquiryTargetMapper;
-    @Autowired private 審査モデル照会ＳTargetMapper scoringInquirySTargetMapper;
-    @Autowired private 審査モデル照会基本TargetMapper scoringInquiryBasicTargetMapper;
-    @Autowired private 審査モデル照会基本ＳTargetMapper scoringInquiryBasicSTargetMapper;
-    @Autowired private システム判定結果TargetMapper systemJudgeResultTargetMapper;
-    @Autowired private システム判定結果明細TargetMapper systemJudgeResultDetailTargetMapper;
-    @Autowired private システム判定照会TargetMapper systemJudgeInquiryTargetMapper;
-    @Autowired private 住宅ローン不正検知結果TargetMapper fraudDetectionResultTargetMapper;
-    @Autowired private 住宅ローン不正検知照会TargetMapper fraudDetectionInquiryTargetMapper;
-    @Autowired private 審査結果照会TargetMapper reviewResultInquiryTargetMapper;
-    @Autowired private 審査コメントTargetMapper reviewCommentTargetMapper;
-    @Autowired private 審査データ送信TargetMapper reviewDataSendTargetMapper;
-    @Autowired private 審査ＳＮＡＶＩ連携イベントTargetMapper reviewSnaviLinkEventTargetMapper;
-    @Autowired private 審査ＳＮＡＶＩ連携内容TargetMapper reviewSnaviLinkContentTargetMapper;
-    @Autowired private ＩＦ＿契約書送信TargetMapper contractDocSendTargetMapper;
-    @Autowired private 契約書連携イベントTargetMapper contractLinkEventTargetMapper;
-    @Autowired private 審査預保照会TargetMapper reviewDepositGuaranteeInquiryTargetMapper;
-    @Autowired private 保証結果メインじぶんTargetMapper guaranteeResultMainJibunTargetMapper;
-    @Autowired private 保証結果メインアルヒTargetMapper guaranteeResultMainAruhiTargetMapper;
-    @Autowired private 保証結果融資条件じぶんTargetMapper guaranteeResultFinanceJibunTargetMapper;
-    @Autowired private 保証結果融資条件アルヒTargetMapper guaranteeResultFinanceAruhiTargetMapper;
-    @Autowired private 担当者別操作管理TargetMapper operationMgmtByPersonTargetMapper;
-    @Autowired private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
-    @Autowired private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
-    @Autowired private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
-    @Autowired private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
-    @Autowired private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
-    @Autowired private ＩＦ＿担保評価連携結果TargetMapper collateralValuationResultTargetMapper;
-    @Autowired private ＩＦ＿担保評価連携結果＿ファイルTargetMapper collateralValuationFileTargetMapper;
+    @Autowired
+    private 申込進捗TargetMapper applicationProgressTargetMapper;
+    @Autowired
+    private 申込審査状況TargetMapper reviewStatusTargetMapper;
+    // 申込審査段階 / 履歴申込審査段階 now use the MBG-generated entities (full column set).
+    @Autowired
+    private SZB申込審査段階Mapper reviewStageSourceMapperGen;
+    @Autowired
+    private SMS申込審査段階Mapper reviewStageTargetMapperGen;
+    @Autowired
+    private SMS履歴申込審査段階Mapper historyReviewStageTargetMapperGen;
+    @Autowired
+    private 申込TargetMapper applicationTargetMapper;
+    @Autowired
+    private 履歴申込TargetMapper historyApplicationTargetMapper;
+    @Autowired
+    private SMS履歴申込＿業者＿住宅Mapper historyApplicationVendorHousingTargetMapper;
+    @Autowired
+    private 保証人TargetMapper guarantorTargetMapper;
+    @Autowired
+    private SMS申込＿業者＿住宅Mapper applicationVendorHousingTargetMapper;
+    @Autowired
+    private SZB申込Mapper vendorApplicationSourceMapper;
+    @Autowired
+    private SZB販売業者マスターMapper vendorMasterSourceMapper;
+    @Autowired
+    private SZB保証決裁進捗Mapper approvalProgressSourceMapper;
+    @Autowired
+    private SMS申込決裁進捗Mapper approvalProgressTargetMapper;
+    @Autowired
+    private 保証検討表補足TargetMapper guaranteeReviewSupplementTargetMapper;
+    @Autowired
+    private 履歴保証人TargetMapper historyGuarantorTargetMapper;
+    @Autowired
+    private 履歴保証検討表補足TargetMapper historyGuaranteeReviewSupplementTargetMapper;
+    @Autowired
+    private 申込担保情報ＰＤＦTargetMapper collateralInfoPdfTargetMapper;
+    @Autowired
+    private 申込審査履歴TargetMapper reviewHistoryTargetMapper;
+    @Autowired
+    private 申込関連申込TargetMapper relatedApplicationTargetMapper;
+    @Autowired
+    private 審査チェック照会TargetMapper reviewCheckTargetMapper;
+    @Autowired
+    private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
+    @Autowired
+    private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
+    @Autowired
+    private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
+    @Autowired
+    private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
+    @Autowired
+    private 個信類似照会明細TargetMapper kosinSimilarInquiryDetailTargetMapper;
+    @Autowired
+    private 個信類似明細TargetMapper kosinSimilarDetailTargetMapper;
+    @Autowired
+    private 個信データ編集管理TargetMapper kosinDataEditMgmtTargetMapper;
+    @Autowired
+    private 返済比率計算TargetMapper repaymentRatioCalcTargetMapper;
+    @Autowired
+    private 返済比率計算結果TargetMapper repaymentRatioResultTargetMapper;
+    @Autowired
+    private 返済比率計算結果明細TargetMapper repaymentRatioResultDetailTargetMapper;
+    @Autowired
+    private 審査モデル回答TargetMapper scoringAnswerTargetMapper;
+    @Autowired
+    private 審査モデル回答ＳTargetMapper scoringAnswerSTargetMapper;
+    @Autowired
+    private 審査モデル回答判定TargetMapper scoringJudgeTargetMapper;
+    @Autowired
+    private 審査モデル回答判定ＳTargetMapper scoringJudgeSTargetMapper;
+    @Autowired
+    private 審査モデル回答明細TargetMapper scoringDetailTargetMapper;
+    @Autowired
+    private 審査モデル回答明細ＳTargetMapper scoringDetailSTargetMapper;
+    @Autowired
+    private 審査モデル照会TargetMapper scoringInquiryTargetMapper;
+    @Autowired
+    private 審査モデル照会ＳTargetMapper scoringInquirySTargetMapper;
+    @Autowired
+    private 審査モデル照会基本TargetMapper scoringInquiryBasicTargetMapper;
+    @Autowired
+    private 審査モデル照会基本ＳTargetMapper scoringInquiryBasicSTargetMapper;
+    @Autowired
+    private システム判定結果TargetMapper systemJudgeResultTargetMapper;
+    @Autowired
+    private システム判定結果明細TargetMapper systemJudgeResultDetailTargetMapper;
+    @Autowired
+    private システム判定照会TargetMapper systemJudgeInquiryTargetMapper;
+    @Autowired
+    private 住宅ローン不正検知結果TargetMapper fraudDetectionResultTargetMapper;
+    @Autowired
+    private 住宅ローン不正検知照会TargetMapper fraudDetectionInquiryTargetMapper;
+    @Autowired
+    private 審査結果照会TargetMapper reviewResultInquiryTargetMapper;
+    @Autowired
+    private 審査コメントTargetMapper reviewCommentTargetMapper;
+    @Autowired
+    private 審査データ送信TargetMapper reviewDataSendTargetMapper;
+    @Autowired
+    private 審査ＳＮＡＶＩ連携イベントTargetMapper reviewSnaviLinkEventTargetMapper;
+    @Autowired
+    private 審査ＳＮＡＶＩ連携内容TargetMapper reviewSnaviLinkContentTargetMapper;
+    @Autowired
+    private ＩＦ＿契約書送信TargetMapper contractDocSendTargetMapper;
+    @Autowired
+    private 契約書連携イベントTargetMapper contractLinkEventTargetMapper;
+    @Autowired
+    private 審査預保照会TargetMapper reviewDepositGuaranteeInquiryTargetMapper;
+    @Autowired
+    private 保証結果メインじぶんTargetMapper guaranteeResultMainJibunTargetMapper;
+    @Autowired
+    private 保証結果メインアルヒTargetMapper guaranteeResultMainAruhiTargetMapper;
+    @Autowired
+    private 保証結果融資条件じぶんTargetMapper guaranteeResultFinanceJibunTargetMapper;
+    @Autowired
+    private 保証結果融資条件アルヒTargetMapper guaranteeResultFinanceAruhiTargetMapper;
+    @Autowired
+    private 担当者別操作管理TargetMapper operationMgmtByPersonTargetMapper;
+    @Autowired
+    private 審査ＪＩＣＣ信用情報詳細TargetMapper reviewJiccCreditDetailTargetMapper;
+    @Autowired
+    private 審査ＣＩＣ信用情報詳細TargetMapper reviewCicCreditDetailTargetMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報TargetMapper reviewKscCreditTargetMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報明細TargetMapper reviewKscCreditLineTargetMapper;
+    @Autowired
+    private 審査ＫＳＣ信用情報詳細TargetMapper reviewKscCreditDetailTargetMapper;
+    @Autowired
+    private ＩＦ＿担保評価連携結果TargetMapper collateralValuationResultTargetMapper;
+    @Autowired
+    private ＩＦ＿担保評価連携結果＿ファイルTargetMapper collateralValuationFileTargetMapper;
 
     @Value("${migration.simulate:false}")
     private boolean simulate;
@@ -526,7 +658,7 @@ public class JutakuLoanService {
         // The MAX source 申込目的 is the last element of the ascending-sorted list.
         String maxSourcePurpose = reviewStages.get(reviewStages.size() - 1).get申込目的();
 
-        // ① 申込 main (MAX only) — inserted FIRST because 申込審査段階/保証人 both FK to 申込.
+        // ① 申込 main (MAX only) - inserted FIRST because 申込審査段階/保証人 both FK to 申込.
         申込Source sourceApplication =
                 applicationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
         if (sourceApplication != null) {
@@ -536,7 +668,7 @@ public class JutakuLoanService {
             mapApplicationColumns(sourceApplication, applicationTarget);
             applicationTargetMapper.insert(applicationTarget);
 
-            // ①-a 申込_業者_住宅 main (MAX only) — FK to 申込. Implemented via auto-generated
+            // ①-a 申込_業者_住宅 main (MAX only) - FK to 申込. Implemented via auto-generated
             // gen-folder entities (Nakamura's generator), not the old hand-written classes.
             // 業者名カナ/業者名 come via JOIN: 販売業者マスター.販売業者コード = 申込.宅建業者コード.
             // Most other target columns have no source ("-" in design doc) and stay null.
@@ -557,19 +689,44 @@ public class JutakuLoanService {
                     vendorHousingTarget.set業者名(vendor.get販売業者名());
                 }
             }
-            // insert() (not insertSelective) — OGNL used by insertSelective's <if> checks cannot
+            // insert() (not insertSelective) - OGNL used by insertSelective's <if> checks cannot
             // parse property names containing full-width underscore (＿), e.g. 業者担当者＿カナ姓.
             applicationVendorHousingTargetMapper.insert(vendorHousingTarget);
+
+            // ①-b 申込決裁進捗 main (MAX only) - FK to 申込. 1:1 per (申込番号, 申込目的); source = 保証決裁進捗.
+            // 決裁段階/最終決裁段階/次決裁段階 use 編集仕様詳細「決裁段階」(コード0021:保証決裁段階); 状態 passes through.
+            SZB保証決裁進捗Key approvalProgressKey = new SZB保証決裁進捗Key();
+            approvalProgressKey.set申込番号(sourceApplicationNumber);
+            approvalProgressKey.set申込目的(maxSourcePurpose);
+            SZB保証決裁進捗 srcApprovalProgress = approvalProgressSourceMapper.selectByPrimaryKey(approvalProgressKey);
+            if (srcApprovalProgress != null) {
+                SMS申込決裁進捗 approvalProgressTarget = new SMS申込決裁進捗();
+                approvalProgressTarget.set申込番号(targetApplicationNumber);
+                approvalProgressTarget.set申込目的(convertedPurpose);
+                approvalProgressTarget.set決裁段階(conv決裁段階(srcApprovalProgress.get決裁段階()));
+                approvalProgressTarget.set状態(srcApprovalProgress.get状態());
+                approvalProgressTarget.set最終決裁段階(conv決裁段階(srcApprovalProgress.get最終決裁段階()));
+                approvalProgressTarget.set次決裁段階(conv決裁段階(srcApprovalProgress.get次決裁段階()));
+                // insert() (not insertSelective) - same full-width-property OGNL issue as above.
+                approvalProgressTargetMapper.insert(approvalProgressTarget);
+            }
         }
 
-        // ② 申込審査段階 main (MAX only) — FK to 申込.
-        申込審査段階Target reviewStageTarget = new 申込審査段階Target();
+        // ② 申込審査段階 main (MAX only) - FK to 申込. Full column set via MBG-generated entity.
+        // Grouping is driven by the lightweight 申込審査段階Source list; the full source row is
+        // re-read by PK (申込番号 + MAX 申込目的) to populate every column.
+        SMS申込審査段階 reviewStageTarget = new SMS申込審査段階();
         reviewStageTarget.set申込番号(targetApplicationNumber);
         reviewStageTarget.set申込目的(convertedPurpose);
-        reviewStageTarget.set審査完了区分(reviewStages.get(reviewStages.size() - 1).get審査完了区分());
-        reviewStageTargetMapper.insert(reviewStageTarget);
+        SZB申込審査段階Key reviewStageKey = new SZB申込審査段階Key();
+        reviewStageKey.set申込番号(sourceApplicationNumber);
+        reviewStageKey.set申込目的(maxSourcePurpose);
+        SZB申込審査段階 srcReviewStage = reviewStageSourceMapperGen.selectByPrimaryKey(reviewStageKey);
+        map申込審査段階Main(srcReviewStage, reviewStageTarget);
+        // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
+        reviewStageTargetMapperGen.insert(reviewStageTarget);
 
-        // ③ 保証人 main (MAX only) — FK to 申込.
+        // ③ 保証人 main (MAX only) - FK to 申込.
         List<保証人Source> mainGuarantors =
                 emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証人Source guarantor : mainGuarantors) {
@@ -580,7 +737,7 @@ public class JutakuLoanService {
             guarantorTargetMapper.insert(guarantorTarget);
         }
 
-        // ③-a 保証検討表補足 main (MAX only) — FK to 申込.
+        // ③-a 保証検討表補足 main (MAX only) - FK to 申込.
         保証検討表補足Source mainGuaranteeSupplement =
                 guaranteeReviewSupplementSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
         if (mainGuaranteeSupplement != null) {
@@ -590,7 +747,7 @@ public class JutakuLoanService {
             guaranteeReviewSupplementTargetMapper.insert(guaranteeSupplementTarget);
         }
 
-        // ③-b 申込担保情報ＰＤＦ (MAX only) — FK to 申込, 1:N per application + purpose, loaded from 申込担保回答ＰＤＦ.
+        // ③-b 申込担保情報ＰＤＦ (MAX only) - FK to 申込, 1:N per application + purpose, loaded from 申込担保回答ＰＤＦ.
         // ファイル種別 passes through from ファイル種類; the single source file-name feeds both target file-name columns.
         List<申込担保回答ＰＤＦSource> collateralPdfs =
                 emptyIfNull(collateralAnswerPdfSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -604,7 +761,7 @@ public class JutakuLoanService {
             collateralInfoPdfTargetMapper.insert(collateralPdfTarget);
         }
 
-        // ③-c 申込審査履歴 event log (MAX only) — FK to 申込, 1:N per (申込番号, 申込目的).
+        // ③-c 申込審査履歴 event log (MAX only) - FK to 申込, 1:N per (申込番号, 申込目的).
         // 進捗コード is converted via the 編集仕様詳細 code table; other columns pass through with the source-provided 回数.
         List<申込審査履歴Source> reviewHistories =
                 emptyIfNull(reviewHistorySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -621,7 +778,7 @@ public class JutakuLoanService {
             reviewHistoryTargetMapper.insert(reviewHistoryTarget);
         }
 
-        // ③-d 審査チェック照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // ③-d 審査チェック照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 一連番号 fixed '99999'; other columns pass through from source.
         List<審査チェック照会Source> reviewChecks =
                 emptyIfNull(reviewCheckSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -637,7 +794,7 @@ public class JutakuLoanService {
             reviewCheckTargetMapper.insert(reviewCheckTarget);
         }
 
-        // ③-d2 審査ＫＳＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // ③-d2 審査ＫＳＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＫＳＣ照会Source> reviewKscs =
                 emptyIfNull(reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -655,7 +812,7 @@ public class JutakuLoanService {
             reviewKscTargetMapper.insert(reviewKscTarget);
         }
 
-        // ③-d3 審査ＫＳＣ信用情報 (MAX only) — 1:N per (申込番号, 申込目的).
+        // ③-d3 審査ＫＳＣ信用情報 (MAX only) - 1:N per (申込番号, 申込目的).
         // Only columns present in both source and target are copied; target-only
         // columns (ＫＳＣグレー, ＫＳＣ延滞, ＫＳＣ転居歴, etc.) are left null.
         List<審査ＫＳＣ信用情報Source> reviewKscCredits =
@@ -677,7 +834,7 @@ public class JutakuLoanService {
             reviewKscCreditTargetMapper.insert(reviewKscCreditTarget);
         }
 
-        // ③-d4 審査ＫＳＣ信用情報明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d4 審査ＫＳＣ信用情報明細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＫＳＣ信用情報明細Source> reviewKscCreditLines =
                 emptyIfNull(reviewKscCreditLineSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＫＳＣ信用情報明細Source reviewKscCreditLine : reviewKscCreditLines) {
@@ -698,7 +855,7 @@ public class JutakuLoanService {
             reviewKscCreditLineTargetMapper.insert(reviewKscCreditLineTarget);
         }
 
-        // ③-d5 審査ＫＳＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d5 審査ＫＳＣ信用情報詳細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         // Target-only column 延滞回数 has no source and is left null.
         List<審査ＫＳＣ信用情報詳細Source> reviewKscCreditDetails =
                 emptyIfNull(reviewKscCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -740,7 +897,7 @@ public class JutakuLoanService {
             reviewKscCreditDetailTargetMapper.insert(reviewKscCreditDetailTarget);
         }
 
-        // ③-d6 審査ＪＩＣＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // ③-d6 審査ＪＩＣＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＪＩＣＣ照会Source> reviewJiccs =
                 emptyIfNull(reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -758,7 +915,7 @@ public class JutakuLoanService {
             reviewJiccTargetMapper.insert(reviewJiccTarget);
         }
 
-        // ③-d7 審査ＣＩＣ照会 (MAX only) — 1:N event log per (申込番号, 申込目的).
+        // ③-d7 審査ＣＩＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
         List<審査ＣＩＣ照会Source> reviewCics =
                 emptyIfNull(reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -776,7 +933,7 @@ public class JutakuLoanService {
             reviewCicTargetMapper.insert(reviewCicTarget);
         }
 
-        // ③-d8a 個信類似照会管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d8a 個信類似照会管理 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似照会管理Source> kosinSimilarInquiryMgmts =
                 emptyIfNull(kosinSimilarInquiryMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似照会管理Source kosinSimilarInquiryMgmt : kosinSimilarInquiryMgmts) {
@@ -791,7 +948,7 @@ public class JutakuLoanService {
             kosinSimilarInquiryMgmtTargetMapper.insert(kosinSimilarInquiryMgmtTarget);
         }
 
-        // ③-d8 個信類似照会明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d8 個信類似照会明細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似照会明細Source> kosinSimilarInquiryDetails =
                 emptyIfNull(kosinSimilarInquiryDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似照会明細Source kosinSimilarInquiryDetail : kosinSimilarInquiryDetails) {
@@ -826,7 +983,7 @@ public class JutakuLoanService {
             kosinSimilarInquiryDetailTargetMapper.insert(kosinSimilarInquiryDetailTarget);
         }
 
-        // ③-d9 個信類似明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d9 個信類似明細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<個信類似明細Source> kosinSimilarDetails =
                 emptyIfNull(kosinSimilarDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信類似明細Source kosinSimilarDetail : kosinSimilarDetails) {
@@ -871,7 +1028,7 @@ public class JutakuLoanService {
             kosinSimilarDetailTargetMapper.insert(kosinSimilarDetailTarget);
         }
 
-        // ③-d10 審査ＪＩＣＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d10 審査ＪＩＣＣ信用情報詳細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＪＩＣＣ信用情報詳細Source> reviewJiccCreditDetails =
                 emptyIfNull(reviewJiccCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＪＩＣＣ信用情報詳細Source reviewJiccCreditDetail : reviewJiccCreditDetails) {
@@ -920,7 +1077,7 @@ public class JutakuLoanService {
             reviewJiccCreditDetailTargetMapper.insert(reviewJiccCreditDetailTarget);
         }
 
-        // ③-d11 審査ＣＩＣ信用情報詳細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d11 審査ＣＩＣ信用情報詳細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＣＩＣ信用情報詳細Source> reviewCicCreditDetails =
                 emptyIfNull(reviewCicCreditDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＣＩＣ信用情報詳細Source reviewCicCreditDetail : reviewCicCreditDetails) {
@@ -966,7 +1123,7 @@ public class JutakuLoanService {
             reviewCicCreditDetailTargetMapper.insert(reviewCicCreditDetailTarget);
         }
 
-        // ③-d12 個信データ編集管理 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d12 個信データ編集管理 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<個信データ編集管理Source> kosinDataEditMgmts =
                 emptyIfNull(kosinDataEditMgmtSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (個信データ編集管理Source kosinDataEditMgmt : kosinDataEditMgmts) {
@@ -984,7 +1141,7 @@ public class JutakuLoanService {
             kosinDataEditMgmtTargetMapper.insert(kosinDataEditMgmtTarget);
         }
 
-        // ③-d13 返済比率計算 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d13 返済比率計算 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<返済比率計算Source> repaymentRatioCalcs =
                 emptyIfNull(repaymentRatioCalcSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (返済比率計算Source repaymentRatioCalc : repaymentRatioCalcs) {
@@ -1002,7 +1159,7 @@ public class JutakuLoanService {
             repaymentRatioCalcTargetMapper.insert(repaymentRatioCalcTarget);
         }
 
-        // ③-d14 返済比率計算結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d14 返済比率計算結果 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<返済比率計算結果Source> repaymentRatioResults =
                 emptyIfNull(repaymentRatioResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (返済比率計算結果Source src : repaymentRatioResults) {
@@ -1074,7 +1231,7 @@ public class JutakuLoanService {
             repaymentRatioResultTargetMapper.insert(t);
         }
 
-        // ③-d15 返済比率計算結果明細 (MAX only) — 1:N per (申込番号, 申込目的) keyed with 連番, pass-through.
+        // ③-d15 返済比率計算結果明細 (MAX only) - 1:N per (申込番号, 申込目的) keyed with 連番, pass-through.
         List<返済比率計算結果明細Source> repaymentRatioResultDetails =
                 emptyIfNull(repaymentRatioResultDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (返済比率計算結果明細Source src : repaymentRatioResultDetails) {
@@ -1147,7 +1304,7 @@ public class JutakuLoanService {
             repaymentRatioResultDetailTargetMapper.insert(t);
         }
 
-        // ③-d16 審査モデル回答 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d16 審査モデル回答 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答Source> scoringAnswers =
                 emptyIfNull(scoringAnswerSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答Source src : scoringAnswers) {
@@ -1164,7 +1321,7 @@ public class JutakuLoanService {
             scoringAnswerTargetMapper.insert(t);
         }
 
-        // ③-d17 審査モデル回答Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d17 審査モデル回答Ｓ (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答ＳSource> scoringAnswerS =
                 emptyIfNull(scoringAnswerSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答ＳSource src : scoringAnswerS) {
@@ -1181,7 +1338,7 @@ public class JutakuLoanService {
             scoringAnswerSTargetMapper.insert(t);
         }
 
-        // ③-d18 審査モデル回答判定 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d18 審査モデル回答判定 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答判定Source> scoringJudges =
                 emptyIfNull(scoringJudgeSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答判定Source src : scoringJudges) {
@@ -1201,7 +1358,7 @@ public class JutakuLoanService {
             scoringJudgeTargetMapper.insert(t);
         }
 
-        // ③-d19 審査モデル回答判定Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d19 審査モデル回答判定Ｓ (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答判定ＳSource> scoringJudgeS =
                 emptyIfNull(scoringJudgeSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答判定ＳSource src : scoringJudgeS) {
@@ -1221,7 +1378,7 @@ public class JutakuLoanService {
             scoringJudgeSTargetMapper.insert(t);
         }
 
-        // ③-d20 審査モデル回答明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d20 審査モデル回答明細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答明細Source> scoringDetails =
                 emptyIfNull(scoringDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答明細Source src : scoringDetails) {
@@ -1257,7 +1414,7 @@ public class JutakuLoanService {
             scoringDetailTargetMapper.insert(t);
         }
 
-        // ③-d21 審査モデル回答明細Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d21 審査モデル回答明細Ｓ (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル回答明細ＳSource> scoringDetailS =
                 emptyIfNull(scoringDetailSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル回答明細ＳSource src : scoringDetailS) {
@@ -1293,7 +1450,7 @@ public class JutakuLoanService {
             scoringDetailSTargetMapper.insert(t);
         }
 
-        // ③-d22 審査モデル照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d22 審査モデル照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル照会Source> scoringInquiries =
                 emptyIfNull(scoringInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル照会Source src : scoringInquiries) {
@@ -1311,7 +1468,7 @@ public class JutakuLoanService {
             scoringInquiryTargetMapper.insert(t);
         }
 
-        // ③-d23 審査モデル照会Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d23 審査モデル照会Ｓ (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル照会ＳSource> scoringInquiryS =
                 emptyIfNull(scoringInquirySSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル照会ＳSource src : scoringInquiryS) {
@@ -1329,7 +1486,7 @@ public class JutakuLoanService {
             scoringInquirySTargetMapper.insert(t);
         }
 
-        // ③-d24 審査モデル照会基本 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d24 審査モデル照会基本 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル照会基本Source> scoringInquiryBasics =
                 emptyIfNull(scoringInquiryBasicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル照会基本Source src : scoringInquiryBasics) {
@@ -1364,7 +1521,7 @@ public class JutakuLoanService {
             scoringInquiryBasicTargetMapper.insert(t);
         }
 
-        // ③-d25 審査モデル照会基本Ｓ (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d25 審査モデル照会基本Ｓ (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査モデル照会基本ＳSource> scoringInquiryBasicS =
                 emptyIfNull(scoringInquiryBasicSSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査モデル照会基本ＳSource src : scoringInquiryBasicS) {
@@ -1399,7 +1556,7 @@ public class JutakuLoanService {
             scoringInquiryBasicSTargetMapper.insert(t);
         }
 
-        // ③-d26 システム判定結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d26 システム判定結果 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<システム判定結果Source> systemJudgeResults =
                 emptyIfNull(systemJudgeResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (システム判定結果Source src : systemJudgeResults) {
@@ -1415,7 +1572,7 @@ public class JutakuLoanService {
             systemJudgeResultTargetMapper.insert(t);
         }
 
-        // ③-d27 システム判定結果明細 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d27 システム判定結果明細 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<システム判定結果明細Source> systemJudgeResultDetails =
                 emptyIfNull(systemJudgeResultDetailSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (システム判定結果明細Source src : systemJudgeResultDetails) {
@@ -1433,7 +1590,7 @@ public class JutakuLoanService {
             systemJudgeResultDetailTargetMapper.insert(t);
         }
 
-        // ③-d28 システム判定照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d28 システム判定照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<システム判定照会Source> systemJudgeInquiries =
                 emptyIfNull(systemJudgeInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (システム判定照会Source src : systemJudgeInquiries) {
@@ -1451,7 +1608,7 @@ public class JutakuLoanService {
             systemJudgeInquiryTargetMapper.insert(t);
         }
 
-        // ③-d29 住宅ローン不正検知結果 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d29 住宅ローン不正検知結果 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<住宅ローン不正検知結果Source> fraudDetectionResults =
                 emptyIfNull(fraudDetectionResultSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (住宅ローン不正検知結果Source src : fraudDetectionResults) {
@@ -1470,7 +1627,7 @@ public class JutakuLoanService {
             fraudDetectionResultTargetMapper.insert(t);
         }
 
-        // ③-d30 住宅ローン不正検知照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d30 住宅ローン不正検知照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<住宅ローン不正検知照会Source> fraudDetectionInquiries =
                 emptyIfNull(fraudDetectionInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (住宅ローン不正検知照会Source src : fraudDetectionInquiries) {
@@ -1519,7 +1676,7 @@ public class JutakuLoanService {
             fraudDetectionInquiryTargetMapper.insert(t);
         }
 
-        // ③-d31 審査結果照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d31 審査結果照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査結果照会Source> reviewResultInquiries =
                 emptyIfNull(reviewResultInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査結果照会Source src : reviewResultInquiries) {
@@ -1538,7 +1695,7 @@ public class JutakuLoanService {
             reviewResultInquiryTargetMapper.insert(t);
         }
 
-        // ③-d32 審査コメント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d32 審査コメント (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査コメントSource> reviewComments =
                 emptyIfNull(reviewCommentSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査コメントSource src : reviewComments) {
@@ -1556,7 +1713,7 @@ public class JutakuLoanService {
             reviewCommentTargetMapper.insert(t);
         }
 
-        // ③-d33 審査データ送信 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d33 審査データ送信 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査データ送信Source> reviewDataSends =
                 emptyIfNull(reviewDataSendSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査データ送信Source src : reviewDataSends) {
@@ -1576,7 +1733,7 @@ public class JutakuLoanService {
             reviewDataSendTargetMapper.insert(t);
         }
 
-        // ③-d34 審査ＳＮＡＶＩ連携 -> 審査ＳＮＡＶＩ連携イベント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d34 審査ＳＮＡＶＩ連携 -> 審査ＳＮＡＶＩ連携イベント (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査ＳＮＡＶＩ連携イベントSource> reviewSnaviLinkEvents =
                 emptyIfNull(reviewSnaviLinkEventSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査ＳＮＡＶＩ連携イベントSource src : reviewSnaviLinkEvents) {
@@ -1594,7 +1751,7 @@ public class JutakuLoanService {
             reviewSnaviLinkEventTargetMapper.insert(t);
         }
 
-        // ③-d35 審査ＳＮＡＶＩ連携内容 (MAX only) — 105 cols, 1:N per (申込番号, 申込目的).
+        // ③-d35 審査ＳＮＡＶＩ連携内容 (MAX only) - 105 cols, 1:N per (申込番号, 申込目的).
         // 上乗せ保証料 (source) -> 段階保証料率コード (target) aliased in the source SQL.
         List<審査ＳＮＡＶＩ連携内容Source> reviewSnaviLinkContents =
                 emptyIfNull(reviewSnaviLinkContentSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -1711,7 +1868,7 @@ public class JutakuLoanService {
             reviewSnaviLinkContentTargetMapper.insert(t);
         }
 
-        // ③-d36 審査契約書出力連携内容 -> ＩＦ＿契約書送信 (MAX only) — 143 cols, 1:N per (申込番号, 申込目的).
+        // ③-d36 審査契約書出力連携内容 -> ＩＦ＿契約書送信 (MAX only) - 143 cols, 1:N per (申込番号, 申込目的).
         // Renames handled via SQL aliases: ＣＩＦ->ＣＩＦ番号, 債務者甲名->債務者甲＿名,
         // 債務者甲名カナ->債務者甲＿名カナ, 標準金利パーセント->標準金利,
         // 全期間乖離幅＿数値->全期間乖離幅, 毎月返済２回目以降元金返済年月->毎月返済＿２回目以降元金返済年月日.
@@ -1868,7 +2025,7 @@ public class JutakuLoanService {
             contractDocSendTargetMapper.insert(t);
         }
 
-        // ③-d37 審査契約書出力連携 -> 契約書連携イベント (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d37 審査契約書出力連携 -> 契約書連携イベント (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<契約書連携イベントSource> contractLinkEvents =
                 emptyIfNull(contractLinkEventSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (契約書連携イベントSource src : contractLinkEvents) {
@@ -1886,7 +2043,7 @@ public class JutakuLoanService {
             contractLinkEventTargetMapper.insert(t);
         }
 
-        // ③-d38 審査預保照会 -> 審査預保照会 (MAX only) — 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d38 審査預保照会 -> 審査預保照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
         List<審査預保照会Source> reviewDepositGuaranteeInquiries =
                 emptyIfNull(reviewDepositGuaranteeInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (審査預保照会Source src : reviewDepositGuaranteeInquiries) {
@@ -1902,7 +2059,7 @@ public class JutakuLoanService {
             reviewDepositGuaranteeInquiryTargetMapper.insert(t);
         }
 
-        // ③-d39 保証結果メインじぶん -> 保証結果メインじぶん (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d39 保証結果メインじぶん -> 保証結果メインじぶん (MAX only) - 外部連携, 1:N per (申込番号, 申込目的), pass-through.
         List<保証結果メインじぶんSource> guaranteeResultMainJibuns =
                 emptyIfNull(guaranteeResultMainJibunSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証結果メインじぶんSource src : guaranteeResultMainJibuns) {
@@ -2088,7 +2245,7 @@ public class JutakuLoanService {
             guaranteeResultMainJibunTargetMapper.insert(t);
         }
 
-        // ③-d40 保証結果メインアルヒ -> 保証結果メインアルヒ (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d40 保証結果メインアルヒ -> 保証結果メインアルヒ (MAX only) - 外部連携, 1:N per (申込番号, 申込目的), pass-through.
         List<保証結果メインアルヒSource> guaranteeResultMainAruhis =
                 emptyIfNull(guaranteeResultMainAruhiSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証結果メインアルヒSource src : guaranteeResultMainAruhis) {
@@ -2300,7 +2457,7 @@ public class JutakuLoanService {
             guaranteeResultMainAruhiTargetMapper.insert(t);
         }
 
-        // ③-d41 保証結果融資条件じぶん -> 保証結果融資条件じぶん (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d41 保証結果融資条件じぶん -> 保証結果融資条件じぶん (MAX only) - 外部連携, 1:N per (申込番号, 申込目的), pass-through.
         List<保証結果融資条件じぶんSource> guaranteeResultFinanceJibuns =
                 emptyIfNull(guaranteeResultFinanceJibunSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証結果融資条件じぶんSource src : guaranteeResultFinanceJibuns) {
@@ -2322,7 +2479,7 @@ public class JutakuLoanService {
             guaranteeResultFinanceJibunTargetMapper.insert(t);
         }
 
-        // ③-d42 保証結果融資条件アルヒ -> 保証結果融資条件アルヒ (MAX only) — 外部連携, 1:N per (申込番号, 申込目的), pass-through.
+        // ③-d42 保証結果融資条件アルヒ -> 保証結果融資条件アルヒ (MAX only) - 外部連携, 1:N per (申込番号, 申込目的), pass-through.
         List<保証結果融資条件アルヒSource> guaranteeResultFinanceAruhis =
                 emptyIfNull(guaranteeResultFinanceAruhiSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
         for (保証結果融資条件アルヒSource src : guaranteeResultFinanceAruhis) {
@@ -2343,7 +2500,7 @@ public class JutakuLoanService {
             guaranteeResultFinanceAruhiTargetMapper.insert(t);
         }
 
-        // ③-d43 担当者別操作管理 -> 担当者別操作管理 (MAX only) — ログ, 1:N per (申込番号, 申込目的).
+        // ③-d43 担当者別操作管理 -> 担当者別操作管理 (MAX only) - ログ, 1:N per (申込番号, 申込目的).
         // 進捗コード converted via the 編集仕様詳細 code table; other columns pass through.
         List<担当者別操作管理Source> operationMgmtByPersons =
                 emptyIfNull(operationMgmtByPersonSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -2361,7 +2518,7 @@ public class JutakuLoanService {
             operationMgmtByPersonTargetMapper.insert(t);
         }
 
-        // ③-e ＩＦ＿担保評価連携結果 (MAX only) — 1:N per (申込番号, 申込目的) from 担保評価回答.
+        // ③-e ＩＦ＿担保評価連携結果 (MAX only) - 1:N per (申込番号, 申込目的) from 担保評価回答.
         // 一連番号 fixed '99999'; valuation columns pass through.
         List<担保評価回答Source> collateralValuations =
                 emptyIfNull(collateralValuationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -2381,7 +2538,7 @@ public class JutakuLoanService {
             collateralValuationResultTargetMapper.insert(valuationTarget);
         }
 
-        // ③-f ＩＦ＿担保評価連携結果＿ファイル (MAX only) — 担保評価回答 joined with 申込担保回答ＰＤＦ.
+        // ③-f ＩＦ＿担保評価連携結果＿ファイル (MAX only) - 担保評価回答 joined with 申込担保回答ＰＤＦ.
         // 一連番号 fixed '99999'; ファイル種別 <- ファイル種類.
         List<担保評価連携結果ファイルSource> valuationFiles =
                 emptyIfNull(collateralValuationFileSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
@@ -2403,14 +2560,14 @@ public class JutakuLoanService {
         for (申込審査段階Source stage : reviewStages) {
             String sourcePurpose = stage.get申込目的();
 
-            // ④ 申込審査状況 — FK to 申込.
+            // ④ 申込審査状況 - FK to 申込.
             申込審査状況Target reviewStatusTarget = new 申込審査状況Target();
             reviewStatusTarget.set申込番号(targetApplicationNumber);
             reviewStatusTarget.set申込目的(convertedPurpose);
             reviewStatusTarget.set回数(occurrenceNumber);
             reviewStatusTargetMapper.insert(reviewStatusTarget);
 
-            // ⑤ 履歴申込 — FK to 申込審査状況 (must precede 履歴申込審査段階/履歴保証人).
+            // ⑤ 履歴申込 - FK to 申込審査状況 (must precede 履歴申込審査段階/履歴保証人).
             申込Source historyApplicationSource =
                     applicationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose);
             if (historyApplicationSource != null) {
@@ -2420,7 +2577,7 @@ public class JutakuLoanService {
                 historyApplicationTarget.set回数(occurrenceNumber);
                 historyApplicationTargetMapper.insert(historyApplicationTarget);
 
-                // ⑤-a 履歴申込_業者_住宅 — FK to 履歴申込. Same gen-entity JOIN logic as 申込_業者_住宅,
+                // ⑤-a 履歴申込_業者_住宅 - FK to 履歴申込. Same gen-entity JOIN logic as 申込_業者_住宅,
                 // but keyed per completed stage (sourcePurpose) instead of maxSourcePurpose, with 回数 set.
                 SZB申込Key szbHistoryApplicationKey = new SZB申込Key();
                 szbHistoryApplicationKey.set申込番号(sourceApplicationNumber);
@@ -2440,19 +2597,25 @@ public class JutakuLoanService {
                         historyVendorHousingTarget.set業者名(historyVendor.get販売業者名());
                     }
                 }
-                // insert() (not insertSelective) — same OGNL/full-width-underscore issue as above.
+                // insert() (not insertSelective) - same OGNL/full-width-underscore issue as above.
                 historyApplicationVendorHousingTargetMapper.insert(historyVendorHousingTarget);
             }
 
-            // ⑥ 履歴申込審査段階 — FK to 履歴申込.
-            履歴申込審査段階Target historyReviewStageTarget = new 履歴申込審査段階Target();
+            // ⑥ 履歴申込審査段階 - FK to 履歴申込. Full column set via MBG-generated entity;
+            // the full source row is re-read by PK (申込番号 + this stage's 申込目的).
+            SMS履歴申込審査段階 historyReviewStageTarget = new SMS履歴申込審査段階();
             historyReviewStageTarget.set申込番号(targetApplicationNumber);
             historyReviewStageTarget.set申込目的(convertedPurpose);
             historyReviewStageTarget.set回数(occurrenceNumber);
-            historyReviewStageTarget.set審査完了区分(stage.get審査完了区分());
-            historyReviewStageTargetMapper.insert(historyReviewStageTarget);
+            SZB申込審査段階Key historyReviewStageKey = new SZB申込審査段階Key();
+            historyReviewStageKey.set申込番号(sourceApplicationNumber);
+            historyReviewStageKey.set申込目的(sourcePurpose);
+            SZB申込審査段階 srcHistoryReviewStage =
+                    reviewStageSourceMapperGen.selectByPrimaryKey(historyReviewStageKey);
+            map履歴申込審査段階(srcHistoryReviewStage, historyReviewStageTarget);
+            historyReviewStageTargetMapperGen.insert(historyReviewStageTarget);
 
-            // ⑦ 履歴保証人 — FK to 履歴申込.
+            // ⑦ 履歴保証人 - FK to 履歴申込.
             List<保証人Source> historyGuarantors =
                     emptyIfNull(guarantorSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose));
             for (保証人Source guarantor : historyGuarantors) {
@@ -2464,7 +2627,7 @@ public class JutakuLoanService {
                 historyGuarantorTargetMapper.insert(historyGuarantorTarget);
             }
 
-            // ⑧ 履歴保証検討表補足 — FK to 履歴申込.
+            // ⑧ 履歴保証検討表補足 - FK to 履歴申込.
             保証検討表補足Source historyGuaranteeSupplement =
                     guaranteeReviewSupplementSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, sourcePurpose);
             if (historyGuaranteeSupplement != null) {
@@ -2730,6 +2893,116 @@ public class JutakuLoanService {
             case "9900": return "JT9200";
             default:     return value; // TODO(編集仕様詳細): 9500:振分待ち undecided (ARUHI/external loans only)
         }
+    }
+
+    // 決裁段階 (approval stage) - used by 申込決裁進捗.決裁段階 / 最終決裁段階 / 次決裁段階.
+    // Source values: 00:担当者 10:審査役 20:主任審査役 30:担当部長 40:グループ長 50:部長 60:社長席 70:代表取締役
+    // (別紙)編集仕様詳細「決裁段階」/ コード設定「0021:保証決裁段階」.
+    // TODO(編集仕様詳細): source→target remap not yet transcribed; pass through until the code table is confirmed.
+    private static String conv決裁段階(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value; // TODO(編集仕様詳細): apply 0021:保証決裁段階 mapping once shared.
+    }
+
+    // 審査結果 (review result) - (別紙)編集仕様詳細「審査結果」.
+    // 1→1:承認, 2:条件付承認→1:承認, 3→3:否認, 4→4:返却, 5→5:取下, 6:差戻し→(未定).
+    // Applies to 銀行続行結果 / 銀行審査結果 / 保証審査結果 / 保証結果入力結果 / 銀行決裁結果 / 最終審査結果.
+    private static String conv審査結果(String value) {
+        if (value == null) {
+            return null;
+        }
+        switch (value) {
+            case "1": return "1"; // 承認
+            case "2": return "1"; // 条件付承認 → 承認
+            case "3": return "3"; // 否認
+            case "4": return "4"; // 返却
+            case "5": return "5"; // 取下
+            default:  return value; // TODO(編集仕様詳細): 6:差戻し 未定
+        }
+    }
+
+    // Maps every 申込審査段階 column (No.689-726) from the generated source row to the main target.
+    // 申込番号 / 申込目的 are set by the caller. Source and target column names are identical
+    // except 保証会社受付日付 (target) ← 保証会社発行日付 (source, No.705).
+    private static void map申込審査段階Main(SZB申込審査段階 s, SMS申込審査段階 t) {
+        if (s == null) {
+            return;
+        }
+        t.set振分完了日付(s.get振分完了日付());
+        t.set振分ユーザ名(s.get振分ユーザ名());
+        t.set申込入力日付(s.get申込入力日付());
+        t.set申込ユーザ名(s.get申込ユーザ名());
+        t.setベリファイ日付(s.getベリファイ日付());
+        t.setベリファイユーザ名(s.getベリファイユーザ名());
+        t.set銀行続行日付(s.get銀行続行日付());
+        t.set銀行続行ユーザ名(s.get銀行続行ユーザ名());
+        t.set銀行続行結果(conv審査結果(s.get銀行続行結果()));
+        t.set銀行審査日付(s.get銀行審査日付());
+        t.set銀行審査ユーザ名(s.get銀行審査ユーザ名());
+        t.set銀行審査結果(conv審査結果(s.get銀行審査結果()));
+        t.set保証会社受付日付(s.get保証会社発行日付());
+        t.set保証審査日付(s.get保証審査日付());
+        t.set保証審査ユーザ名(s.get保証審査ユーザ名());
+        t.set保証審査結果(conv審査結果(s.get保証審査結果()));
+        t.set保証結果入力日付(s.get保証結果入力日付());
+        t.set保証審査入力ユーザ名(s.get保証審査入力ユーザ名());
+        t.set保証結果入力結果(conv審査結果(s.get保証結果入力結果()));
+        t.set銀行決裁日付(s.get銀行決裁日付());
+        t.set銀行決裁ユーザ名(s.get銀行決裁ユーザ名());
+        t.set銀行決裁結果(conv審査結果(s.get銀行決裁結果()));
+        t.set最終審査結果日付(s.get最終審査結果日付());
+        t.set最終審査ユーザ名(s.get最終審査ユーザ名());
+        t.set最終審査結果(conv審査結果(s.get最終審査結果()));
+        t.set審査段階(s.get審査段階());
+        t.set審査完了日付(s.get審査完了日付());
+        t.set審査完了区分(s.get審査完了区分());
+        t.set追認要求日付(s.get追認要求日付());
+        t.set追認要求ユーザ名(s.get追認要求ユーザ名());
+        t.set追認結果(s.get追認結果());
+        t.set追認結果日付(s.get追認結果日付());
+        t.set追認結果ユーザ名(s.get追認結果ユーザ名());
+    }
+
+    // Same column set as map申込審査段階Main, targeting the 履歴 entity (回数 set by the caller).
+    private static void map履歴申込審査段階(SZB申込審査段階 s, SMS履歴申込審査段階 t) {
+        if (s == null) {
+            return;
+        }
+        t.set振分完了日付(s.get振分完了日付());
+        t.set振分ユーザ名(s.get振分ユーザ名());
+        t.set申込入力日付(s.get申込入力日付());
+        t.set申込ユーザ名(s.get申込ユーザ名());
+        t.setベリファイ日付(s.getベリファイ日付());
+        t.setベリファイユーザ名(s.getベリファイユーザ名());
+        t.set銀行続行日付(s.get銀行続行日付());
+        t.set銀行続行ユーザ名(s.get銀行続行ユーザ名());
+        t.set銀行続行結果(conv審査結果(s.get銀行続行結果()));
+        t.set銀行審査日付(s.get銀行審査日付());
+        t.set銀行審査ユーザ名(s.get銀行審査ユーザ名());
+        t.set銀行審査結果(conv審査結果(s.get銀行審査結果()));
+        t.set保証会社受付日付(s.get保証会社発行日付());
+        t.set保証審査日付(s.get保証審査日付());
+        t.set保証審査ユーザ名(s.get保証審査ユーザ名());
+        t.set保証審査結果(conv審査結果(s.get保証審査結果()));
+        t.set保証結果入力日付(s.get保証結果入力日付());
+        t.set保証審査入力ユーザ名(s.get保証審査入力ユーザ名());
+        t.set保証結果入力結果(conv審査結果(s.get保証結果入力結果()));
+        t.set銀行決裁日付(s.get銀行決裁日付());
+        t.set銀行決裁ユーザ名(s.get銀行決裁ユーザ名());
+        t.set銀行決裁結果(conv審査結果(s.get銀行決裁結果()));
+        t.set最終審査結果日付(s.get最終審査結果日付());
+        t.set最終審査ユーザ名(s.get最終審査ユーザ名());
+        t.set最終審査結果(conv審査結果(s.get最終審査結果()));
+        t.set審査段階(s.get審査段階());
+        t.set審査完了日付(s.get審査完了日付());
+        t.set審査完了区分(s.get審査完了区分());
+        t.set追認要求日付(s.get追認要求日付());
+        t.set追認要求ユーザ名(s.get追認要求ユーザ名());
+        t.set追認結果(s.get追認結果());
+        t.set追認結果日付(s.get追認結果日付());
+        t.set追認結果ユーザ名(s.get追認結果ユーザ名());
     }
 
     /**
