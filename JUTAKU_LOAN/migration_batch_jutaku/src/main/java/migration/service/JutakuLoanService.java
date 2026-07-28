@@ -658,6 +658,14 @@ public class JutakuLoanService {
         // The MAX source 申込目的 is the last element of the ascending-sorted list.
         String maxSourcePurpose = reviewStages.get(reviewStages.size() - 1).get申込目的();
 
+        // 申込審査段階 (MAX 申込目的) is the paired review-stage row. Its 審査段階 is reused as the
+        // 審査段階 PK component of 申込決裁進捗 (保証決裁進捗 itself has no 審査段階), and it also
+        // supplies the full 申込審査段階 / 履歴申込審査段階 target columns below.
+        SZB申込審査段階Key reviewStageKey = new SZB申込審査段階Key();
+        reviewStageKey.set申込番号(sourceApplicationNumber);
+        reviewStageKey.set申込目的(maxSourcePurpose);
+        SZB申込審査段階 srcReviewStage = reviewStageSourceMapperGen.selectByPrimaryKey(reviewStageKey);
+
         // ① 申込 main (MAX only) - inserted FIRST because 申込審査段階/保証人 both FK to 申込.
         申込Source sourceApplication =
                 applicationSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose);
@@ -705,6 +713,10 @@ public class JutakuLoanService {
                 approvalProgressTarget.set申込目的(convertedPurpose);
                 approvalProgressTarget.set作成日時(srcApprovalProgress.get作成日時());
                 approvalProgressTarget.set更新日時(srcApprovalProgress.get更新日時());
+                // 審査段階 is NOT NULL on the target (part of the PK). 保証決裁進捗 has no 審査段階,
+                // so reuse the paired 申込審査段階 record's 審査段階 (same 申込番号 + MAX 申込目的).
+                // TODO(編集仕様詳細): confirm the correct source of 申込決裁進捗.審査段階.
+                approvalProgressTarget.set審査段階(srcReviewStage != null ? srcReviewStage.get審査段階() : null);
                 approvalProgressTarget.set決裁段階(conv決裁段階(srcApprovalProgress.get決裁段階()));
                 approvalProgressTarget.set状態(srcApprovalProgress.get状態());
                 approvalProgressTarget.set最終決裁段階(conv決裁段階(srcApprovalProgress.get最終決裁段階()));
@@ -720,10 +732,7 @@ public class JutakuLoanService {
         SMS申込審査段階 reviewStageTarget = new SMS申込審査段階();
         reviewStageTarget.set申込番号(targetApplicationNumber);
         reviewStageTarget.set申込目的(convertedPurpose);
-        SZB申込審査段階Key reviewStageKey = new SZB申込審査段階Key();
-        reviewStageKey.set申込番号(sourceApplicationNumber);
-        reviewStageKey.set申込目的(maxSourcePurpose);
-        SZB申込審査段階 srcReviewStage = reviewStageSourceMapperGen.selectByPrimaryKey(reviewStageKey);
+        // srcReviewStage was loaded once at the top of this method (reused by 申込決裁進捗 above).
         map申込審査段階Main(srcReviewStage, reviewStageTarget);
         // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
         reviewStageTargetMapperGen.insert(reviewStageTarget);
