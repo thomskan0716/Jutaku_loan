@@ -703,6 +703,8 @@ public class JutakuLoanService {
                 SMS申込決裁進捗 approvalProgressTarget = new SMS申込決裁進捗();
                 approvalProgressTarget.set申込番号(targetApplicationNumber);
                 approvalProgressTarget.set申込目的(convertedPurpose);
+                approvalProgressTarget.set作成日時(srcApprovalProgress.get作成日時());
+                approvalProgressTarget.set更新日時(srcApprovalProgress.get更新日時());
                 approvalProgressTarget.set決裁段階(conv決裁段階(srcApprovalProgress.get決裁段階()));
                 approvalProgressTarget.set状態(srcApprovalProgress.get状態());
                 approvalProgressTarget.set最終決裁段階(conv決裁段階(srcApprovalProgress.get最終決裁段階()));
