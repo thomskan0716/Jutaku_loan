@@ -17,6 +17,21 @@
 -- Order = children first (FK-safe). Run top to bottom, then COMMIT.
 -- ============================================================
 
+-- ＫＳＣ２ receipt-number-keyed tables (no 申込番号): delete via the 受付番号 carried by
+-- our migrated 審査ＫＳＣ照会 rows (申込番号 LIKE '3%').
+DELETE FROM ITF_SMS.ＫＳＣ２ＣＩＣ
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２サービス状態エラー
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２回答情報
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２官報個人
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２官報法人
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+-- ＫＳＣ２マスター is a run-once master with no 申込番号/受付番号 key: full delete.
+DELETE FROM ITF_SMS.ＫＳＣ２マスター;
+
 -- history detail (FK -> 履歴申込)
 DELETE FROM ITF_SMS."履歴申込＿業者＿住宅" WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.履歴申込審査段階       WHERE 申込番号 LIKE '3%';

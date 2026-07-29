@@ -37,6 +37,37 @@ import migration.mybatis.domain.itf_sms.SMS申込審査段階;
 import migration.mybatis.mapper.itf_sms.SMS申込審査段階Mapper;
 import migration.mybatis.domain.itf_sms.SMS履歴申込審査段階;
 import migration.mybatis.mapper.itf_sms.SMS履歴申込審査段階Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣ;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣExample;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２ＣＩＣMapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２ＣＩＣ;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２ＣＩＣMapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２サービス状態エラー;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２サービス状態エラーExample;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２サービス状態エラーMapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２サービス状態エラー;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２サービス状態エラーMapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２回答情報;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２回答情報Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２回答情報Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２回答情報;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２回答情報Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報個人;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報個人Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２官報個人Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２官報個人;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２官報個人Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報法人;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報法人Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２官報法人Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２官報法人;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２官報法人Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスター;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスターExample;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２マスターMapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２マスター;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２マスターExample;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２マスターMapper;
 import migration.domain.target.申込担保情報ＰＤＦTarget;
 import migration.domain.target.申込審査履歴Target;
 import migration.domain.source.保証検討表補足Source;
@@ -382,6 +413,31 @@ public class JutakuLoanService {
     private SMS申込審査段階Mapper reviewStageTargetMapperGen;
     @Autowired
     private SMS履歴申込審査段階Mapper historyReviewStageTargetMapperGen;
+    // ＫＳＣ２ receipt-number-keyed tables (bridge via 審査ＫＳＣ照会). MBG-generated.
+    @Autowired
+    private SZBＫＳＣ２ＣＩＣMapper ksc2CicSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２ＣＩＣMapper ksc2CicTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２サービス状態エラーMapper ksc2ServiceErrorSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２サービス状態エラーMapper ksc2ServiceErrorTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２回答情報Mapper ksc2AnswerInfoSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２回答情報Mapper ksc2AnswerInfoTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２官報個人Mapper ksc2GazetteIndividualSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２官報個人Mapper ksc2GazetteIndividualTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２官報法人Mapper ksc2GazetteCorporateSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２官報法人Mapper ksc2GazetteCorporateTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２マスターMapper ksc2MasterSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２マスターMapper ksc2MasterTargetMapper;
     @Autowired
     private 申込TargetMapper applicationTargetMapper;
     @Autowired
@@ -546,6 +602,11 @@ public class JutakuLoanService {
 
         log.info("Processing range: {} ~ {}", fromRowNumber, toRowNumber);
 
+        // Run-once masters (no 申込番号/受付番号): copied a single time, guarded by an
+        // empty-target check so re-running a range (or later ranges) does not duplicate.
+        // TODO(architecture): move to a dedicated run-once step per Amano's decision.
+        migrateＫＳＣ２マスター();
+
         List<申込進捗Source> progressRecords = emptyIfNull(applicationProgressSourceMapper.selectByRowRange(fromRowNumber, toRowNumber));
 
         int migratedCount = 0;
@@ -635,6 +696,24 @@ public class JutakuLoanService {
         log.debug("Migrated 申込番号={} → {} (preliminary={}, formal={})",
                 sourceApplicationNumber, targetApplicationNumber, preliminaryStages.size(), formalStages.size());
         return true;
+    }
+
+    // ＫＳＣ２マスター (run-once master): no 申込番号/受付番号 key, so it is a full copy.
+    // Guarded by an empty-target check so it is inserted only once across all ranges.
+    // Source and target share the same table/column names, so copyLikeNamedProperties applies.
+    private void migrateＫＳＣ２マスター() {
+        long existing = ksc2MasterTargetMapper.countByExample(new SMSＫＳＣ２マスターExample());
+        if (existing > 0) {
+            return;
+        }
+        List<SZBＫＳＣ２マスター> masters = emptyIfNull(
+                ksc2MasterSourceMapper.selectByExample(new SZBＫＳＣ２マスターExample()));
+        for (SZBＫＳＣ２マスター src : masters) {
+            SMSＫＳＣ２マスター target = new SMSＫＳＣ２マスター();
+            copyLikeNamedProperties(src, target);
+            ksc2MasterTargetMapper.insert(target);
+        }
+        log.info("  [ＫＳＣ２マスター] run-once copy inserted {} rows", masters.size());
     }
 
     // Inserts every target table for one review group (preliminary or formal).
@@ -906,6 +985,64 @@ public class JutakuLoanService {
             reviewKscCreditDetailTarget.set発生日(reviewKscCreditDetail.get発生日());
             reviewKscCreditDetailTarget.set契約日(reviewKscCreditDetail.get契約日());
             reviewKscCreditDetailTargetMapper.insert(reviewKscCreditDetailTarget);
+        }
+
+        // ③-d5b ＫＳＣ２ receipt-number-keyed tables (bridge via 審査ＫＳＣ照会 -> 受付番号).
+        // These tables have no 申込番号/申込目的; they are reached through the 受付番号 carried
+        // by the 審査ＫＳＣ照会 rows loaded above (reviewKscs, 1:N). Columns are a straight 1:1
+        // copy (identical names, target width >= source), so a generic same-name copy is used;
+        // the 作成日時/更新日時 audit columns ride along automatically. 受付番号 is copied as-is
+        // (a bureau number, not subject to the 申込番号 2->3 rule).
+        for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
+            String kscReceptionNumber = reviewKsc.get受付番号();
+            if (kscReceptionNumber == null) {
+                continue;
+            }
+
+            // ＫＳＣ２ＣＩＣ - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２ＣＩＣExample ksc2CicExample = new SZBＫＳＣ２ＣＩＣExample();
+            ksc2CicExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ２ＣＩＣ srcKsc2Cic : emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample))) {
+                SMSＫＳＣ２ＣＩＣ ksc2CicTarget = new SMSＫＳＣ２ＣＩＣ();
+                copyLikeNamedProperties(srcKsc2Cic, ksc2CicTarget);
+                ksc2CicTargetMapper.insert(ksc2CicTarget);
+            }
+
+            // ＫＳＣ２サービス状態エラー - 1:N per 受付番号.
+            SZBＫＳＣ２サービス状態エラーExample ksc2ServiceErrorExample = new SZBＫＳＣ２サービス状態エラーExample();
+            ksc2ServiceErrorExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ２サービス状態エラー srcKsc2ServiceError : emptyIfNull(ksc2ServiceErrorSourceMapper.selectByExample(ksc2ServiceErrorExample))) {
+                SMSＫＳＣ２サービス状態エラー ksc2ServiceErrorTarget = new SMSＫＳＣ２サービス状態エラー();
+                copyLikeNamedProperties(srcKsc2ServiceError, ksc2ServiceErrorTarget);
+                ksc2ServiceErrorTargetMapper.insert(ksc2ServiceErrorTarget);
+            }
+
+            // ＫＳＣ２回答情報 - 1:N per 受付番号. ~154 columns, all identical source->target.
+            SZBＫＳＣ２回答情報Example ksc2AnswerInfoExample = new SZBＫＳＣ２回答情報Example();
+            ksc2AnswerInfoExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ２回答情報 srcKsc2AnswerInfo : emptyIfNull(ksc2AnswerInfoSourceMapper.selectByExample(ksc2AnswerInfoExample))) {
+                SMSＫＳＣ２回答情報 ksc2AnswerInfoTarget = new SMSＫＳＣ２回答情報();
+                copyLikeNamedProperties(srcKsc2AnswerInfo, ksc2AnswerInfoTarget);
+                ksc2AnswerInfoTargetMapper.insert(ksc2AnswerInfoTarget);
+            }
+
+            // ＫＳＣ２官報個人 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２官報個人Example ksc2GazetteIndividualExample = new SZBＫＳＣ２官報個人Example();
+            ksc2GazetteIndividualExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ２官報個人 srcKsc2GazetteIndividual : emptyIfNull(ksc2GazetteIndividualSourceMapper.selectByExample(ksc2GazetteIndividualExample))) {
+                SMSＫＳＣ２官報個人 ksc2GazetteIndividualTarget = new SMSＫＳＣ２官報個人();
+                copyLikeNamedProperties(srcKsc2GazetteIndividual, ksc2GazetteIndividualTarget);
+                ksc2GazetteIndividualTargetMapper.insert(ksc2GazetteIndividualTarget);
+            }
+
+            // ＫＳＣ２官報法人 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２官報法人Example ksc2GazetteCorporateExample = new SZBＫＳＣ２官報法人Example();
+            ksc2GazetteCorporateExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ２官報法人 srcKsc2GazetteCorporate : emptyIfNull(ksc2GazetteCorporateSourceMapper.selectByExample(ksc2GazetteCorporateExample))) {
+                SMSＫＳＣ２官報法人 ksc2GazetteCorporateTarget = new SMSＫＳＣ２官報法人();
+                copyLikeNamedProperties(srcKsc2GazetteCorporate, ksc2GazetteCorporateTarget);
+                ksc2GazetteCorporateTargetMapper.insert(ksc2GazetteCorporateTarget);
+            }
         }
 
         // ③-d6 審査ＪＩＣＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
@@ -2670,6 +2807,45 @@ public class JutakuLoanService {
     // can be iterated safely without a NullPointerException.
     private static <T> List<T> emptyIfNull(List<T> list) {
         return list == null ? java.util.Collections.emptyList() : list;
+    }
+
+    // Copies every property whose name AND type match between source and target getters/setters.
+    // Used for straight 1:1 table copies (e.g. the ＫＳＣ２ bureau tables) where source and target
+    // share identical column names, including audit columns (作成日時/更新日時) not in the mapping
+    // sheet. getMethods() is used so inherited PK getters (from the MBG *Key superclass) are copied.
+    // Target-only properties (no matching source getter) are simply left untouched (null).
+    private static void copyLikeNamedProperties(Object source, Object target) {
+        if (source == null || target == null) {
+            return;
+        }
+        java.util.Map<String, java.lang.reflect.Method> setters = new java.util.HashMap<>();
+        for (java.lang.reflect.Method m : target.getClass().getMethods()) {
+            if (m.getName().startsWith("set") && m.getParameterCount() == 1) {
+                setters.put(m.getName().substring(3), m);
+            }
+        }
+        for (java.lang.reflect.Method getter : source.getClass().getMethods()) {
+            if (getter.getParameterCount() != 0) {
+                continue;
+            }
+            String property;
+            if (getter.getName().startsWith("get") && !"getClass".equals(getter.getName())) {
+                property = getter.getName().substring(3);
+            } else if (getter.getName().startsWith("is")) {
+                property = getter.getName().substring(2);
+            } else {
+                continue;
+            }
+            java.lang.reflect.Method setter = setters.get(property);
+            if (setter == null || !setter.getParameterTypes()[0].isAssignableFrom(getter.getReturnType())) {
+                continue;
+            }
+            try {
+                setter.invoke(target, getter.invoke(source));
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("copyLikeNamedProperties failed for property: " + property, e);
+            }
+        }
     }
 
     // Truncates a value so it fits within maxBytes bytes in MS932 (Shift-JIS) encoding.
