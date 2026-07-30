@@ -29,6 +29,9 @@ DELETE FROM ITF_SMS.ＫＳＣ２官報個人
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.ＫＳＣ２官報法人
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+-- ＫＳＣ照会管理 (No.99) is the FK parent of the ＫＳＣ２ detail tables: delete AFTER them.
+DELETE FROM ITF_SMS.ＫＳＣ照会管理
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
 -- ＫＳＣ２マスター is a run-once master with no 申込番号/受付番号 key: full delete.
 DELETE FROM ITF_SMS.ＫＳＣ２マスター;
 
@@ -48,6 +51,7 @@ DELETE FROM ITF_SMS.申込決裁進捗           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込審査段階           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証人                 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証検討表補足         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.申込顛末管理           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込担保情報ＰＤＦ      WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込審査履歴           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込関連申込           WHERE 申込番号 LIKE '3%';

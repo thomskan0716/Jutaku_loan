@@ -37,6 +37,11 @@ import migration.mybatis.domain.itf_sms.SMS申込審査段階;
 import migration.mybatis.mapper.itf_sms.SMS申込審査段階Mapper;
 import migration.mybatis.domain.itf_sms.SMS履歴申込審査段階;
 import migration.mybatis.mapper.itf_sms.SMS履歴申込審査段階Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ照会管理;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ照会管理Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ照会管理Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ照会管理;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ照会管理Mapper;
 import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣ;
 import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣExample;
 import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２ＣＩＣMapper;
@@ -414,6 +419,12 @@ public class JutakuLoanService {
     @Autowired
     private SMS履歴申込審査段階Mapper historyReviewStageTargetMapperGen;
     // ＫＳＣ２ receipt-number-keyed tables (bridge via 審査ＫＳＣ照会). MBG-generated.
+    // ＫＳＣ照会管理 (No.99) is the parent of every ＫＳＣ２ detail table (FK on 受付日時+受付番号),
+    // so it must be migrated before them.
+    @Autowired
+    private SZBＫＳＣ照会管理Mapper kscInquiryMgmtSourceMapper;
+    @Autowired
+    private SMSＫＳＣ照会管理Mapper kscInquiryMgmtTargetMapper;
     @Autowired
     private SZBＫＳＣ２ＣＩＣMapper ksc2CicSourceMapper;
     @Autowired
@@ -997,6 +1008,16 @@ public class JutakuLoanService {
             String kscReceptionNumber = reviewKsc.get受付番号();
             if (kscReceptionNumber == null) {
                 continue;
+            }
+
+            // ＫＳＣ照会管理 (No.99) - parent of all ＫＳＣ２ detail tables (FK 受付日時+受付番号).
+            // Must be inserted BEFORE the detail tables. 1:N per 受付番号 (PK 受付日時+受付番号).
+            SZBＫＳＣ照会管理Example kscInquiryMgmtExample = new SZBＫＳＣ照会管理Example();
+            kscInquiryMgmtExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
+            for (SZBＫＳＣ照会管理 srcKscInquiryMgmt : emptyIfNull(kscInquiryMgmtSourceMapper.selectByExample(kscInquiryMgmtExample))) {
+                SMSＫＳＣ照会管理 kscInquiryMgmtTarget = new SMSＫＳＣ照会管理();
+                copyLikeNamedProperties(srcKscInquiryMgmt, kscInquiryMgmtTarget);
+                kscInquiryMgmtTargetMapper.insert(kscInquiryMgmtTarget);
             }
 
             // ＫＳＣ２ＣＩＣ - 1:N per 受付番号 (PK 受付番号 + 該当者通番).

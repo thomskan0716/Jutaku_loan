@@ -47,6 +47,41 @@ All rows below are **対象となる (in scope)**. Source table names == target 
 Gaps in the No. sequence (108/110/124, and `ＫＳＣ２照会回答` / `ＫＳＣ２全債連回答`)
 are 対象外 (新システム未使用) per `テーブルマッピング`.
 
+### FK relationship chain (VERIFIED against the DB — memorize this)
+The physical foreign keys for the KSC group are:
+
+```
+申込審査履歴 (申込番号, 申込目的, イベント='ＫＳＣ照会', イベント日時)
+   └─(FK)─ 審査ＫＳＣ照会        ← BRIDGE only. Its parent is 申込審査履歴.
+                                   Carries 受付番号 but is NOT a parent of ＫＳＣ２*.
+ＫＳＣ照会管理 (受付日時, 受付番号)  ← No parent of its own. THE FK parent of all ＫＳＣ２* details.
+   ├─(FK)─ ＫＳＣ２ＣＩＣ
+   ├─(FK)─ ＫＳＣ２サービス状態エラー
+   ├─(FK)─ ＫＳＣ２回答情報
+   ├─(FK)─ ＫＳＣ２官報個人
+   └─(FK)─ ＫＳＣ２官報法人
+```
+
+Consequences:
+- **Migration insert order** (per application): `審査ＫＳＣ照会` → `ＫＳＣ照会管理` → the 5 details.
+  `ＫＳＣ照会管理` MUST be inserted before the details or they hit `ORA-02291`.
+- **Cleanup order** (target): delete the 5 details first, then `ＫＳＣ照会管理` (children before parent).
+- **The link between the bridge and the details is `受付番号` (no FK), not a DB relationship.**
+  `審査ＫＳＣ照会.受付番号` == `ＫＳＣ照会管理.受付番号` == `ＫＳＣ２*.受付番号`.
+
+### Seeding a minimal valid chain (source SZB_SMS, for end-to-end testing)
+Because the FKs go all the way up to `申込審査履歴`, seed **top-down**, all sharing one
+`受付番号` and one `受付日時`/`イベント日時` literal:
+1. `申込審査履歴` (申込番号, 申込目的, イベント='ＫＳＣ照会', イベント日時, 進捗コード, 回数)
+2. `審査ＫＳＣ照会` (same 申込番号/申込目的/イベント/イベント日時, 連番, 別名連番, 受付番号)
+3. `ＫＳＣ照会管理` (受付日時, 受付番号)   — 受付日時 == the イベント日時 literal
+4. the 5 `ＫＳＣ２*` rows (受付日時, 受付番号 == same literals)
+
+**Gotcha for the test run:** the migration loads `審査ＫＳＣ照会` filtered by
+`申込目的 == maxSourcePurpose` (the MAX 申込目的 of the app's formal group). If the seed's
+`申込目的` is not that MAX value, `reviewKscs` comes back empty and the KSC2 targets stay
+empty even though the seed inserted fine. If targets are empty after a run, check this first.
+
 ### Migration patterns
 - **Pattern A — 受付番号 bridge (per application).** Driven by the existing
   `申込進捗` loop. For each application, `審査ＫＳＣ照会` (already loaded as `reviewKscs`)
