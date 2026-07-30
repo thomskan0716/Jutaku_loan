@@ -96,7 +96,11 @@ import migration.mapper.target.保証検討表補足TargetMapper;
 import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
 import migration.domain.source.審査チェック照会Source;
-import migration.domain.source.審査ＫＳＣ照会Source;
+import migration.mybatis.domain.szb_sms.SZB審査ＫＳＣ照会;
+import migration.mybatis.domain.szb_sms.SZB審査ＫＳＣ照会Example;
+import migration.mybatis.mapper.szb_sms.SZB審査ＫＳＣ照会Mapper;
+import migration.mybatis.domain.itf_sms.SMS審査ＫＳＣ照会;
+import migration.mybatis.mapper.itf_sms.SMS審査ＫＳＣ照会Mapper;
 import migration.domain.source.審査ＪＩＣＣ照会Source;
 import migration.domain.source.審査ＣＩＣ照会Source;
 import migration.domain.source.個信類似照会管理Source;
@@ -142,7 +146,6 @@ import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
 import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
-import migration.domain.target.審査ＫＳＣ照会Target;
 import migration.domain.target.審査ＪＩＣＣ照会Target;
 import migration.domain.target.審査ＣＩＣ照会Target;
 import migration.domain.target.個信類似照会管理Target;
@@ -188,7 +191,6 @@ import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
-import migration.mapper.source.審査ＫＳＣ照会SourceMapper;
 import migration.mapper.source.審査ＪＩＣＣ照会SourceMapper;
 import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
 import migration.mapper.source.個信類似照会管理SourceMapper;
@@ -234,7 +236,6 @@ import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
 import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
-import migration.mapper.target.審査ＫＳＣ照会TargetMapper;
 import migration.mapper.target.審査ＪＩＣＣ照会TargetMapper;
 import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
 import migration.mapper.target.個信類似照会管理TargetMapper;
@@ -316,7 +317,7 @@ public class JutakuLoanService {
     @Autowired
     private 審査チェック照会SourceMapper reviewCheckSourceMapper;
     @Autowired
-    private 審査ＫＳＣ照会SourceMapper reviewKscSourceMapper;
+    private SZB審査ＫＳＣ照会Mapper reviewKscSourceMapper;
     @Autowired
     private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
     @Autowired
@@ -482,7 +483,7 @@ public class JutakuLoanService {
     @Autowired
     private 審査チェック照会TargetMapper reviewCheckTargetMapper;
     @Autowired
-    private 審査ＫＳＣ照会TargetMapper reviewKscTargetMapper;
+    private SMS審査ＫＳＣ照会Mapper reviewKscTargetMapper;
     @Autowired
     private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
     @Autowired
@@ -897,10 +898,16 @@ public class JutakuLoanService {
 
         // ③-d2 審査ＫＳＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
-        List<審査ＫＳＣ照会Source> reviewKscs =
-                emptyIfNull(reviewKscSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
-        for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
-            審査ＫＳＣ照会Target reviewKscTarget = new 審査ＫＳＣ照会Target();
+        // Implemented via auto-generated gen-folder entities (Nakamura's generator).
+        SZB審査ＫＳＣ照会Example reviewKscExample = new SZB審査ＫＳＣ照会Example();
+        reviewKscExample.createCriteria()
+                .and申込番号EqualTo(sourceApplicationNumber)
+                .and申込目的EqualTo(maxSourcePurpose);
+        reviewKscExample.setOrderByClause("イベント日時, 連番, 別名連番");
+        List<SZB審査ＫＳＣ照会> reviewKscs =
+                emptyIfNull(reviewKscSourceMapper.selectByExample(reviewKscExample));
+        for (SZB審査ＫＳＣ照会 reviewKsc : reviewKscs) {
+            SMS審査ＫＳＣ照会 reviewKscTarget = new SMS審査ＫＳＣ照会();
             reviewKscTarget.set申込番号(targetApplicationNumber);
             reviewKscTarget.set申込目的(convertedPurpose);
             reviewKscTarget.setイベント(reviewKsc.getイベント());
@@ -910,6 +917,7 @@ public class JutakuLoanService {
             reviewKscTarget.set受付日時(reviewKsc.get受付日時());
             reviewKscTarget.set受付番号(reviewKsc.get受付番号());
             reviewKscTarget.setコメント(reviewKsc.getコメント());
+            // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
             reviewKscTargetMapper.insert(reviewKscTarget);
         }
 
@@ -1004,17 +1012,24 @@ public class JutakuLoanService {
         // copy (identical names, target width >= source), so a generic same-name copy is used;
         // the 作成日時/更新日時 audit columns ride along automatically. 受付番号 is copied as-is
         // (a bureau number, not subject to the 申込番号 2->3 rule).
-        for (審査ＫＳＣ照会Source reviewKsc : reviewKscs) {
+        for (SZB審査ＫＳＣ照会 reviewKsc : reviewKscs) {
             String kscReceptionNumber = reviewKsc.get受付番号();
             if (kscReceptionNumber == null) {
                 continue;
             }
+            // ＫＳＣ照会管理/ＫＳＣ２* 受付番号 columns are CHAR(12) (blank-padded on storage).
+            // Oracle uses non-padded comparison when either side is VARCHAR2, so an unpadded
+            // bind value never matches the padded stored value - pad to 12 chars to match.
+            String paddedKscReceptionNumber = String.format("%-12s", kscReceptionNumber);
+            log.info("DEBUG ksc2 bridge: kscReceptionNumber=[{}] length={}", kscReceptionNumber, kscReceptionNumber.length());
 
             // ＫＳＣ照会管理 (No.99) - parent of all ＫＳＣ２ detail tables (FK 受付日時+受付番号).
             // Must be inserted BEFORE the detail tables. 1:N per 受付番号 (PK 受付日時+受付番号).
             SZBＫＳＣ照会管理Example kscInquiryMgmtExample = new SZBＫＳＣ照会管理Example();
-            kscInquiryMgmtExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ照会管理 srcKscInquiryMgmt : emptyIfNull(kscInquiryMgmtSourceMapper.selectByExample(kscInquiryMgmtExample))) {
+            kscInquiryMgmtExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ照会管理> kscInquiryMgmtList = emptyIfNull(kscInquiryMgmtSourceMapper.selectByExample(kscInquiryMgmtExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ照会管理 found {} rows", kscInquiryMgmtList.size());
+            for (SZBＫＳＣ照会管理 srcKscInquiryMgmt : kscInquiryMgmtList) {
                 SMSＫＳＣ照会管理 kscInquiryMgmtTarget = new SMSＫＳＣ照会管理();
                 copyLikeNamedProperties(srcKscInquiryMgmt, kscInquiryMgmtTarget);
                 kscInquiryMgmtTargetMapper.insert(kscInquiryMgmtTarget);
@@ -1022,8 +1037,10 @@ public class JutakuLoanService {
 
             // ＫＳＣ２ＣＩＣ - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
             SZBＫＳＣ２ＣＩＣExample ksc2CicExample = new SZBＫＳＣ２ＣＩＣExample();
-            ksc2CicExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ２ＣＩＣ srcKsc2Cic : emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample))) {
+            ksc2CicExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２ＣＩＣ> ksc2CicList = emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２ＣＩＣ found {} rows", ksc2CicList.size());
+            for (SZBＫＳＣ２ＣＩＣ srcKsc2Cic : ksc2CicList) {
                 SMSＫＳＣ２ＣＩＣ ksc2CicTarget = new SMSＫＳＣ２ＣＩＣ();
                 copyLikeNamedProperties(srcKsc2Cic, ksc2CicTarget);
                 ksc2CicTargetMapper.insert(ksc2CicTarget);
@@ -1031,8 +1048,10 @@ public class JutakuLoanService {
 
             // ＫＳＣ２サービス状態エラー - 1:N per 受付番号.
             SZBＫＳＣ２サービス状態エラーExample ksc2ServiceErrorExample = new SZBＫＳＣ２サービス状態エラーExample();
-            ksc2ServiceErrorExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ２サービス状態エラー srcKsc2ServiceError : emptyIfNull(ksc2ServiceErrorSourceMapper.selectByExample(ksc2ServiceErrorExample))) {
+            ksc2ServiceErrorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２サービス状態エラー> ksc2ServiceErrorList = emptyIfNull(ksc2ServiceErrorSourceMapper.selectByExample(ksc2ServiceErrorExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２サービス状態エラー found {} rows", ksc2ServiceErrorList.size());
+            for (SZBＫＳＣ２サービス状態エラー srcKsc2ServiceError : ksc2ServiceErrorList) {
                 SMSＫＳＣ２サービス状態エラー ksc2ServiceErrorTarget = new SMSＫＳＣ２サービス状態エラー();
                 copyLikeNamedProperties(srcKsc2ServiceError, ksc2ServiceErrorTarget);
                 ksc2ServiceErrorTargetMapper.insert(ksc2ServiceErrorTarget);
@@ -1040,8 +1059,10 @@ public class JutakuLoanService {
 
             // ＫＳＣ２回答情報 - 1:N per 受付番号. ~154 columns, all identical source->target.
             SZBＫＳＣ２回答情報Example ksc2AnswerInfoExample = new SZBＫＳＣ２回答情報Example();
-            ksc2AnswerInfoExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ２回答情報 srcKsc2AnswerInfo : emptyIfNull(ksc2AnswerInfoSourceMapper.selectByExample(ksc2AnswerInfoExample))) {
+            ksc2AnswerInfoExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２回答情報> ksc2AnswerInfoList = emptyIfNull(ksc2AnswerInfoSourceMapper.selectByExample(ksc2AnswerInfoExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２回答情報 found {} rows", ksc2AnswerInfoList.size());
+            for (SZBＫＳＣ２回答情報 srcKsc2AnswerInfo : ksc2AnswerInfoList) {
                 SMSＫＳＣ２回答情報 ksc2AnswerInfoTarget = new SMSＫＳＣ２回答情報();
                 copyLikeNamedProperties(srcKsc2AnswerInfo, ksc2AnswerInfoTarget);
                 ksc2AnswerInfoTargetMapper.insert(ksc2AnswerInfoTarget);
@@ -1049,8 +1070,10 @@ public class JutakuLoanService {
 
             // ＫＳＣ２官報個人 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
             SZBＫＳＣ２官報個人Example ksc2GazetteIndividualExample = new SZBＫＳＣ２官報個人Example();
-            ksc2GazetteIndividualExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ２官報個人 srcKsc2GazetteIndividual : emptyIfNull(ksc2GazetteIndividualSourceMapper.selectByExample(ksc2GazetteIndividualExample))) {
+            ksc2GazetteIndividualExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２官報個人> ksc2GazetteIndividualList = emptyIfNull(ksc2GazetteIndividualSourceMapper.selectByExample(ksc2GazetteIndividualExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２官報個人 found {} rows", ksc2GazetteIndividualList.size());
+            for (SZBＫＳＣ２官報個人 srcKsc2GazetteIndividual : ksc2GazetteIndividualList) {
                 SMSＫＳＣ２官報個人 ksc2GazetteIndividualTarget = new SMSＫＳＣ２官報個人();
                 copyLikeNamedProperties(srcKsc2GazetteIndividual, ksc2GazetteIndividualTarget);
                 ksc2GazetteIndividualTargetMapper.insert(ksc2GazetteIndividualTarget);
@@ -1058,8 +1081,10 @@ public class JutakuLoanService {
 
             // ＫＳＣ２官報法人 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
             SZBＫＳＣ２官報法人Example ksc2GazetteCorporateExample = new SZBＫＳＣ２官報法人Example();
-            ksc2GazetteCorporateExample.createCriteria().and受付番号EqualTo(kscReceptionNumber);
-            for (SZBＫＳＣ２官報法人 srcKsc2GazetteCorporate : emptyIfNull(ksc2GazetteCorporateSourceMapper.selectByExample(ksc2GazetteCorporateExample))) {
+            ksc2GazetteCorporateExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２官報法人> ksc2GazetteCorporateList = emptyIfNull(ksc2GazetteCorporateSourceMapper.selectByExample(ksc2GazetteCorporateExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２官報法人 found {} rows", ksc2GazetteCorporateList.size());
+            for (SZBＫＳＣ２官報法人 srcKsc2GazetteCorporate : ksc2GazetteCorporateList) {
                 SMSＫＳＣ２官報法人 ksc2GazetteCorporateTarget = new SMSＫＳＣ２官報法人();
                 copyLikeNamedProperties(srcKsc2GazetteCorporate, ksc2GazetteCorporateTarget);
                 ksc2GazetteCorporateTargetMapper.insert(ksc2GazetteCorporateTarget);
