@@ -1,0 +1,36 @@
+---
+description: Keep source files MS932 (Shift-JIS) safe so they can be pasted into the VM's Eclipse
+alwaysApply: true
+---
+
+# Keep source MS932 (Shift-JIS) safe
+
+Code is authored locally in **UTF-8** but pasted into the VM's Eclipse and saved as
+**MS932 (Windows-31J / CP932)**. Eclipse refuses to save any character that has no MS932
+mapping ("Some characters cannot be mapped using MS932 character encoding"). So every file
+we write must contain **only characters that also exist in MS932**.
+
+## Rule
+
+- Use **ASCII punctuation only** in comments and string/char literals. Never paste
+  "typographer" punctuation copied from docs/spec sheets.
+- Do NOT change local files to Shift-JIS encoding: the repo is all UTF-8 and the transfer
+  is copy/paste (Eclipse re-encodes on save), so only the *content* must be MS932-safe.
+
+## Characters to avoid (NOT in MS932) -> use instead
+
+- `—` em dash (U+2014), `–` en dash (U+2013)  ->  `-` ASCII hyphen
+- `“ ” ‘ ’` curly quotes (U+201C/201D/2018/2019)  ->  `"` and `'`
+- `−` minus sign (U+2212)  ->  `-`
+- Any exotic dash/quote/space pasted from Excel/Word.
+
+## Safe in MS932 (fine to use)
+
+- Normal ASCII, Japanese kanji/kana, full-width digits/underscore `０-９` `＿`,
+  `②` circled numbers, `→` `←` arrows, `…` ellipsis, `「」` `（）` brackets.
+
+## Quick self-check
+
+If a VM save ever fails on encoding, the culprit is almost always a smart dash/quote.
+Scan the file for non-CP932 characters (Python): each char that raises on
+`ch.encode('cp932')` is an offender; replace with the ASCII equivalent above.

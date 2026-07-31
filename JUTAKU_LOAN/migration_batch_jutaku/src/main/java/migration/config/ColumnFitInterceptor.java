@@ -35,9 +35,10 @@ import lombok.extern.slf4j.Slf4j;
  * read live from the database (user_tab_columns), for ALL target tables:
  * <ul>
  *   <li>String values are truncated to the column's byte length (Shift-JIS / MS932)
- *       — prevents ORA-12899 (value too large).</li>
- *   <li>BigDecimal values are clamped to NUMBER(precision, scale)
- *       — prevents ORA-01438 (value larger than precision).</li>
+ *       - prevents ORA-12899 (value too large).</li>
+ *   <li>Numeric values (BigDecimal, BigInteger, Long, Integer, Short, Byte, Double,
+ *       Float) are clamped to NUMBER(precision, scale)
+ *       - prevents ORA-01438 (value larger than precision).</li>
  * </ul>
  * Column metadata and the per-statement property→column mapping are cached.
  * If metadata cannot be read, the insert proceeds unchanged (fail-safe).
@@ -122,16 +123,61 @@ public class ColumnFitInterceptor implements Interceptor {
                         table, column, s, tr, cl.type, cl.byteLen);
                 return tr;
             }
-        } else if (v instanceof BigDecimal && "NUMBER".equalsIgnoreCase(cl.type) && cl.precision > 0) {
-            BigDecimal bd = (BigDecimal) v;
+        } else if (v instanceof Number && "NUMBER".equalsIgnoreCase(cl.type) && cl.precision > 0) {
+            // MBG maps NUMBER(p,0) to Short/Integer/Long (not BigDecimal), so clamp every
+            // numeric type - otherwise an oversized int slips through as ORA-01438.
+            BigDecimal bd = toBigDecimal((Number) v);
             BigDecimal c = clamp(bd, cl.precision, Math.max(cl.scale, 0));
             if (c.compareTo(bd) != 0) {
                 log.warn("CLAMP {}.{}: {} -> {} (NUMBER({},{}))",
                         table, column, bd.toPlainString(), c.toPlainString(), cl.precision, cl.scale);
-                return c;
+                return convertToType(c, v.getClass());
             }
         }
         return v;
+    }
+
+    /** Widen any Number to BigDecimal without losing digits. */
+    private static BigDecimal toBigDecimal(Number n) {
+        if (n instanceof BigDecimal) {
+            return (BigDecimal) n;
+        }
+        if (n instanceof java.math.BigInteger) {
+            return new BigDecimal((java.math.BigInteger) n);
+        }
+        if (n instanceof Double || n instanceof Float) {
+            return BigDecimal.valueOf(n.doubleValue());
+        }
+        return BigDecimal.valueOf(n.longValue());
+    }
+
+    /** Convert the clamped BigDecimal back to the original property's numeric type. */
+    private static Object convertToType(BigDecimal c, Class<?> type) {
+        if (type == BigDecimal.class) {
+            return c;
+        }
+        if (type == java.math.BigInteger.class) {
+            return c.toBigInteger();
+        }
+        if (type == Long.class) {
+            return c.longValue();
+        }
+        if (type == Integer.class) {
+            return c.intValue();
+        }
+        if (type == Short.class) {
+            return c.shortValue();
+        }
+        if (type == Byte.class) {
+            return c.byteValue();
+        }
+        if (type == Double.class) {
+            return c.doubleValue();
+        }
+        if (type == Float.class) {
+            return c.floatValue();
+        }
+        return c;
     }
 
     /** Extract the table name following INSERT INTO. */
