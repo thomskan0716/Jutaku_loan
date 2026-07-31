@@ -29,6 +29,40 @@ DELETE FROM ITF_SMS.ＫＳＣ２官報個人
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.ＫＳＣ２官報法人
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２項目エラー
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社取引
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社取引属性
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社照会記録
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社正規化取引
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社正規化取引属性
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社正規化照会記録
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２自社不渡
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２取引
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２取引属性
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２取引停止個人
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２受付管理
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２照会記録
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２全情連
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２不渡
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２本人申告
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.ＫＳＣ２本人申告属性
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');
 -- ＫＳＣ照会管理 (No.99) is the FK parent of the ＫＳＣ２ detail tables: delete AFTER them.
 DELETE FROM ITF_SMS.ＫＳＣ照会管理
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＫＳＣ照会 WHERE 申込番号 LIKE '3%');

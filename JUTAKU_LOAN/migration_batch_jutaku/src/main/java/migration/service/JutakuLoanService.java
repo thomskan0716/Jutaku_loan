@@ -67,6 +67,91 @@ import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報法人Example;
 import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２官報法人Mapper;
 import migration.mybatis.domain.itf_sms.SMSＫＳＣ２官報法人;
 import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２官報法人Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２項目エラー;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２項目エラーExample;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２項目エラーMapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２項目エラー;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２項目エラーMapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社取引Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社取引;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社取引Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引属性;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引属性Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社取引属性Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社取引属性;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社取引属性Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社照会記録;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社照会記録Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社照会記録Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社照会記録;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社照会記録Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化取引Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化取引;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化取引Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引属性;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引属性Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化取引属性Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化取引属性;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化取引属性Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化照会記録;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化照会記録Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化照会記録Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化照会記録;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化照会記録Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社不渡;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社不渡Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社不渡Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社不渡;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社不渡Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引属性;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引属性Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引属性Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引属性;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引属性Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引停止個人;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引停止個人Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引停止個人Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引停止個人;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引停止個人Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２受付管理;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２受付管理Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２受付管理Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２受付管理;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２受付管理Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２照会記録;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２照会記録Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２照会記録Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２照会記録;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２照会記録Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２全情連;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２全情連Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２全情連Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２全情連;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２全情連Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２不渡;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２不渡Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２不渡Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２不渡;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２不渡Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２本人申告Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２本人申告;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２本人申告Mapper;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告属性;
+import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告属性Example;
+import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２本人申告属性Mapper;
+import migration.mybatis.domain.itf_sms.SMSＫＳＣ２本人申告属性;
+import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２本人申告属性Mapper;
 import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスター;
 import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスターExample;
 import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２マスターMapper;
@@ -446,6 +531,74 @@ public class JutakuLoanService {
     private SZBＫＳＣ２官報法人Mapper ksc2GazetteCorporateSourceMapper;
     @Autowired
     private SMSＫＳＣ２官報法人Mapper ksc2GazetteCorporateTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２項目エラーMapper ksc2ItemErrorSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２項目エラーMapper ksc2ItemErrorTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社取引Mapper ksc2SelfTransactionSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社取引Mapper ksc2SelfTransactionTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社取引属性Mapper ksc2SelfTransactionAttributeSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社取引属性Mapper ksc2SelfTransactionAttributeTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社照会記録Mapper ksc2SelfInquiryRecordSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社照会記録Mapper ksc2SelfInquiryRecordTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社正規化取引Mapper ksc2SelfNormalizedTransactionSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社正規化取引Mapper ksc2SelfNormalizedTransactionTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社正規化取引属性Mapper ksc2SelfNormalizedTransactionAttributeSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社正規化取引属性Mapper ksc2SelfNormalizedTransactionAttributeTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社正規化照会記録Mapper ksc2SelfNormalizedInquiryRecordSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社正規化照会記録Mapper ksc2SelfNormalizedInquiryRecordTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２自社不渡Mapper ksc2SelfDishonorSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２自社不渡Mapper ksc2SelfDishonorTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２取引Mapper ksc2TransactionSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２取引Mapper ksc2TransactionTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２取引属性Mapper ksc2TransactionAttributeSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２取引属性Mapper ksc2TransactionAttributeTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２取引停止個人Mapper ksc2TransactionSuspensionIndividualSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２取引停止個人Mapper ksc2TransactionSuspensionIndividualTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２受付管理Mapper ksc2ReceptionMgmtSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２受付管理Mapper ksc2ReceptionMgmtTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２照会記録Mapper ksc2InquiryRecordSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２照会記録Mapper ksc2InquiryRecordTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２全情連Mapper ksc2ZenjorenSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２全情連Mapper ksc2ZenjorenTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２不渡Mapper ksc2DishonorSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２不渡Mapper ksc2DishonorTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２本人申告Mapper ksc2SelfDeclarationSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２本人申告Mapper ksc2SelfDeclarationTargetMapper;
+    @Autowired
+    private SZBＫＳＣ２本人申告属性Mapper ksc2SelfDeclarationAttributeSourceMapper;
+    @Autowired
+    private SMSＫＳＣ２本人申告属性Mapper ksc2SelfDeclarationAttributeTargetMapper;
     @Autowired
     private SZBＫＳＣ２マスターMapper ksc2MasterSourceMapper;
     @Autowired
@@ -1088,6 +1241,193 @@ public class JutakuLoanService {
                 SMSＫＳＣ２官報法人 ksc2GazetteCorporateTarget = new SMSＫＳＣ２官報法人();
                 copyLikeNamedProperties(srcKsc2GazetteCorporate, ksc2GazetteCorporateTarget);
                 ksc2GazetteCorporateTargetMapper.insert(ksc2GazetteCorporateTarget);
+            }
+
+            // ＫＳＣ２項目エラー - 1:N per 受付番号.
+            SZBＫＳＣ２項目エラーExample ksc2ItemErrorExample = new SZBＫＳＣ２項目エラーExample();
+            ksc2ItemErrorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２項目エラー> ksc2ItemErrorList = emptyIfNull(ksc2ItemErrorSourceMapper.selectByExample(ksc2ItemErrorExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２項目エラー found {} rows", ksc2ItemErrorList.size());
+            for (SZBＫＳＣ２項目エラー srcKsc2ItemError : ksc2ItemErrorList) {
+                SMSＫＳＣ２項目エラー ksc2ItemErrorTarget = new SMSＫＳＣ２項目エラー();
+                copyLikeNamedProperties(srcKsc2ItemError, ksc2ItemErrorTarget);
+                ksc2ItemErrorTargetMapper.insert(ksc2ItemErrorTarget);
+            }
+
+            // ＫＳＣ２自社取引 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社取引Example ksc2SelfTransactionExample = new SZBＫＳＣ２自社取引Example();
+            ksc2SelfTransactionExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社取引> ksc2SelfTransactionList = emptyIfNull(ksc2SelfTransactionSourceMapper.selectByExample(ksc2SelfTransactionExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社取引 found {} rows", ksc2SelfTransactionList.size());
+            for (SZBＫＳＣ２自社取引 srcKsc2SelfTransaction : ksc2SelfTransactionList) {
+                SMSＫＳＣ２自社取引 ksc2SelfTransactionTarget = new SMSＫＳＣ２自社取引();
+                copyLikeNamedProperties(srcKsc2SelfTransaction, ksc2SelfTransactionTarget);
+                ksc2SelfTransactionTargetMapper.insert(ksc2SelfTransactionTarget);
+            }
+
+            // ＫＳＣ２自社取引属性 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社取引属性Example ksc2SelfTransactionAttributeExample = new SZBＫＳＣ２自社取引属性Example();
+            ksc2SelfTransactionAttributeExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社取引属性> ksc2SelfTransactionAttributeList = emptyIfNull(ksc2SelfTransactionAttributeSourceMapper.selectByExample(ksc2SelfTransactionAttributeExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社取引属性 found {} rows", ksc2SelfTransactionAttributeList.size());
+            for (SZBＫＳＣ２自社取引属性 srcKsc2SelfTransactionAttribute : ksc2SelfTransactionAttributeList) {
+                SMSＫＳＣ２自社取引属性 ksc2SelfTransactionAttributeTarget = new SMSＫＳＣ２自社取引属性();
+                copyLikeNamedProperties(srcKsc2SelfTransactionAttribute, ksc2SelfTransactionAttributeTarget);
+                ksc2SelfTransactionAttributeTargetMapper.insert(ksc2SelfTransactionAttributeTarget);
+            }
+
+            // ＫＳＣ２自社照会記録 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社照会記録Example ksc2SelfInquiryRecordExample = new SZBＫＳＣ２自社照会記録Example();
+            ksc2SelfInquiryRecordExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社照会記録> ksc2SelfInquiryRecordList = emptyIfNull(ksc2SelfInquiryRecordSourceMapper.selectByExample(ksc2SelfInquiryRecordExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社照会記録 found {} rows", ksc2SelfInquiryRecordList.size());
+            for (SZBＫＳＣ２自社照会記録 srcKsc2SelfInquiryRecord : ksc2SelfInquiryRecordList) {
+                SMSＫＳＣ２自社照会記録 ksc2SelfInquiryRecordTarget = new SMSＫＳＣ２自社照会記録();
+                copyLikeNamedProperties(srcKsc2SelfInquiryRecord, ksc2SelfInquiryRecordTarget);
+                ksc2SelfInquiryRecordTargetMapper.insert(ksc2SelfInquiryRecordTarget);
+            }
+
+            // ＫＳＣ２自社正規化取引 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社正規化取引Example ksc2SelfNormalizedTransactionExample = new SZBＫＳＣ２自社正規化取引Example();
+            ksc2SelfNormalizedTransactionExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社正規化取引> ksc2SelfNormalizedTransactionList = emptyIfNull(ksc2SelfNormalizedTransactionSourceMapper.selectByExample(ksc2SelfNormalizedTransactionExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社正規化取引 found {} rows", ksc2SelfNormalizedTransactionList.size());
+            for (SZBＫＳＣ２自社正規化取引 srcKsc2SelfNormalizedTransaction : ksc2SelfNormalizedTransactionList) {
+                SMSＫＳＣ２自社正規化取引 ksc2SelfNormalizedTransactionTarget = new SMSＫＳＣ２自社正規化取引();
+                copyLikeNamedProperties(srcKsc2SelfNormalizedTransaction, ksc2SelfNormalizedTransactionTarget);
+                ksc2SelfNormalizedTransactionTargetMapper.insert(ksc2SelfNormalizedTransactionTarget);
+            }
+
+            // ＫＳＣ２自社正規化取引属性 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社正規化取引属性Example ksc2SelfNormalizedTransactionAttributeExample = new SZBＫＳＣ２自社正規化取引属性Example();
+            ksc2SelfNormalizedTransactionAttributeExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社正規化取引属性> ksc2SelfNormalizedTransactionAttributeList = emptyIfNull(ksc2SelfNormalizedTransactionAttributeSourceMapper.selectByExample(ksc2SelfNormalizedTransactionAttributeExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社正規化取引属性 found {} rows", ksc2SelfNormalizedTransactionAttributeList.size());
+            for (SZBＫＳＣ２自社正規化取引属性 srcKsc2SelfNormalizedTransactionAttribute : ksc2SelfNormalizedTransactionAttributeList) {
+                SMSＫＳＣ２自社正規化取引属性 ksc2SelfNormalizedTransactionAttributeTarget = new SMSＫＳＣ２自社正規化取引属性();
+                copyLikeNamedProperties(srcKsc2SelfNormalizedTransactionAttribute, ksc2SelfNormalizedTransactionAttributeTarget);
+                ksc2SelfNormalizedTransactionAttributeTargetMapper.insert(ksc2SelfNormalizedTransactionAttributeTarget);
+            }
+
+            // ＫＳＣ２自社正規化照会記録 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社正規化照会記録Example ksc2SelfNormalizedInquiryRecordExample = new SZBＫＳＣ２自社正規化照会記録Example();
+            ksc2SelfNormalizedInquiryRecordExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社正規化照会記録> ksc2SelfNormalizedInquiryRecordList = emptyIfNull(ksc2SelfNormalizedInquiryRecordSourceMapper.selectByExample(ksc2SelfNormalizedInquiryRecordExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社正規化照会記録 found {} rows", ksc2SelfNormalizedInquiryRecordList.size());
+            for (SZBＫＳＣ２自社正規化照会記録 srcKsc2SelfNormalizedInquiryRecord : ksc2SelfNormalizedInquiryRecordList) {
+                SMSＫＳＣ２自社正規化照会記録 ksc2SelfNormalizedInquiryRecordTarget = new SMSＫＳＣ２自社正規化照会記録();
+                copyLikeNamedProperties(srcKsc2SelfNormalizedInquiryRecord, ksc2SelfNormalizedInquiryRecordTarget);
+                ksc2SelfNormalizedInquiryRecordTargetMapper.insert(ksc2SelfNormalizedInquiryRecordTarget);
+            }
+
+            // ＫＳＣ２自社不渡 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２自社不渡Example ksc2SelfDishonorExample = new SZBＫＳＣ２自社不渡Example();
+            ksc2SelfDishonorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２自社不渡> ksc2SelfDishonorList = emptyIfNull(ksc2SelfDishonorSourceMapper.selectByExample(ksc2SelfDishonorExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２自社不渡 found {} rows", ksc2SelfDishonorList.size());
+            for (SZBＫＳＣ２自社不渡 srcKsc2SelfDishonor : ksc2SelfDishonorList) {
+                SMSＫＳＣ２自社不渡 ksc2SelfDishonorTarget = new SMSＫＳＣ２自社不渡();
+                copyLikeNamedProperties(srcKsc2SelfDishonor, ksc2SelfDishonorTarget);
+                ksc2SelfDishonorTargetMapper.insert(ksc2SelfDishonorTarget);
+            }
+
+            // ＫＳＣ２取引 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２取引Example ksc2TransactionExample = new SZBＫＳＣ２取引Example();
+            ksc2TransactionExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２取引> ksc2TransactionList = emptyIfNull(ksc2TransactionSourceMapper.selectByExample(ksc2TransactionExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２取引 found {} rows", ksc2TransactionList.size());
+            for (SZBＫＳＣ２取引 srcKsc2Transaction : ksc2TransactionList) {
+                SMSＫＳＣ２取引 ksc2TransactionTarget = new SMSＫＳＣ２取引();
+                copyLikeNamedProperties(srcKsc2Transaction, ksc2TransactionTarget);
+                ksc2TransactionTargetMapper.insert(ksc2TransactionTarget);
+            }
+
+            // ＫＳＣ２取引属性 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２取引属性Example ksc2TransactionAttributeExample = new SZBＫＳＣ２取引属性Example();
+            ksc2TransactionAttributeExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２取引属性> ksc2TransactionAttributeList = emptyIfNull(ksc2TransactionAttributeSourceMapper.selectByExample(ksc2TransactionAttributeExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２取引属性 found {} rows", ksc2TransactionAttributeList.size());
+            for (SZBＫＳＣ２取引属性 srcKsc2TransactionAttribute : ksc2TransactionAttributeList) {
+                SMSＫＳＣ２取引属性 ksc2TransactionAttributeTarget = new SMSＫＳＣ２取引属性();
+                copyLikeNamedProperties(srcKsc2TransactionAttribute, ksc2TransactionAttributeTarget);
+                ksc2TransactionAttributeTargetMapper.insert(ksc2TransactionAttributeTarget);
+            }
+
+            // ＫＳＣ２取引停止個人 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２取引停止個人Example ksc2TransactionSuspensionIndividualExample = new SZBＫＳＣ２取引停止個人Example();
+            ksc2TransactionSuspensionIndividualExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２取引停止個人> ksc2TransactionSuspensionIndividualList = emptyIfNull(ksc2TransactionSuspensionIndividualSourceMapper.selectByExample(ksc2TransactionSuspensionIndividualExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２取引停止個人 found {} rows", ksc2TransactionSuspensionIndividualList.size());
+            for (SZBＫＳＣ２取引停止個人 srcKsc2TransactionSuspensionIndividual : ksc2TransactionSuspensionIndividualList) {
+                SMSＫＳＣ２取引停止個人 ksc2TransactionSuspensionIndividualTarget = new SMSＫＳＣ２取引停止個人();
+                copyLikeNamedProperties(srcKsc2TransactionSuspensionIndividual, ksc2TransactionSuspensionIndividualTarget);
+                ksc2TransactionSuspensionIndividualTargetMapper.insert(ksc2TransactionSuspensionIndividualTarget);
+            }
+
+            // ＫＳＣ２受付管理 - 1:N per 受付番号 (PK 受付番号 + 受付日時).
+            SZBＫＳＣ２受付管理Example ksc2ReceptionMgmtExample = new SZBＫＳＣ２受付管理Example();
+            ksc2ReceptionMgmtExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２受付管理> ksc2ReceptionMgmtList = emptyIfNull(ksc2ReceptionMgmtSourceMapper.selectByExample(ksc2ReceptionMgmtExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２受付管理 found {} rows", ksc2ReceptionMgmtList.size());
+            for (SZBＫＳＣ２受付管理 srcKsc2ReceptionMgmt : ksc2ReceptionMgmtList) {
+                SMSＫＳＣ２受付管理 ksc2ReceptionMgmtTarget = new SMSＫＳＣ２受付管理();
+                copyLikeNamedProperties(srcKsc2ReceptionMgmt, ksc2ReceptionMgmtTarget);
+                ksc2ReceptionMgmtTargetMapper.insert(ksc2ReceptionMgmtTarget);
+            }
+
+            // ＫＳＣ２照会記録 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２照会記録Example ksc2InquiryRecordExample = new SZBＫＳＣ２照会記録Example();
+            ksc2InquiryRecordExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２照会記録> ksc2InquiryRecordList = emptyIfNull(ksc2InquiryRecordSourceMapper.selectByExample(ksc2InquiryRecordExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２照会記録 found {} rows", ksc2InquiryRecordList.size());
+            for (SZBＫＳＣ２照会記録 srcKsc2InquiryRecord : ksc2InquiryRecordList) {
+                SMSＫＳＣ２照会記録 ksc2InquiryRecordTarget = new SMSＫＳＣ２照会記録();
+                copyLikeNamedProperties(srcKsc2InquiryRecord, ksc2InquiryRecordTarget);
+                ksc2InquiryRecordTargetMapper.insert(ksc2InquiryRecordTarget);
+            }
+
+            // ＫＳＣ２全情連 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２全情連Example ksc2ZenjorenExample = new SZBＫＳＣ２全情連Example();
+            ksc2ZenjorenExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２全情連> ksc2ZenjorenList = emptyIfNull(ksc2ZenjorenSourceMapper.selectByExample(ksc2ZenjorenExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２全情連 found {} rows", ksc2ZenjorenList.size());
+            for (SZBＫＳＣ２全情連 srcKsc2Zenjoren : ksc2ZenjorenList) {
+                SMSＫＳＣ２全情連 ksc2ZenjorenTarget = new SMSＫＳＣ２全情連();
+                copyLikeNamedProperties(srcKsc2Zenjoren, ksc2ZenjorenTarget);
+                ksc2ZenjorenTargetMapper.insert(ksc2ZenjorenTarget);
+            }
+
+            // ＫＳＣ２不渡 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２不渡Example ksc2DishonorExample = new SZBＫＳＣ２不渡Example();
+            ksc2DishonorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２不渡> ksc2DishonorList = emptyIfNull(ksc2DishonorSourceMapper.selectByExample(ksc2DishonorExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２不渡 found {} rows", ksc2DishonorList.size());
+            for (SZBＫＳＣ２不渡 srcKsc2Dishonor : ksc2DishonorList) {
+                SMSＫＳＣ２不渡 ksc2DishonorTarget = new SMSＫＳＣ２不渡();
+                copyLikeNamedProperties(srcKsc2Dishonor, ksc2DishonorTarget);
+                ksc2DishonorTargetMapper.insert(ksc2DishonorTarget);
+            }
+
+            // ＫＳＣ２本人申告 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２本人申告Example ksc2SelfDeclarationExample = new SZBＫＳＣ２本人申告Example();
+            ksc2SelfDeclarationExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２本人申告> ksc2SelfDeclarationList = emptyIfNull(ksc2SelfDeclarationSourceMapper.selectByExample(ksc2SelfDeclarationExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２本人申告 found {} rows", ksc2SelfDeclarationList.size());
+            for (SZBＫＳＣ２本人申告 srcKsc2SelfDeclaration : ksc2SelfDeclarationList) {
+                SMSＫＳＣ２本人申告 ksc2SelfDeclarationTarget = new SMSＫＳＣ２本人申告();
+                copyLikeNamedProperties(srcKsc2SelfDeclaration, ksc2SelfDeclarationTarget);
+                ksc2SelfDeclarationTargetMapper.insert(ksc2SelfDeclarationTarget);
+            }
+
+            // ＫＳＣ２本人申告属性 - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
+            SZBＫＳＣ２本人申告属性Example ksc2SelfDeclarationAttributeExample = new SZBＫＳＣ２本人申告属性Example();
+            ksc2SelfDeclarationAttributeExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            List<SZBＫＳＣ２本人申告属性> ksc2SelfDeclarationAttributeList = emptyIfNull(ksc2SelfDeclarationAttributeSourceMapper.selectByExample(ksc2SelfDeclarationAttributeExample));
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２本人申告属性 found {} rows", ksc2SelfDeclarationAttributeList.size());
+            for (SZBＫＳＣ２本人申告属性 srcKsc2SelfDeclarationAttribute : ksc2SelfDeclarationAttributeList) {
+                SMSＫＳＣ２本人申告属性 ksc2SelfDeclarationAttributeTarget = new SMSＫＳＣ２本人申告属性();
+                copyLikeNamedProperties(srcKsc2SelfDeclarationAttribute, ksc2SelfDeclarationAttributeTarget);
+                ksc2SelfDeclarationAttributeTargetMapper.insert(ksc2SelfDeclarationAttributeTarget);
             }
         }
 
