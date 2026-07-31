@@ -186,7 +186,16 @@ import migration.mybatis.domain.szb_sms.SZB審査ＫＳＣ照会Example;
 import migration.mybatis.mapper.szb_sms.SZB審査ＫＳＣ照会Mapper;
 import migration.mybatis.domain.itf_sms.SMS審査ＫＳＣ照会;
 import migration.mybatis.mapper.itf_sms.SMS審査ＫＳＣ照会Mapper;
-import migration.domain.source.審査ＪＩＣＣ照会Source;
+import migration.mybatis.domain.szb_sms.SZB審査ＪＩＣＣ照会;
+import migration.mybatis.domain.szb_sms.SZB審査ＪＩＣＣ照会Example;
+import migration.mybatis.mapper.szb_sms.SZB審査ＪＩＣＣ照会Mapper;
+import migration.mybatis.domain.itf_sms.SMS審査ＪＩＣＣ照会;
+import migration.mybatis.mapper.itf_sms.SMS審査ＪＩＣＣ照会Mapper;
+import migration.mybatis.domain.szb_sms.SZBＪＩＣＣ照会管理;
+import migration.mybatis.domain.szb_sms.SZBＪＩＣＣ照会管理Example;
+import migration.mybatis.mapper.szb_sms.SZBＪＩＣＣ照会管理Mapper;
+import migration.mybatis.domain.itf_sms.SMSＪＩＣＣ照会管理;
+import migration.mybatis.mapper.itf_sms.SMSＪＩＣＣ照会管理Mapper;
 import migration.domain.source.審査ＣＩＣ照会Source;
 import migration.domain.source.個信類似照会管理Source;
 import migration.domain.source.個信類似照会明細Source;
@@ -231,7 +240,6 @@ import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
 import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
-import migration.domain.target.審査ＪＩＣＣ照会Target;
 import migration.domain.target.審査ＣＩＣ照会Target;
 import migration.domain.target.個信類似照会管理Target;
 import migration.domain.target.個信類似照会明細Target;
@@ -276,7 +284,6 @@ import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
-import migration.mapper.source.審査ＪＩＣＣ照会SourceMapper;
 import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
 import migration.mapper.source.個信類似照会管理SourceMapper;
 import migration.mapper.source.個信類似照会明細SourceMapper;
@@ -321,7 +328,6 @@ import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
 import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
-import migration.mapper.target.審査ＪＩＣＣ照会TargetMapper;
 import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
 import migration.mapper.target.個信類似照会管理TargetMapper;
 import migration.mapper.target.個信類似照会明細TargetMapper;
@@ -404,7 +410,11 @@ public class JutakuLoanService {
     @Autowired
     private SZB審査ＫＳＣ照会Mapper reviewKscSourceMapper;
     @Autowired
-    private 審査ＪＩＣＣ照会SourceMapper reviewJiccSourceMapper;
+    private SZB審査ＪＩＣＣ照会Mapper reviewJiccSourceMapper;
+    @Autowired
+    private SZBＪＩＣＣ照会管理Mapper jiccInquiryMgmtSourceMapper;
+    @Autowired
+    private SMSＪＩＣＣ照会管理Mapper jiccInquiryMgmtTargetMapper;
     @Autowired
     private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
     @Autowired
@@ -638,7 +648,7 @@ public class JutakuLoanService {
     @Autowired
     private SMS審査ＫＳＣ照会Mapper reviewKscTargetMapper;
     @Autowired
-    private 審査ＪＩＣＣ照会TargetMapper reviewJiccTargetMapper;
+    private SMS審査ＪＩＣＣ照会Mapper reviewJiccTargetMapper;
     @Autowired
     private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
     @Autowired
@@ -1433,10 +1443,16 @@ public class JutakuLoanService {
 
         // ③-d6 審査ＪＩＣＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
-        List<審査ＪＩＣＣ照会Source> reviewJiccs =
-                emptyIfNull(reviewJiccSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
-        for (審査ＪＩＣＣ照会Source reviewJicc : reviewJiccs) {
-            審査ＪＩＣＣ照会Target reviewJiccTarget = new 審査ＪＩＣＣ照会Target();
+        // Implemented via auto-generated gen-folder entities (Nakamura's generator).
+        SZB審査ＪＩＣＣ照会Example reviewJiccExample = new SZB審査ＪＩＣＣ照会Example();
+        reviewJiccExample.createCriteria()
+                .and申込番号EqualTo(sourceApplicationNumber)
+                .and申込目的EqualTo(maxSourcePurpose);
+        reviewJiccExample.setOrderByClause("イベント日時, 連番, 別名連番");
+        List<SZB審査ＪＩＣＣ照会> reviewJiccs =
+                emptyIfNull(reviewJiccSourceMapper.selectByExample(reviewJiccExample));
+        for (SZB審査ＪＩＣＣ照会 reviewJicc : reviewJiccs) {
+            SMS審査ＪＩＣＣ照会 reviewJiccTarget = new SMS審査ＪＩＣＣ照会();
             reviewJiccTarget.set申込番号(targetApplicationNumber);
             reviewJiccTarget.set申込目的(convertedPurpose);
             reviewJiccTarget.setイベント(reviewJicc.getイベント());
@@ -1446,7 +1462,25 @@ public class JutakuLoanService {
             reviewJiccTarget.set受付日時(reviewJicc.get受付日時());
             reviewJiccTarget.set受付番号(reviewJicc.get受付番号());
             reviewJiccTarget.setコメント(reviewJicc.getコメント());
+            // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
             reviewJiccTargetMapper.insert(reviewJiccTarget);
+
+            // ＪＩＣＣ照会管理 - bridge via 受付番号 carried by this 審査ＪＩＣＣ照会 row.
+            // No 申込番号/申込目的 of its own; no FK of its own (unlike ＫＳＣ照会管理's children).
+            String jiccReceptionNumber = reviewJicc.get受付番号();
+            if (jiccReceptionNumber == null) {
+                continue;
+            }
+            String paddedJiccReceptionNumber = String.format("%-12s", jiccReceptionNumber);
+            SZBＪＩＣＣ照会管理Example jiccInquiryMgmtExample = new SZBＪＩＣＣ照会管理Example();
+            jiccInquiryMgmtExample.createCriteria().and受付番号EqualTo(paddedJiccReceptionNumber);
+            List<SZBＪＩＣＣ照会管理> jiccInquiryMgmtList = emptyIfNull(jiccInquiryMgmtSourceMapper.selectByExample(jiccInquiryMgmtExample));
+            log.info("DEBUG jicc bridge: ＪＩＣＣ照会管理 found {} rows", jiccInquiryMgmtList.size());
+            for (SZBＪＩＣＣ照会管理 srcJiccInquiryMgmt : jiccInquiryMgmtList) {
+                SMSＪＩＣＣ照会管理 jiccInquiryMgmtTarget = new SMSＪＩＣＣ照会管理();
+                copyLikeNamedProperties(srcJiccInquiryMgmt, jiccInquiryMgmtTarget);
+                jiccInquiryMgmtTargetMapper.insert(jiccInquiryMgmtTarget);
+            }
         }
 
         // ③-d7 審査ＣＩＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).

@@ -95,6 +95,10 @@ DELETE FROM ITF_SMS.審査ＫＳＣ信用情報     WHERE 申込番号 LIKE '3%'
 DELETE FROM ITF_SMS.審査ＫＳＣ信用情報明細 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査ＫＳＣ信用情報詳細 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査ＪＩＣＣ照会       WHERE 申込番号 LIKE '3%';
+-- ＪＩＣＣ照会管理 (no 申込番号, no FK of its own): delete via the 受付番号 carried by
+-- our migrated 審査ＪＩＣＣ照会 rows (申込番号 LIKE '3%').
+DELETE FROM ITF_SMS.ＪＩＣＣ照会管理
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＪＩＣＣ照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.審査ＣＩＣ照会         WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似照会管理       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似照会明細       WHERE 申込番号 LIKE '3%';
