@@ -89,6 +89,7 @@ DELETE FROM ITF_SMS.申込顛末管理           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込担保情報ＰＤＦ      WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込審査履歴           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込関連申込           WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.実行管理               WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査チェック照会       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査ＫＳＣ照会         WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査ＫＳＣ信用情報     WHERE 申込番号 LIKE '3%';
@@ -100,6 +101,10 @@ DELETE FROM ITF_SMS.審査ＪＩＣＣ照会       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.ＪＩＣＣ照会管理
  WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＪＩＣＣ照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.審査ＣＩＣ照会         WHERE 申込番号 LIKE '3%';
+-- ＣＩＣ照会管理 (no 申込番号, no FK of its own): delete via the 受付番号 carried by
+-- our migrated 審査ＣＩＣ照会 rows (申込番号 LIKE '3%').
+DELETE FROM ITF_SMS.ＣＩＣ照会管理
+ WHERE 受付番号 IN (SELECT 受付番号 FROM ITF_SMS.審査ＣＩＣ照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.個信類似照会管理       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似照会明細       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.個信類似明細           WHERE 申込番号 LIKE '3%';
@@ -132,6 +137,16 @@ DELETE FROM ITF_SMS.審査ＳＮＡＶＩ連携内容   WHERE 申込番号 LIKE 
 DELETE FROM ITF_SMS."ＩＦ＿契約書送信"              WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.契約書連携イベント     WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.審査預保照会           WHERE 申込番号 LIKE '3%';
+-- 預保照会管理/基本情報/人情報/イメージ情報 (no 申込番号, no FK of their own): delete via the
+-- 照会依頼番号 carried by our migrated 審査預保照会 rows (申込番号 LIKE '3%').
+DELETE FROM ITF_SMS.預保照会管理
+ WHERE 照会依頼番号 IN (SELECT 照会依頼番号 FROM ITF_SMS.審査預保照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.預保照会基本情報
+ WHERE 照会依頼番号 IN (SELECT 照会依頼番号 FROM ITF_SMS.審査預保照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.預保照会人情報
+ WHERE 照会依頼番号 IN (SELECT 照会依頼番号 FROM ITF_SMS.審査預保照会 WHERE 申込番号 LIKE '3%');
+DELETE FROM ITF_SMS.預保照会イメージ情報
+ WHERE 照会依頼番号 IN (SELECT 照会依頼番号 FROM ITF_SMS.審査預保照会 WHERE 申込番号 LIKE '3%');
 DELETE FROM ITF_SMS.保証結果メインじぶん   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証結果メインアルヒ   WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証結果融資条件じぶん WHERE 申込番号 LIKE '3%';

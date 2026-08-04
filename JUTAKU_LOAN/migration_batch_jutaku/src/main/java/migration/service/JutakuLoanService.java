@@ -12,152 +12,14 @@ import migration.domain.target.申込Target;
 import migration.domain.target.申込審査状況Target;
 import migration.domain.target.申込進捗Target;
 import migration.domain.target.履歴申込Target;
-import migration.mybatis.domain.itf_sms.SMS履歴申込＿業者＿住宅;
-import migration.mybatis.mapper.itf_sms.SMS履歴申込＿業者＿住宅Mapper;
+import migration.mybatis.domain.szb_sms.*;
+import migration.mybatis.domain.itf_sms.*;
+import migration.mybatis.mapper.szb_sms.*;
+import migration.mybatis.mapper.itf_sms.*;
 import migration.domain.target.履歴保証人Target;
 import migration.domain.target.履歴保証検討表補足Target;
 import migration.domain.target.保証人Target;
 import migration.domain.target.保証検討表補足Target;
-import migration.mybatis.domain.itf_sms.SMS申込＿業者＿住宅;
-import migration.mybatis.domain.szb_sms.SZB申込;
-import migration.mybatis.domain.szb_sms.SZB申込Key;
-import migration.mybatis.domain.szb_sms.SZB販売業者マスター;
-import migration.mybatis.mapper.itf_sms.SMS申込＿業者＿住宅Mapper;
-import migration.mybatis.mapper.szb_sms.SZB申込Mapper;
-import migration.mybatis.mapper.szb_sms.SZB販売業者マスターMapper;
-import migration.mybatis.domain.szb_sms.SZB保証決裁進捗;
-import migration.mybatis.domain.szb_sms.SZB保証決裁進捗Key;
-import migration.mybatis.mapper.szb_sms.SZB保証決裁進捗Mapper;
-import migration.mybatis.domain.itf_sms.SMS申込決裁進捗;
-import migration.mybatis.mapper.itf_sms.SMS申込決裁進捗Mapper;
-import migration.mybatis.domain.szb_sms.SZB申込審査段階;
-import migration.mybatis.domain.szb_sms.SZB申込審査段階Key;
-import migration.mybatis.mapper.szb_sms.SZB申込審査段階Mapper;
-import migration.mybatis.domain.itf_sms.SMS申込審査段階;
-import migration.mybatis.mapper.itf_sms.SMS申込審査段階Mapper;
-import migration.mybatis.domain.itf_sms.SMS履歴申込審査段階;
-import migration.mybatis.mapper.itf_sms.SMS履歴申込審査段階Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ照会管理;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ照会管理Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ照会管理Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ照会管理;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ照会管理Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣ;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２ＣＩＣExample;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２ＣＩＣMapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２ＣＩＣ;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２ＣＩＣMapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２サービス状態エラー;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２サービス状態エラーExample;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２サービス状態エラーMapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２サービス状態エラー;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２サービス状態エラーMapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２回答情報;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２回答情報Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２回答情報Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２回答情報;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２回答情報Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報個人;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報個人Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２官報個人Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２官報個人;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２官報個人Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報法人;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２官報法人Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２官報法人Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２官報法人;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２官報法人Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２項目エラー;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２項目エラーExample;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２項目エラーMapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２項目エラー;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２項目エラーMapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社取引Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社取引;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社取引Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引属性;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社取引属性Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社取引属性Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社取引属性;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社取引属性Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社照会記録;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社照会記録Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社照会記録Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社照会記録;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社照会記録Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化取引Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化取引;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化取引Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引属性;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化取引属性Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化取引属性Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化取引属性;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化取引属性Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化照会記録;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社正規化照会記録Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社正規化照会記録Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社正規化照会記録;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社正規化照会記録Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社不渡;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２自社不渡Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２自社不渡Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２自社不渡;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２自社不渡Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引属性;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引属性Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引属性Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引属性;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引属性Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引停止個人;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２取引停止個人Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２取引停止個人Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２取引停止個人;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２取引停止個人Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２受付管理;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２受付管理Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２受付管理Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２受付管理;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２受付管理Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２照会記録;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２照会記録Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２照会記録Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２照会記録;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２照会記録Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２全情連;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２全情連Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２全情連Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２全情連;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２全情連Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２不渡;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２不渡Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２不渡Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２不渡;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２不渡Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２本人申告Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２本人申告;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２本人申告Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告属性;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２本人申告属性Example;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２本人申告属性Mapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２本人申告属性;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２本人申告属性Mapper;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスター;
-import migration.mybatis.domain.szb_sms.SZBＫＳＣ２マスターExample;
-import migration.mybatis.mapper.szb_sms.SZBＫＳＣ２マスターMapper;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２マスター;
-import migration.mybatis.domain.itf_sms.SMSＫＳＣ２マスターExample;
-import migration.mybatis.mapper.itf_sms.SMSＫＳＣ２マスターMapper;
 import migration.domain.target.申込担保情報ＰＤＦTarget;
 import migration.domain.target.申込審査履歴Target;
 import migration.domain.source.保証検討表補足Source;
@@ -181,22 +43,6 @@ import migration.mapper.target.保証検討表補足TargetMapper;
 import migration.mapper.target.申込担保情報ＰＤＦTargetMapper;
 import migration.mapper.target.申込審査履歴TargetMapper;
 import migration.domain.source.審査チェック照会Source;
-import migration.mybatis.domain.szb_sms.SZB審査ＫＳＣ照会;
-import migration.mybatis.domain.szb_sms.SZB審査ＫＳＣ照会Example;
-import migration.mybatis.mapper.szb_sms.SZB審査ＫＳＣ照会Mapper;
-import migration.mybatis.domain.itf_sms.SMS審査ＫＳＣ照会;
-import migration.mybatis.mapper.itf_sms.SMS審査ＫＳＣ照会Mapper;
-import migration.mybatis.domain.szb_sms.SZB審査ＪＩＣＣ照会;
-import migration.mybatis.domain.szb_sms.SZB審査ＪＩＣＣ照会Example;
-import migration.mybatis.mapper.szb_sms.SZB審査ＪＩＣＣ照会Mapper;
-import migration.mybatis.domain.itf_sms.SMS審査ＪＩＣＣ照会;
-import migration.mybatis.mapper.itf_sms.SMS審査ＪＩＣＣ照会Mapper;
-import migration.mybatis.domain.szb_sms.SZBＪＩＣＣ照会管理;
-import migration.mybatis.domain.szb_sms.SZBＪＩＣＣ照会管理Example;
-import migration.mybatis.mapper.szb_sms.SZBＪＩＣＣ照会管理Mapper;
-import migration.mybatis.domain.itf_sms.SMSＪＩＣＣ照会管理;
-import migration.mybatis.mapper.itf_sms.SMSＪＩＣＣ照会管理Mapper;
-import migration.domain.source.審査ＣＩＣ照会Source;
 import migration.domain.source.個信類似照会管理Source;
 import migration.domain.source.個信類似照会明細Source;
 import migration.domain.source.個信類似明細Source;
@@ -240,7 +86,6 @@ import migration.domain.source.審査ＫＳＣ信用情報詳細Source;
 import migration.domain.source.担保評価回答Source;
 import migration.domain.source.担保評価連携結果ファイルSource;
 import migration.domain.target.審査チェック照会Target;
-import migration.domain.target.審査ＣＩＣ照会Target;
 import migration.domain.target.個信類似照会管理Target;
 import migration.domain.target.個信類似照会明細Target;
 import migration.domain.target.個信類似明細Target;
@@ -284,7 +129,6 @@ import migration.domain.target.審査ＫＳＣ信用情報詳細Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果Target;
 import migration.domain.target.ＩＦ＿担保評価連携結果＿ファイルTarget;
 import migration.mapper.source.審査チェック照会SourceMapper;
-import migration.mapper.source.審査ＣＩＣ照会SourceMapper;
 import migration.mapper.source.個信類似照会管理SourceMapper;
 import migration.mapper.source.個信類似照会明細SourceMapper;
 import migration.mapper.source.個信類似明細SourceMapper;
@@ -328,7 +172,6 @@ import migration.mapper.source.審査ＫＳＣ信用情報詳細SourceMapper;
 import migration.mapper.source.担保評価回答SourceMapper;
 import migration.mapper.source.担保評価連携結果ファイルSourceMapper;
 import migration.mapper.target.審査チェック照会TargetMapper;
-import migration.mapper.target.審査ＣＩＣ照会TargetMapper;
 import migration.mapper.target.個信類似照会管理TargetMapper;
 import migration.mapper.target.個信類似照会明細TargetMapper;
 import migration.mapper.target.個信類似明細TargetMapper;
@@ -406,17 +249,25 @@ public class JutakuLoanService {
     @Autowired
     private 申込関連申込SourceMapper relatedApplicationSourceMapper;
     @Autowired
+    private SZB実行管理Mapper executionMgmtSourceMapper;
+    @Autowired
+    private SMS実行管理Mapper executionMgmtTargetMapper;
+    @Autowired
     private 審査チェック照会SourceMapper reviewCheckSourceMapper;
     @Autowired
     private SZB審査ＫＳＣ照会Mapper reviewKscSourceMapper;
     @Autowired
     private SZB審査ＪＩＣＣ照会Mapper reviewJiccSourceMapper;
     @Autowired
+    private SZB審査ＣＩＣ照会Mapper szbShinsaCICShokaiMapper;
+    @Autowired
     private SZBＪＩＣＣ照会管理Mapper jiccInquiryMgmtSourceMapper;
     @Autowired
     private SMSＪＩＣＣ照会管理Mapper jiccInquiryMgmtTargetMapper;
     @Autowired
-    private 審査ＣＩＣ照会SourceMapper reviewCicSourceMapper;
+    private SZBＣＩＣ照会管理Mapper cicInquiryMgmtSourceMapper;
+    @Autowired
+    private SMSＣＩＣ照会管理Mapper cicInquiryMgmtTargetMapper;
     @Autowired
     private 個信類似照会管理SourceMapper kosinSimilarInquiryMgmtSourceMapper;
     @Autowired
@@ -476,7 +327,23 @@ public class JutakuLoanService {
     @Autowired
     private 契約書連携イベントSourceMapper contractLinkEventSourceMapper;
     @Autowired
-    private 審査預保照会SourceMapper reviewDepositGuaranteeInquirySourceMapper;
+    private SZB預保照会管理Mapper depositGuaranteeInquiryMgmtSourceMapper;
+    @Autowired
+    private SMS預保照会管理Mapper depositGuaranteeInquiryMgmtTargetMapper;
+    @Autowired
+    private SZB預保照会基本情報Mapper depositGuaranteeInquiryBasicSourceMapper;
+    @Autowired
+    private SMS預保照会基本情報Mapper depositGuaranteeInquiryBasicTargetMapper;
+    @Autowired
+    private SZB預保照会人情報Mapper depositGuaranteeInquiryPersonSourceMapper;
+    @Autowired
+    private SMS預保照会人情報Mapper depositGuaranteeInquiryPersonTargetMapper;
+    @Autowired
+    private SZB預保照会イメージ情報Mapper depositGuaranteeInquiryImageSourceMapper;
+    @Autowired
+    private SMS預保照会イメージ情報Mapper depositGuaranteeInquiryImageTargetMapper;
+    @Autowired
+    private SZB審査預保照会Mapper szbShinsaYohoShokaiMapper;
     @Autowired
     private 保証結果メインじぶんSourceMapper guaranteeResultMainJibunSourceMapper;
     @Autowired
@@ -650,7 +517,7 @@ public class JutakuLoanService {
     @Autowired
     private SMS審査ＪＩＣＣ照会Mapper reviewJiccTargetMapper;
     @Autowired
-    private 審査ＣＩＣ照会TargetMapper reviewCicTargetMapper;
+    private SMS審査ＣＩＣ照会Mapper smsShinsaCICShokaiMapper;
     @Autowired
     private 個信類似照会管理TargetMapper kosinSimilarInquiryMgmtTargetMapper;
     @Autowired
@@ -710,7 +577,7 @@ public class JutakuLoanService {
     @Autowired
     private 契約書連携イベントTargetMapper contractLinkEventTargetMapper;
     @Autowired
-    private 審査預保照会TargetMapper reviewDepositGuaranteeInquiryTargetMapper;
+    private SMS審査預保照会Mapper smsShinsaYohoShokaiMapper;
     @Autowired
     private 保証結果メインじぶんTargetMapper guaranteeResultMainJibunTargetMapper;
     @Autowired
@@ -866,6 +733,25 @@ public class JutakuLoanService {
             relatedApplicationTarget.set関連区分(relatedApplication.get関連区分());
             relatedApplicationTarget.set関連申込番号(convertApplicationNumber(relatedApplication.get関連申込番号()));
             relatedApplicationTargetMapper.insert(relatedApplicationTarget);
+        }
+
+        // 実行管理: 1:1 per 申込番号 (no 申込目的, no FK). Inserted once per application.
+        // 申込番号 2→3 converted; other columns pass through from source.
+        SZB実行管理Example executionMgmtExample = new SZB実行管理Example();
+        executionMgmtExample.createCriteria().and申込番号EqualTo(sourceApplicationNumber);
+        for (SZB実行管理 srcExecutionMgmt : emptyIfNull(executionMgmtSourceMapper.selectByExample(executionMgmtExample))) {
+            if (srcExecutionMgmt == null) {
+                continue;
+            }
+            SMS実行管理 executionMgmtTarget = new SMS実行管理();
+            executionMgmtTarget.set申込番号(targetApplicationNumber);
+            executionMgmtTarget.set実行区分(srcExecutionMgmt.get実行区分());
+            executionMgmtTarget.set実行日(srcExecutionMgmt.get実行日());
+            executionMgmtTarget.set実行金額(srcExecutionMgmt.get実行金額());
+            executionMgmtTarget.set実行期間(srcExecutionMgmt.get実行期間());
+            executionMgmtTarget.set申込書情報送信区分(srcExecutionMgmt.get申込書情報送信区分());
+            executionMgmtTarget.set実行店番(srcExecutionMgmt.get実行店番());
+            executionMgmtTargetMapper.insert(executionMgmtTarget);
         }
 
         log.debug("Migrated 申込番号={} → {} (preliminary={}, formal={})",
@@ -1465,7 +1351,7 @@ public class JutakuLoanService {
             // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
             reviewJiccTargetMapper.insert(reviewJiccTarget);
 
-            // ＪＩＣＣ照会管理 - bridge via 受付番号 carried by this 審査ＪＩＣＣ照会 row.
+            // ＪＩＣＣ照会管理 - bridge via 受付日時+受付番号 carried by this 審査ＪＩＣＣ照会 row.
             // No 申込番号/申込目的 of its own; no FK of its own (unlike ＫＳＣ照会管理's children).
             String jiccReceptionNumber = reviewJicc.get受付番号();
             if (jiccReceptionNumber == null) {
@@ -1473,7 +1359,9 @@ public class JutakuLoanService {
             }
             String paddedJiccReceptionNumber = String.format("%-12s", jiccReceptionNumber);
             SZBＪＩＣＣ照会管理Example jiccInquiryMgmtExample = new SZBＪＩＣＣ照会管理Example();
-            jiccInquiryMgmtExample.createCriteria().and受付番号EqualTo(paddedJiccReceptionNumber);
+            jiccInquiryMgmtExample.createCriteria()
+                    .and受付日時EqualTo(reviewJicc.get受付日時())
+                    .and受付番号EqualTo(paddedJiccReceptionNumber);
             List<SZBＪＩＣＣ照会管理> jiccInquiryMgmtList = emptyIfNull(jiccInquiryMgmtSourceMapper.selectByExample(jiccInquiryMgmtExample));
             log.info("DEBUG jicc bridge: ＪＩＣＣ照会管理 found {} rows", jiccInquiryMgmtList.size());
             for (SZBＪＩＣＣ照会管理 srcJiccInquiryMgmt : jiccInquiryMgmtList) {
@@ -1485,20 +1373,45 @@ public class JutakuLoanService {
 
         // ③-d7 審査ＣＩＣ照会 (MAX only) - 1:N event log per (申込番号, 申込目的).
         // 申込番号 2→3 and 申込目的 converted; other columns pass through from source.
-        List<審査ＣＩＣ照会Source> reviewCics =
-                emptyIfNull(reviewCicSourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
-        for (審査ＣＩＣ照会Source reviewCic : reviewCics) {
-            審査ＣＩＣ照会Target reviewCicTarget = new 審査ＣＩＣ照会Target();
-            reviewCicTarget.set申込番号(targetApplicationNumber);
-            reviewCicTarget.set申込目的(convertedPurpose);
-            reviewCicTarget.setイベント(reviewCic.getイベント());
-            reviewCicTarget.setイベント日時(reviewCic.getイベント日時());
-            reviewCicTarget.set連番(reviewCic.get連番());
-            reviewCicTarget.set別名連番(reviewCic.get別名連番());
-            reviewCicTarget.set受付日時(reviewCic.get受付日時());
-            reviewCicTarget.set受付番号(reviewCic.get受付番号());
-            reviewCicTarget.setコメント(reviewCic.getコメント());
-            reviewCicTargetMapper.insert(reviewCicTarget);
+        // Implemented via auto-generated gen-folder entities (Nakamura's generator).
+        SZB審査ＣＩＣ照会Example szbShinsaCICShokaiExample = new SZB審査ＣＩＣ照会Example();
+        szbShinsaCICShokaiExample.createCriteria()
+                .and申込番号EqualTo(sourceApplicationNumber)
+                .and申込目的EqualTo(maxSourcePurpose);
+        szbShinsaCICShokaiExample.setOrderByClause("イベント日時, 連番, 別名連番");
+        List<SZB審査ＣＩＣ照会> szbShinsaCICShokaiList =
+                emptyIfNull(szbShinsaCICShokaiMapper.selectByExample(szbShinsaCICShokaiExample));
+        for (SZB審査ＣＩＣ照会 szbShinsaCICShokai : szbShinsaCICShokaiList) {
+            SMS審査ＣＩＣ照会 smsShinsaCICShokai = new SMS審査ＣＩＣ照会();
+            smsShinsaCICShokai.set申込番号(targetApplicationNumber);
+            smsShinsaCICShokai.set申込目的(convertedPurpose);
+            smsShinsaCICShokai.setイベント(szbShinsaCICShokai.getイベント());
+            smsShinsaCICShokai.setイベント日時(szbShinsaCICShokai.getイベント日時());
+            smsShinsaCICShokai.set連番(szbShinsaCICShokai.get連番());
+            smsShinsaCICShokai.set別名連番(szbShinsaCICShokai.get別名連番());
+            smsShinsaCICShokai.set受付日時(szbShinsaCICShokai.get受付日時());
+            smsShinsaCICShokai.set受付番号(szbShinsaCICShokai.get受付番号());
+            smsShinsaCICShokai.setコメント(szbShinsaCICShokai.getコメント());
+            // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
+            smsShinsaCICShokaiMapper.insert(smsShinsaCICShokai);
+
+            // ＣＩＣ照会管理 - bridge via 受付日時+受付番号 carried by this 審査ＣＩＣ照会 row.
+            String cicReceptionNumber = szbShinsaCICShokai.get受付番号();
+            if (cicReceptionNumber == null) {
+                continue;
+            }
+            String paddedCicReceptionNumber = String.format("%-12s", cicReceptionNumber);
+            SZBＣＩＣ照会管理Example cicInquiryMgmtExample = new SZBＣＩＣ照会管理Example();
+            cicInquiryMgmtExample.createCriteria()
+                    .and受付日時EqualTo(szbShinsaCICShokai.get受付日時())
+                    .and受付番号EqualTo(paddedCicReceptionNumber);
+            List<SZBＣＩＣ照会管理> cicInquiryMgmtList = emptyIfNull(cicInquiryMgmtSourceMapper.selectByExample(cicInquiryMgmtExample));
+            log.info("DEBUG cic bridge: ＣＩＣ照会管理 found {} rows", cicInquiryMgmtList.size());
+            for (SZBＣＩＣ照会管理 srcCicInquiryMgmt : cicInquiryMgmtList) {
+                SMSＣＩＣ照会管理 cicInquiryMgmtTarget = new SMSＣＩＣ照会管理();
+                copyLikeNamedProperties(srcCicInquiryMgmt, cicInquiryMgmtTarget);
+                cicInquiryMgmtTargetMapper.insert(cicInquiryMgmtTarget);
+            }
         }
 
         // ③-d8a 個信類似照会管理 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
@@ -2612,19 +2525,71 @@ public class JutakuLoanService {
         }
 
         // ③-d38 審査預保照会 -> 審査預保照会 (MAX only) - 1:N per (申込番号, 申込目的), pass-through.
-        List<審査預保照会Source> reviewDepositGuaranteeInquiries =
-                emptyIfNull(reviewDepositGuaranteeInquirySourceMapper.selectByApplicationIdAndPurpose(sourceApplicationNumber, maxSourcePurpose));
-        for (審査預保照会Source src : reviewDepositGuaranteeInquiries) {
+        // Implemented via auto-generated gen-folder entities (Nakamura's generator).
+        SZB審査預保照会Example reviewDepositGuaranteeInquiryExample = new SZB審査預保照会Example();
+        reviewDepositGuaranteeInquiryExample.createCriteria()
+                .and申込番号EqualTo(sourceApplicationNumber)
+                .and申込目的EqualTo(maxSourcePurpose);
+        List<SZB審査預保照会> reviewDepositGuaranteeInquiries =
+                emptyIfNull(szbShinsaYohoShokaiMapper.selectByExample(reviewDepositGuaranteeInquiryExample));
+        for (SZB審査預保照会 src : reviewDepositGuaranteeInquiries) {
             if (src == null) {
                 continue;
             }
-            審査預保照会Target t = new 審査預保照会Target();
+            SMS審査預保照会 t = new SMS審査預保照会();
             t.set申込番号(targetApplicationNumber);
             t.set申込目的(convertedPurpose);
             t.setイベント(src.getイベント());
             t.setイベント日時(src.getイベント日時());
             t.set照会依頼番号(src.get照会依頼番号());
-            reviewDepositGuaranteeInquiryTargetMapper.insert(t);
+            // insert() (not insertSelective) - same full-width-property OGNL issue as elsewhere.
+            smsShinsaYohoShokaiMapper.insert(t);
+
+            // 預保照会管理/基本情報/人情報/イメージ情報 - bridge via 照会依頼番号 carried by this 審査預保照会 row.
+            String depositInquiryRequestNumber = src.get照会依頼番号();
+            if (depositInquiryRequestNumber == null) {
+                continue;
+            }
+
+            SZB預保照会管理Example depositGuaranteeInquiryMgmtExample = new SZB預保照会管理Example();
+            depositGuaranteeInquiryMgmtExample.createCriteria().and照会依頼番号EqualTo(depositInquiryRequestNumber);
+            List<SZB預保照会管理> depositGuaranteeInquiryMgmtList = emptyIfNull(depositGuaranteeInquiryMgmtSourceMapper.selectByExample(depositGuaranteeInquiryMgmtExample));
+            log.info("DEBUG deposit guarantee bridge: 預保照会管理 found {} rows", depositGuaranteeInquiryMgmtList.size());
+            for (SZB預保照会管理 srcDepositGuaranteeInquiryMgmt : depositGuaranteeInquiryMgmtList) {
+                SMS預保照会管理 depositGuaranteeInquiryMgmtTarget = new SMS預保照会管理();
+                copyLikeNamedProperties(srcDepositGuaranteeInquiryMgmt, depositGuaranteeInquiryMgmtTarget);
+                depositGuaranteeInquiryMgmtTargetMapper.insert(depositGuaranteeInquiryMgmtTarget);
+            }
+
+            SZB預保照会基本情報Example depositGuaranteeInquiryBasicExample = new SZB預保照会基本情報Example();
+            depositGuaranteeInquiryBasicExample.createCriteria().and照会依頼番号EqualTo(depositInquiryRequestNumber);
+            List<SZB預保照会基本情報> depositGuaranteeInquiryBasicList = emptyIfNull(depositGuaranteeInquiryBasicSourceMapper.selectByExample(depositGuaranteeInquiryBasicExample));
+            log.info("DEBUG deposit guarantee bridge: 預保照会基本情報 found {} rows", depositGuaranteeInquiryBasicList.size());
+            for (SZB預保照会基本情報 srcDepositGuaranteeInquiryBasic : depositGuaranteeInquiryBasicList) {
+                SMS預保照会基本情報 depositGuaranteeInquiryBasicTarget = new SMS預保照会基本情報();
+                copyLikeNamedProperties(srcDepositGuaranteeInquiryBasic, depositGuaranteeInquiryBasicTarget);
+                depositGuaranteeInquiryBasicTargetMapper.insert(depositGuaranteeInquiryBasicTarget);
+            }
+
+            SZB預保照会人情報Example depositGuaranteeInquiryPersonExample = new SZB預保照会人情報Example();
+            depositGuaranteeInquiryPersonExample.createCriteria().and照会依頼番号EqualTo(depositInquiryRequestNumber);
+            List<SZB預保照会人情報> depositGuaranteeInquiryPersonList = emptyIfNull(depositGuaranteeInquiryPersonSourceMapper.selectByExample(depositGuaranteeInquiryPersonExample));
+            log.info("DEBUG deposit guarantee bridge: 預保照会人情報 found {} rows", depositGuaranteeInquiryPersonList.size());
+            for (SZB預保照会人情報 srcDepositGuaranteeInquiryPerson : depositGuaranteeInquiryPersonList) {
+                SMS預保照会人情報 depositGuaranteeInquiryPersonTarget = new SMS預保照会人情報();
+                copyLikeNamedProperties(srcDepositGuaranteeInquiryPerson, depositGuaranteeInquiryPersonTarget);
+                depositGuaranteeInquiryPersonTargetMapper.insert(depositGuaranteeInquiryPersonTarget);
+            }
+
+            SZB預保照会イメージ情報Example depositGuaranteeInquiryImageExample = new SZB預保照会イメージ情報Example();
+            depositGuaranteeInquiryImageExample.createCriteria().and照会依頼番号EqualTo(depositInquiryRequestNumber);
+            List<SZB預保照会イメージ情報> depositGuaranteeInquiryImageList = emptyIfNull(depositGuaranteeInquiryImageSourceMapper.selectByExample(depositGuaranteeInquiryImageExample));
+            log.info("DEBUG deposit guarantee bridge: 預保照会イメージ情報 found {} rows", depositGuaranteeInquiryImageList.size());
+            for (SZB預保照会イメージ情報 srcDepositGuaranteeInquiryImage : depositGuaranteeInquiryImageList) {
+                SMS預保照会イメージ情報 depositGuaranteeInquiryImageTarget = new SMS預保照会イメージ情報();
+                copyLikeNamedProperties(srcDepositGuaranteeInquiryImage, depositGuaranteeInquiryImageTarget);
+                depositGuaranteeInquiryImageTargetMapper.insert(depositGuaranteeInquiryImageTarget);
+            }
         }
 
         // ③-d39 保証結果メインじぶん -> 保証結果メインじぶん (MAX only) - 外部連携, 1:N per (申込番号, 申込目的), pass-through.
