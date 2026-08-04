@@ -87,6 +87,7 @@ DELETE FROM ITF_SMS.保証人                 WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.保証検討表補足         WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込顛末管理           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込担保情報ＰＤＦ      WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.申込担保情報           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込審査履歴           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.申込関連申込           WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS.実行管理               WHERE 申込番号 LIKE '3%';
@@ -154,6 +155,25 @@ DELETE FROM ITF_SMS.保証結果融資条件アルヒ WHERE 申込番号 LIKE '3
 DELETE FROM ITF_SMS.担当者別操作管理       WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果"        WHERE 申込番号 LIKE '3%';
 DELETE FROM ITF_SMS."ＩＦ＿担保評価連携結果＿ファイル" WHERE 申込番号 LIKE '3%';
+
+-- Medium-difficulty tables (implemented by Nakamura, VM)
+DELETE FROM ITF_SMS.審査時延滞明細         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査時回収履歴         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査時契約             WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査時情報取得         WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査時申込             WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査時属性             WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査チェック回答       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査チェック回答確認   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.担保評価連携イベント   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS."ＩＦ＿担保評価連携依頼"        WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＪＩＣＣ信用情報   WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＪＩＣＣ信用情報明細 WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＣＩＣ信用情報     WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査ＣＩＣ信用情報明細 WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.返済比率計算明細       WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査結果               WHERE 申込番号 LIKE '3%';
+DELETE FROM ITF_SMS.審査結果事由           WHERE 申込番号 LIKE '3%';
 
 -- 申込 parent
 DELETE FROM ITF_SMS.申込                   WHERE 申込番号 LIKE '3%';
