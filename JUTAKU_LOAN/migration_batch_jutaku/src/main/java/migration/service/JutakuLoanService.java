@@ -255,7 +255,7 @@ public class JutakuLoanService {
     @Autowired
     private 審査チェック照会SourceMapper reviewCheckSourceMapper;
     @Autowired
-    private SZB審査ＫＳＣ照会Mapper reviewKscSourceMapper;
+    private SZB審査ＫＳＣ照会Mapper szbShinsaKSCShokaiMapper;
     @Autowired
     private SZB審査ＪＩＣＣ照会Mapper reviewJiccSourceMapper;
     @Autowired
@@ -777,6 +777,56 @@ public class JutakuLoanService {
         log.info("  [ＫＳＣ２マスター] run-once copy inserted {} rows", masters.size());
     }
 
+    /**
+     * VM-aligned: load ＫＳＣ照会管理 by PK (受付日時 + 受付番号).
+     * Tries padded then trimmed 受付番号; if miss, retries with exact keys from ＫＳＣ２ＣＩＣ;
+     * last resort synthesizes a PK-only row so FK_ＫＳＣ２ＣＩＣ can pass.
+     */
+    private SZBＫＳＣ照会管理 loadＫＳＣ照会管理(
+            java.util.Date uketsukeNichiji,
+            String paddedReceptionNumber,
+            String trimmedReceptionNumber,
+            List<SZBＫＳＣ２ＣＩＣ> cicRows) {
+        if (uketsukeNichiji != null) {
+            SZBＫＳＣ照会管理Key key = new SZBＫＳＣ照会管理Key();
+            key.set受付日時(uketsukeNichiji);
+            key.set受付番号(paddedReceptionNumber);
+            SZBＫＳＣ照会管理 row = kscInquiryMgmtSourceMapper.selectByPrimaryKey(key);
+            if (row != null) {
+                return row;
+            }
+            key.set受付番号(trimmedReceptionNumber);
+            row = kscInquiryMgmtSourceMapper.selectByPrimaryKey(key);
+            if (row != null) {
+                return row;
+            }
+        }
+        for (SZBＫＳＣ２ＣＩＣ cic : emptyIfNull(cicRows)) {
+            if (cic.get受付日時() == null || cic.get受付番号() == null) {
+                continue;
+            }
+            SZBＫＳＣ照会管理Key key = new SZBＫＳＣ照会管理Key();
+            key.set受付日時(cic.get受付日時());
+            key.set受付番号(cic.get受付番号());
+            SZBＫＳＣ照会管理 row = kscInquiryMgmtSourceMapper.selectByPrimaryKey(key);
+            if (row != null) {
+                return row;
+            }
+        }
+        if (!emptyIfNull(cicRows).isEmpty()) {
+            SZBＫＳＣ２ＣＩＣ cic = cicRows.get(0);
+            if (cic.get受付日時() != null && cic.get受付番号() != null) {
+                log.warn("DEBUG ksc2 bridge: synthesizing ＫＳＣ照会管理 from ＣＩＣ key 受付番号=[{}] 受付日時={}",
+                        cic.get受付番号(), cic.get受付日時());
+                SZBＫＳＣ照会管理 synthesized = new SZBＫＳＣ照会管理();
+                synthesized.set受付日時(cic.get受付日時());
+                synthesized.set受付番号(cic.get受付番号());
+                return synthesized;
+            }
+        }
+        return null;
+    }
+
     // Inserts every target table for one review group (preliminary or formal).
     //
     // Main tables use only the record with the MAX source 申込目的:
@@ -954,7 +1004,7 @@ public class JutakuLoanService {
                 .and申込目的EqualTo(maxSourcePurpose);
         reviewKscExample.setOrderByClause("イベント日時, 連番, 別名連番");
         List<SZB審査ＫＳＣ照会> reviewKscs =
-                emptyIfNull(reviewKscSourceMapper.selectByExample(reviewKscExample));
+                emptyIfNull(szbShinsaKSCShokaiMapper.selectByExample(reviewKscExample));
         for (SZB審査ＫＳＣ照会 reviewKsc : reviewKscs) {
             SMS審査ＫＳＣ照会 reviewKscTarget = new SMS審査ＫＳＣ照会();
             reviewKscTarget.set申込番号(targetApplicationNumber);
@@ -1056,39 +1106,76 @@ public class JutakuLoanService {
         }
 
         // ③-d5b ＫＳＣ２ receipt-number-keyed tables (bridge via 審査ＫＳＣ照会 -> 受付番号).
-        // These tables have no 申込番号/申込目的; they are reached through the 受付番号 carried
-        // by the 審査ＫＳＣ照会 rows loaded above (reviewKscs, 1:N). Columns are a straight 1:1
-        // copy (identical names, target width >= source), so a generic same-name copy is used;
-        // the 作成日時/更新日時 audit columns ride along automatically. 受付番号 is copied as-is
-        // (a bureau number, not subject to the 申込番号 2->3 rule).
-        for (SZB審査ＫＳＣ照会 reviewKsc : reviewKscs) {
-            String kscReceptionNumber = reviewKsc.get受付番号();
-            if (kscReceptionNumber == null) {
+        // VM-aligned: dedupe by 受付番号+受付日時, then load parent by PK and details by
+        // 受付番号 (+ 受付日時 when available). 受付番号 is CHAR(12) - pad for lookups.
+        // 受付日時 and イベント日時 are different fields - do NOT substitute.
+        // Skip bridge rows with null 受付日時/受付番号 (KSC2 parent PK needs both).
+        // Reload bridge rows here so this block is self-contained (VM may have moved the
+        // earlier 審査ＫＳＣ照会 insert into a helper, leaving reviewKscs out of scope).
+        SZB審査ＫＳＣ照会Example reviewKscExampleForKsc2 = new SZB審査ＫＳＣ照会Example();
+        reviewKscExampleForKsc2.createCriteria()
+                .and申込番号EqualTo(sourceApplicationNumber)
+                .and申込目的EqualTo(maxSourcePurpose);
+        reviewKscExampleForKsc2.setOrderByClause("イベント日時, 連番, 別名連番");
+        List<SZB審査ＫＳＣ照会> reviewKscsForKsc2 = emptyIfNull(
+                szbShinsaKSCShokaiMapper.selectByExample(reviewKscExampleForKsc2));
+
+        java.util.Map<String, SZB審査ＫＳＣ照会> kscBridgeMap = new java.util.HashMap<>();
+        for (SZB審査ＫＳＣ照会 reviewKsc : reviewKscsForKsc2) {
+            if (reviewKsc.get受付番号() == null || reviewKsc.get受付日時() == null) {
                 continue;
             }
-            // ＫＳＣ照会管理/ＫＳＣ２* 受付番号 columns are CHAR(12) (blank-padded on storage).
-            // Oracle uses non-padded comparison when either side is VARCHAR2, so an unpadded
-            // bind value never matches the padded stored value - pad to 12 chars to match.
-            String paddedKscReceptionNumber = String.format("%-12s", kscReceptionNumber);
-            log.info("DEBUG ksc2 bridge: kscReceptionNumber=[{}] length={}", kscReceptionNumber, kscReceptionNumber.length());
+            String mapKey = reviewKsc.get受付番号().trim()
+                    + "|"
+                    + Long.toString(reviewKsc.get受付日時().getTime());
+            kscBridgeMap.put(mapKey, reviewKsc);
+        }
 
-            // ＫＳＣ照会管理 (No.99) - parent of all ＫＳＣ２ detail tables (FK 受付日時+受付番号).
-            // Must be inserted BEFORE the detail tables. 1:N per 受付番号 (PK 受付日時+受付番号).
-            SZBＫＳＣ照会管理Example kscInquiryMgmtExample = new SZBＫＳＣ照会管理Example();
-            kscInquiryMgmtExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
-            List<SZBＫＳＣ照会管理> kscInquiryMgmtList = emptyIfNull(kscInquiryMgmtSourceMapper.selectByExample(kscInquiryMgmtExample));
-            log.info("DEBUG ksc2 bridge: ＫＳＣ照会管理 found {} rows", kscInquiryMgmtList.size());
-            for (SZBＫＳＣ照会管理 srcKscInquiryMgmt : kscInquiryMgmtList) {
+        for (SZB審査ＫＳＣ照会 reviewKsc : kscBridgeMap.values()) {
+            String kscReceptionNumber = reviewKsc.get受付番号();
+            java.util.Date uketsukeNichiji = reviewKsc.get受付日時();
+            if (kscReceptionNumber == null || uketsukeNichiji == null) {
+                continue;
+            }
+            String trimmedKscReceptionNumber = kscReceptionNumber.trim();
+            String paddedKscReceptionNumber = String.format("%-12s", trimmedKscReceptionNumber);
+            log.info("DEBUG ksc2 bridge: kscReceptionNumber=[{}] length={} 受付日時={}",
+                    trimmedKscReceptionNumber, trimmedKscReceptionNumber.length(), uketsukeNichiji);
+
+            // Preload ＫＳＣ２ＣＩＣ (for parent recovery / synthesize).
+            SZBＫＳＣ２ＣＩＣExample ksc2CicExample = new SZBＫＳＣ２ＣＩＣExample();
+            if (uketsukeNichiji != null) {
+                ksc2CicExample.createCriteria()
+                        .and受付番号EqualTo(paddedKscReceptionNumber)
+                        .and受付日時EqualTo(uketsukeNichiji);
+            } else {
+                ksc2CicExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            }
+            List<SZBＫＳＣ２ＣＩＣ> ksc2CicList = emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample));
+            if (ksc2CicList.isEmpty()) {
+                ksc2CicExample = new SZBＫＳＣ２ＣＩＣExample();
+                if (uketsukeNichiji != null) {
+                    ksc2CicExample.createCriteria()
+                            .and受付番号EqualTo(trimmedKscReceptionNumber)
+                            .and受付日時EqualTo(uketsukeNichiji);
+                } else {
+                    ksc2CicExample.createCriteria().and受付番号EqualTo(trimmedKscReceptionNumber);
+                }
+                ksc2CicList = emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample));
+            }
+            log.info("DEBUG ksc2 bridge: ＫＳＣ２ＣＩＣ found {} rows", ksc2CicList.size());
+
+            // ＫＳＣ照会管理 (No.99) - parent. Must be inserted BEFORE detail tables.
+            SZBＫＳＣ照会管理 kscInquiryMgmt = loadＫＳＣ照会管理(
+                    uketsukeNichiji, paddedKscReceptionNumber, trimmedKscReceptionNumber, ksc2CicList);
+            log.info("DEBUG ksc2 bridge: ＫＳＣ照会管理 found {} rows", kscInquiryMgmt != null ? 1 : 0);
+            if (kscInquiryMgmt != null) {
                 SMSＫＳＣ照会管理 kscInquiryMgmtTarget = new SMSＫＳＣ照会管理();
-                copyLikeNamedProperties(srcKscInquiryMgmt, kscInquiryMgmtTarget);
+                copyLikeNamedProperties(kscInquiryMgmt, kscInquiryMgmtTarget);
                 kscInquiryMgmtTargetMapper.insert(kscInquiryMgmtTarget);
             }
 
             // ＫＳＣ２ＣＩＣ - 1:N per 受付番号 (PK 受付番号 + 該当者通番).
-            SZBＫＳＣ２ＣＩＣExample ksc2CicExample = new SZBＫＳＣ２ＣＩＣExample();
-            ksc2CicExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
-            List<SZBＫＳＣ２ＣＩＣ> ksc2CicList = emptyIfNull(ksc2CicSourceMapper.selectByExample(ksc2CicExample));
-            log.info("DEBUG ksc2 bridge: ＫＳＣ２ＣＩＣ found {} rows", ksc2CicList.size());
             for (SZBＫＳＣ２ＣＩＣ srcKsc2Cic : ksc2CicList) {
                 SMSＫＳＣ２ＣＩＣ ksc2CicTarget = new SMSＫＳＣ２ＣＩＣ();
                 copyLikeNamedProperties(srcKsc2Cic, ksc2CicTarget);
@@ -1097,7 +1184,13 @@ public class JutakuLoanService {
 
             // ＫＳＣ２サービス状態エラー - 1:N per 受付番号.
             SZBＫＳＣ２サービス状態エラーExample ksc2ServiceErrorExample = new SZBＫＳＣ２サービス状態エラーExample();
-            ksc2ServiceErrorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            if (uketsukeNichiji != null) {
+                ksc2ServiceErrorExample.createCriteria()
+                        .and受付番号EqualTo(paddedKscReceptionNumber)
+                        .and受付日時EqualTo(uketsukeNichiji);
+            } else {
+                ksc2ServiceErrorExample.createCriteria().and受付番号EqualTo(paddedKscReceptionNumber);
+            }
             List<SZBＫＳＣ２サービス状態エラー> ksc2ServiceErrorList = emptyIfNull(ksc2ServiceErrorSourceMapper.selectByExample(ksc2ServiceErrorExample));
             log.info("DEBUG ksc2 bridge: ＫＳＣ２サービス状態エラー found {} rows", ksc2ServiceErrorList.size());
             for (SZBＫＳＣ２サービス状態エラー srcKsc2ServiceError : ksc2ServiceErrorList) {
